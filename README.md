@@ -91,6 +91,86 @@ The codebase for each step can be found in the commit link
   }
   ```
 
+### 2. Create a NavBar component, add styling
+- All the assets (logo, images, etc.) we will use in this project can be found in public/assets folder
+- Create a NavBar menu and add styles to it
+- In features/nav folder, create a component called NavBar.jsx
+- In NavBar.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic Button, Container, and Menu components: `import { Button, Container, Menu } from 'semantic-ui-react';`
+  - Write a NavBar functional component that renders the navigation menu using Semantic UI components
+  ```javascript
+  import React from 'react';
+  import { Button, Container, Menu } from 'semantic-ui-react';
+
+  export default function NavBar() {
+    return (
+      <Menu inverted fixed='top'>
+        <Container>
+          <Menu.Item header>
+            <img src='/assets/logo.png' alt='logo' style={{ marginRight: 15 }} />
+          </Menu.Item>
+          <Menu.Item name='Events' />
+          <Menu.Item>
+            <Button positive inverted content='Create Event' />
+          </Menu.Item>
+          <Menu.Item position='right'>
+            <Button basic inverted content='Login' />
+            <Button
+              basic
+              inverted
+              content='Register'
+              style={{ marginLeft: '0.5em' }}
+            />
+          </Menu.Item>
+        </Container>
+      </Menu>
+    );
+  }
+  ```
+- In App.jsx file:
+  - Import the NavBar component: `import NavBar from '../../features/nav/NavBar';`
+  - Import Semantic Container: `import { Container } from 'semantic-ui-react';` 
+  - Render the NavBar component just above the EventDashboard component. Also wrap the EventDashboard component in a container so we can apply styles to it
+  ```javascript
+  import EventDashboard from '../../features/events/eventDashboard/EventDashboard';
+  import NavBar from '../../features/nav/NavBar';
+  import { Container } from 'semantic-ui-react';
+
+  export default function App() {
+    return (
+      <>
+        <NavBar />
+        <Container className='main'>
+          <EventDashboard />
+        </Container>
+      </>
+    );
+  }
+  ```
+- In src/app/layout folder, create a file called styles.css. This page will contain the project's css styles
+- In styles.css file:
+  - Apply background color styles to the NavBar menu
+  - Apply styles for the main container so that there's a space between the navbar and the main content
+  ```css
+  body {
+    background-color: #eaeaea;
+  }
+
+  .ui.fixed.menu {
+    background-image: linear-gradient(
+      135deg,
+      rgb(24, 42, 115) 0%,
+      rgb(33, 138, 174) 69%,
+      rgb(32, 167, 172) 89%
+    );
+  }
+
+  .ui.main.container {
+    margin-top: 7em;
+  }
+  ```
+
 
 
 
