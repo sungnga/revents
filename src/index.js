@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import './app/layout/styles.css';
+import App from './app/layout/App';
 import reportWebVitals from './reportWebVitals';
 
 const rootEl = document.getElementById('root');
@@ -13,7 +13,7 @@ function render() {
 // If we make changes to our App component and module.hot is available,
 // update the page with the App component without doing a full page reload
 if (module.hot) {
-	module.hot.accept('./App', function () {
+	module.hot.accept('./app/layout/App', function () {
 		setTimeout(render);
 	});
 }

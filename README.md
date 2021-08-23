@@ -33,7 +33,13 @@ The codebase for each step can be found in the commit link
   render();
   ```
 
+### 3. Add folder structure to our project
+- We want to add a little folder structure and rearrange files of our project and also clean up any files from create-react-app that we don't 
+  - All the features we will build in this project will go inside the 'features' folder
+  - All the common features and components that will be used across the application will go inside the 'app' folder
 
+
+  
 
 
 
