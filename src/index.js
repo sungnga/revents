@@ -4,12 +4,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const rootEl = document.getElementById('root');
+
+function render() {
+	ReactDOM.render(<App />, rootEl);
+}
+
+// If we make changes to our App component and module.hot is available,
+// update the page with the App component without doing a full page reload
+if (module.hot) {
+	module.hot.accept('./App', function () {
+		setTimeout(render);
+	});
+}
+
+render();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

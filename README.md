@@ -12,7 +12,26 @@ The codebase for each step can be found in the commit link
 - Then run: `npm start`. This starts up the development server
 - Can view the revents application in the browser: `http://localhost:3000`
 
+### 2. Add hot module replacement
+- The hot module replacement prevents a full page reload when we make changes to our code. It incrementally updates the page as we update our code. This is a common thing to do
+- In index.js file:
+  ```js
+  const rootEl = document.getElementById('root');
 
+  function render() {
+    ReactDOM.render(<App />, rootEl);
+  }
+
+  // If we make changes to our App component and module.hot is available,
+  // update the page with the App component without doing a full page reload
+  if (module.hot) {
+    module.hot.accept('./App', function () {
+      setTimeout(render);
+    });
+  }
+
+  render();
+  ```
 
 
 
