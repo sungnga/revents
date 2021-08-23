@@ -38,9 +38,26 @@ The codebase for each step can be found in the commit link
   - All the features we will build in this project will go inside the 'features' folder
   - All the common features and components that will be used across the application will go inside the 'app' folder
 
+### 4. Install Semantic UI CSS + Semantic UI React libraries
+- Docs: www.react.semantic-ui.com
+- Install Semantic UI React and Semantic UI CSS libraries
+  - Run to install both: `npm i semantic-ui-react semantic-ui-css`
+- In index.js file:
+  - Import the semantic min css just above the styles.css file: `import 'semantic-ui-css/semantic.min.css';`
+- When using Semantic UI React library, we can import style components inside our components to add styles to our JSX. We add component attributes to specify the style we want from that style component. An example is in App.jsx file
 
-  
 
+
+
+
+
+
+
+## LIBRARIES AND PACKAGES USED IN THIS PROJECT
+- Semantic UI React and Semantic UI CSS
+  - Website: www.react.semantic-ui.com
+  - Install: `npm i semantic-ui-react semantic-ui-css`
+  - Import in index.js file. Above the styles.css, import: `import 'semantic-ui-css/semantic.min.css';`
 
 
 ## VSCode extensions used:
@@ -70,8 +87,8 @@ The codebase for each step can be found in the commit link
 - JSX
 
 **Components**
-- Traditional web page: HTML, JS, CSS
-- React: components which made up of JS, HTML, CSS
+- Traditional web page: HTML, JS, and CSS files
+- React: components which made up of JS, HTML, and CSS. Multiple components make up a web page
 
 **React uses a Virtual DOM**
 - React -> Virtual DOM -> Actual DOM
