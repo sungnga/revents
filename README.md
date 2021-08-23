@@ -47,7 +47,49 @@ The codebase for each step can be found in the commit link
 - When using Semantic UI React library, we can import style components inside our components to add styles to our JSX. We add component attributes to specify the style we want from that style component. An example is in App.jsx file
 
 
+## EVENT DASHBOARD PAGE LAYOUTS
 
+### 1. Create a basic EventDashboard component
+- This component renders two columns: a 10-column grid and a 6-column grid using Semantic Grid component
+- In src/features/events/eventDashboard folder, create a component called EventDashboard.jsx
+- NOTE: the file extension for a React component is `.jsx` instead of plain `.js` to denote that it contains JSX in it
+- In EventDashboard.jsx file:
+  - Import React: `import React from 'react';`
+  - Import semantic Grid component: `import { Grid } from 'semantic-ui-react';`
+  - Write an EventDashboard functional component
+    - Render the Semantic UI Grid in JSX for now
+    - Semantic UI uses a 16-column grid system
+    ```javascript
+    // Semantic UI uses a 16-col grid system
+    export default function EventDashboard() {
+      return (
+        <Grid>
+          <Grid.Column width={10}>
+            <h2>Left Column</h2>
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <h2>Right Column</h2>
+          </Grid.Column>
+        </Grid>
+      );
+    }
+    ```
+- In src/app/layout folder, create a component called App.jsx
+- In App.jsx file:
+  - Import React: `import React from 'react';`
+  - Import the EventDashboard component: `import EventDashboard from '../../features/events/eventDashboard/EventDashboard';`
+  - Write an App functional component that renders other components to the page
+  - Render the EventDashboard component inside JSX
+  ```javascript
+  export default function App() {
+    return (
+      <div>
+        <h1>Re-vents</h1>
+        <EventDashboard />
+      </div>
+    );
+  }
+  ```
 
 
 
