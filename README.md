@@ -171,6 +171,96 @@ The codebase for each step can be found in the commit link
   }
   ```
 
+### 3. Create Event List Items: EventList, EventListItem, and EventListAttendee components
+- In the EventDashboard 10-column grid section, create and display the EventList component. The EventList component renders the EventListItem components. Each EventListItem component renders the title of the event, who is hosting the event, date, venue, description of the event, a button to view the event detail, and list of attendees (the EventListAttendee component)
+- In features/events/eventDashboard folder, create a component called EventList.jsx
+- In EventList.jsx file:
+  - Import React: `import React from 'react';`
+  - Import the EventListItem component: `import EventListItem from './EventListItem';`
+  - Write an EventList functional component that renders the EventListItem component several times
+  ```javascript
+  export default function EventList() {
+    return (
+      <>
+        <EventListItem />
+        <EventListItem />
+        <EventListItem />
+        <EventListItem />
+      </>
+    );
+  }
+  ```
+- In features/events/eventDashboard folder, create a component called EventListItem.jsx
+- In EventListItem.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic components: `import { Button, Icon, Item, List, Segment } from 'semantic-ui-react';`
+  - Import the EventListAttendee component: `import EventListAttendee from './EventListAttendee';`
+  - Write an EventListItem functional component that renders the list item details using Semantic UI
+    - Render several EventListAttendee components
+  ```javascript
+  export default function EventListItem() {
+    return (
+      <Segment.Group>
+        <Segment>
+          <Item.Group>
+            <Item>
+              <Item.Image size='tiny' circular src='/assets/user.png' />
+              <Item.Content>
+                <Item.Header content='Event Title' />
+                <Item.Description>Hosted by Bob</Item.Description>
+              </Item.Content>
+            </Item>
+          </Item.Group>
+        </Segment>
+
+        <Segment>
+          <span>
+            <Icon name='clock' /> Date
+            <Icon name='marker' />
+            Venue
+          </span>
+        </Segment>
+
+        <Segment secondary>
+          <List horizontal>
+            <EventListAttendee />
+            <EventListAttendee />
+            <EventListAttendee />
+          </List>
+        </Segment>
+
+        <Segment clearing>
+          <div>Description of event</div>
+          <Button color='teal' floated='right' content='View' />
+        </Segment>
+      </Segment.Group>
+    );
+  }
+  ```
+- In features/events/eventDashboard folder, create a component called EventListAttendee.jsx
+- In EventListAttendee.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic Image and List components: `import { Image, List } from 'semantic-ui-react';`
+  - Write an EventListAttendee functional component that renders list items of users
+  ```javascript
+  export default function EventListAttendee() {
+    return (
+      <List.Item>
+        <Image size='mini' circular src='/assets/user.png' />
+      </List.Item>
+    );
+  }
+  ```
+- In the EventDashboard.jsx file:
+  - Import the EventList component: `import EventList from './EventList';`
+  - Render the EventList component inside the 10-column Grid component
+  ```javascript
+  <Grid.Column width={10}>
+    <EventList />
+  </Grid.Column>
+  ```
+
+
 
 
 
