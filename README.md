@@ -171,7 +171,7 @@ The codebase for each step can be found in the commit link
   }
   ```
 
-### 3. Create Event List Items: EventList, EventListItem, and EventListAttendee components
+### 3. Create event list items: EventList, EventListItem, and EventListAttendee components
 - In the EventDashboard 10-column grid section, create and display the EventList component. The EventList component renders the EventListItem components. Each EventListItem component renders the title of the event, who is hosting the event, date, venue, description of the event, a button to view the event detail, and list of attendees (the EventListAttendee component)
 - In features/events/eventDashboard folder, create a component called EventList.jsx
 - In EventList.jsx file:
@@ -259,6 +259,53 @@ The codebase for each step can be found in the commit link
     <EventList />
   </Grid.Column>
   ```
+
+### 4. Create an event form: EventForm component
+- In features/events/eventForm folder, create a component called EventForm.jsx
+- In EventForm.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic components: `import { Button, Form, Header, Segment } from 'semantic-ui-react';`
+  - Write an EventForm functional component that renders a form using Semantic UI to create an event
+    ```javascript
+    export default function EventForm() {
+      return (
+        <Segment clearing>
+          <Header content='Create new event' />
+          <Form>
+            <Form.Field>
+              <input type='text' placeholder='Event Title' />
+            </Form.Field>
+            <Form.Field>
+              <input type='text' placeholder='Category' />
+            </Form.Field>
+            <Form.Field>
+              <input type='text' placeholder='Description' />
+            </Form.Field>
+            <Form.Field>
+              <input type='text' placeholder='City' />
+            </Form.Field>
+            <Form.Field>
+              <input type='text' placeholder='Venue' />
+            </Form.Field>
+            <Form.Field>
+              <input type='date' placeholder='Date' />
+            </Form.Field>
+            <Button type='submit' floated='right' positive content='Submit' />
+            <Button type='submit' floated='right' content='Cancel' />
+          </Form>
+        </Segment>
+      );
+    }
+    ```
+- In EventDashboard.jsx file:
+  - Import the EventForm component: `import EventForm from '../eventForm/EventForm';`
+  - Render the component inside the 6-column Grid component
+  ```javascript
+  <Grid.Column width={6}>
+    <EventForm />
+  </Grid.Column>
+  ```
+
 
 
 
