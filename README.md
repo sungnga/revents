@@ -469,7 +469,71 @@ The codebase for each step can be found in the commit link
     />
     ```
 
+## CRUD OPERATIONS IN REACT
+- Uncontrolled Forms (legacy)
+  - Use 'refs' to access the element
+  - Give input a ref value
+  - Access the field using ref.name.value
+  - React has no awareness of the value
+- Controlled Components
+  - No direct access to the DOM
+  - So no access to Input
+  - Only concerned with altering State
+  - Rely on React to manipulate the DOM via the Virtual DOM
 
+### [1. Basic forms in React: EventForm]()
+- Enable the EventForm component to receive input values from the user/EventForm and update the values state with the input values
+- In EventDashboard.jsx file:
+  - Since we're going to be updating events, we're going to be updating them in events state. So we want to pass down the setEvents method as props to the EventForm child component 
+    - `<EventForm setFormOpen={setFormOpen} setEvents={setEvents} />`
+- In EventForm.jsx file:
+  - Receive the setEvents props as an argument from EventDashboard parent component and destructure it
+    - `export default function EventForm({ setEvents }) { ... }`
+  - Create an initialValues object with initial empty-value properties
+    ```javascript
+    const initialValues = {
+      title: '',
+      category: '',
+      description: '',
+      city: '',
+      venue: '',
+      date: ''
+    };
+    ```
+  - Create a values state and initialize its value to the initialValues object. Note that this values state is an object
+    - `const [values, setValues] = useState(initialValues);`
+  - In the Form element, the handleFormSubmit method is executed when the onSubmit event is triggered. Meaning, when the Submit button is clicked
+    - `<Form onSubmit={handleFormSubmit}>`
+  - For each Form input element, the handleInputChange method is executed when the input value changes via the onChange event being triggered
+    - add name, value, and onChange properties to each form input element
+    ```javascript
+    <Form.Field>
+      <input
+        type='text'
+        placeholder='Event Title'
+        name='title'
+        value={values.title}
+        onChange={(e) => handleInputChange(e)}
+      />
+    </Form.Field>
+    ```
+  - Write a handleInputChange method that updates the values state with the input values
+    - It takes the input event as argument
+    - Each input element has name and value properties, so we can destructure those from e.target
+    - Update the values state with the input values based on its name and value properties
+    ```javascript
+    function handleInputChange(e) {
+      const { name, value } = e.target;
+      setValues({ ...values, [name]: value });
+    }
+    ```
+  - Write a handleFormSubmit method that creates an event
+    - Console log the values state for now
+    ```javascript
+    function handleFormSubmit() {
+      console.log(values);
+    }
+    ```
 
 
 
