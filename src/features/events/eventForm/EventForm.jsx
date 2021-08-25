@@ -2,8 +2,11 @@ import cuid from 'cuid';
 import React, { useState } from 'react';
 import { Button, Form, Header, Segment } from 'semantic-ui-react';
 
-function EventForm({ setFormOpen, setEvents, createEvent }) {
-	const initialValues = {
+function EventForm({ setFormOpen, setEvents, createEvent, selectedEvent }) {
+	// ?? is the null conditional operator
+	// The ?? means that if selectedEvent is null, the initialValues is set to whatever is on the right of the ??
+	// If selectedEvent is NOT null, set the initialValues to the values of selectedEvent
+	const initialValues = selectedEvent ?? {
 		title: '',
 		category: '',
 		description: '',

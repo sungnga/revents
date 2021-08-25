@@ -5,7 +5,7 @@ import EventList from './EventList';
 import { sampleData } from '../../../app/api/sampleData';
 
 // Semantic UI uses a 16-col grid system
-function EventDashboard({ formOpen, setFormOpen }) {
+function EventDashboard({ formOpen, setFormOpen, selectEvent, selectedEvent }) {
 	const [events, setEvents] = useState(sampleData);
 
 	function handleCreateEvent(event) {
@@ -15,7 +15,7 @@ function EventDashboard({ formOpen, setFormOpen }) {
 	return (
 		<Grid>
 			<Grid.Column width={10}>
-				<EventList events={events} />
+				<EventList events={events} selectEvent={selectEvent} />
 			</Grid.Column>
 			<Grid.Column width={6}>
 				{formOpen && (
@@ -23,6 +23,7 @@ function EventDashboard({ formOpen, setFormOpen }) {
 						setFormOpen={setFormOpen}
 						setEvents={setEvents}
 						createEvent={handleCreateEvent}
+						selectedEvent={selectedEvent}
 					/>
 				)}
 			</Grid.Column>
