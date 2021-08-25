@@ -4,7 +4,7 @@ The codebase for each step can be found in the commit link
 
 ## PROJECT SETUP
 
-### 1. Create project using create-react-app
+### [1. Create project using create-react-app]()
 - Run in the command line:
   - `npx create-react-app revents --use-npm`
   - The `--use-npm` flag is to ensure that we're using the npm package manager
@@ -12,7 +12,7 @@ The codebase for each step can be found in the commit link
 - Then run: `npm start`. This starts up the development server
 - Can view the revents application in the browser: `http://localhost:3000`
 
-### 2. Add hot module replacement
+### [2. Add hot module replacement]()
 - The hot module replacement prevents a full page reload when we make changes to our code. It incrementally updates the page as we update our code. This is a common thing to do
 - In index.js file:
   ```js
@@ -33,12 +33,12 @@ The codebase for each step can be found in the commit link
   render();
   ```
 
-### 3. Add folder structure to our project
+### [3. Add folder structure to our project]()
 - We want to add a little folder structure and rearrange files of our project and also clean up any files from create-react-app that we don't 
   - All the features we will build in this project will go inside the 'features' folder
   - All the common features and components that will be used across the application will go inside the 'app' folder
 
-### 4. Install Semantic UI CSS + Semantic UI React libraries
+### [4. Install Semantic UI CSS + Semantic UI React libraries]()
 - Docs: www.react.semantic-ui.com
 - Install Semantic UI React and Semantic UI CSS libraries
   - Run to install both: `npm i semantic-ui-react semantic-ui-css`
@@ -49,7 +49,7 @@ The codebase for each step can be found in the commit link
 
 ## EVENT DASHBOARD PAGE LAYOUTS
 
-### 1. Create a basic EventDashboard component
+### [1. Create a basic EventDashboard component]()
 - This component renders two columns: a 10-column grid and a 6-column grid using Semantic Grid component
 - In src/features/events/eventDashboard folder, create a component called EventDashboard.jsx
 - NOTE: the file extension for a React component is `.jsx` instead of plain `.js` to denote that it contains JSX in it
@@ -91,7 +91,7 @@ The codebase for each step can be found in the commit link
   }
   ```
 
-### 2. Create a NavBar component, add styling
+### [2. Create a NavBar component, add styling]()
 - All the assets (logo, images, etc.) we will use in this project can be found in public/assets folder
 - Create a NavBar menu and add styles to it
 - In features/nav folder, create a component called NavBar.jsx
@@ -171,7 +171,7 @@ The codebase for each step can be found in the commit link
   }
   ```
 
-### 3. Create event list items: EventList, EventListItem, and EventListAttendee components
+### [3. Create event list items: EventList, EventListItem, and EventListAttendee components]()
 - In the EventDashboard 10-column grid section, create and display the EventList component. The EventList component renders the EventListItem components. Each EventListItem component renders the title of the event, who is hosting the event, date, venue, description of the event, a button to view the event detail, and list of attendees (the EventListAttendee component)
 - In features/events/eventDashboard folder, create a component called EventList.jsx
 - In EventList.jsx file:
@@ -260,7 +260,7 @@ The codebase for each step can be found in the commit link
   </Grid.Column>
   ```
 
-### 4. Create an event form: EventForm component
+### [4. Create an event form: EventForm component]()
 - In features/events/eventForm folder, create a component called EventForm.jsx
 - In EventForm.jsx file:
   - Import React: `import React from 'react';`
@@ -306,7 +306,7 @@ The codebase for each step can be found in the commit link
   </Grid.Column>
   ```
 
-### 5. Passing props down to child components
+### [5. Passing props down to child components]()
 - In src/app/api folder, there's a sampleData.js file which contains sample data of events that we can use display events information
 - In EventDashboard.jsx file:
   - Import the sample data file: `import { sampleData } from '../../../app/api/sampleData';`
@@ -389,6 +389,86 @@ The codebase for each step can be found in the commit link
     );
   }
   ```
+
+### [6. React component state: using React useState hook]()
+- We can make use of React's useState hook to keep track of the state of component. For example, we want to keep track of the state whether the EventForm component is displayed or not. And we can toggle this state in various places within our application. We can use useState hook to keep track of the list of events (when we add or delete events)
+- In EventDashboard.jsx file:
+  - Import react useState hook: `import React, { useState } from 'react';`
+  - Create an `events` state and initialize its value to sampleData. Now the `events` state holds the data sample coming from the dataSample.js file
+    - `const [events, setEvents] = useState(sampleData);`
+  - For the events props that we pass down to the EventList child component, we can assign its value to events state
+    - `<EventList events={events} />`
+- Now let's work on showing and hiding the EventForm based on the state. When the "Create Event" button in the NavBar is clicked, we want to display the EventForm. When the "Cancel" button in the EventForm is clicked, we want to hide the EventForm
+- In App.jsx file:
+  - Import react useState hook: `import React, { useState } from 'react';`
+  - Create a formOpen state and initialize it to false
+    - `const [formOpen, setFormOpen] = useState(false);`
+  - Pass the setFormOpen method down as props to the NavBar child component. The NavBar component will consume this method, setting the state to true, when the 'Create Event' button is clicked. This will trigger the EventForm component to display in the EventDashboard component
+    - `<NavBar setFormOpen={setFormOpen} />`
+  - Pass the formOpen state and setFormOpen method down as props to the EventDashboard component
+    - `<EventDashboard formOpen={formOpen} setFormOpen={setFormOpen} />` 
+  ```javascript
+  export default function App() {
+    const [formOpen, setFormOpen] = useState(false);
+
+    return (
+      <>
+        <NavBar setFormOpen={setFormOpen} />
+        <Container className='main'>
+          <EventDashboard formOpen={formOpen} setFormOpen={setFormOpen} />
+        </Container>
+      </>
+    );
+  }
+  ```
+- In the NavBar.jsx file:
+  - Receive the setFormOpen props as an argument from App parent component and destructure it
+    - `export default function NavBar({ setFormOpen }) { ... }`
+  - In the 'Create Event' button element
+    - Add an onClick event that will execute the setFormOpen method when the button is clicked
+    - Execute the setFormOpen method inside an arrow/anonymous function and pass in true as an argument
+    - We execute the setFormOpen method inside an arrow function because we want to call setFormOpen() only when the button is clicked. We don't want to execute setFormOpn() when the NavBar component loads
+    - `<Button onClick={() => setFormOpen(true)} positive inverted content='Create Event' />`
+- In EventDashboard.jsx file:
+  - Receive the formOpen and setFormOpen props as an argument from App parent component and destructure them
+    - `export default function EventDashboard({ formOpen, setFormOpen }) { ... }`
+  - Pass the setFormOpen method down as props to the EventForm child component. The EventForm component will consume this method, setting the state to false, when the 'Cancel' button is clicked
+  - We can show or hide the event form based on the state
+    - `{formOpen && <EventForm setFormOpen={setFormOpen} />}`
+    - Whatever is on the left of && is true, do whatever is on the right of &&
+    - Only display the EventForm component if formOpen state is true
+    - This means that when the when the 'Create Event' in the NavBar is clicked, formOpen state is true and EventForm will display
+    - When the 'Cancel' button in the EventForm component is clicked, formOpen state is false and EventForm will not display
+  ```javascript
+  export default function EventDashboard({ formOpen, setFormOpen }) {
+    const [events, setEvents] = useState(sampleData);
+
+    return (
+      <Grid>
+        <Grid.Column width={10}>
+          <EventList events={events} />
+        </Grid.Column>
+        <Grid.Column width={6}>
+          {formOpen && <EventForm setFormOpen={setFormOpen} />}
+        </Grid.Column>
+      </Grid>
+    );
+  }
+  ```
+- In the EventForm.jsx file:
+  - Receive the setFormOpen props as an argument from EventDashboard parent component and destructure it
+    - `export default function EventForm({ setFormOpen }) { ... }`
+  - In the 'Cancel' button element
+    - Add an onClick event handler and execute the setFormOpen() method inside an arrow function and set it to false
+    ```javascript
+    <Button
+      onClick={() => setFormOpen(false)}
+      type='submit'
+      floated='right'
+      content='Cancel'
+    />
+    ```
+
 
 
 
