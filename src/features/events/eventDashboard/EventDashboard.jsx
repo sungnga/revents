@@ -23,7 +23,8 @@ function EventDashboard({ formOpen, setFormOpen, selectEvent, selectedEvent }) {
 						setFormOpen={setFormOpen}
 						setEvents={setEvents}
 						createEvent={handleCreateEvent}
-						selectedEvent={selectedEvent}
+            selectedEvent={selectedEvent}
+            key={selectedEvent ? selectedEvent.id : null}
 					/>
 				)}
 			</Grid.Column>
