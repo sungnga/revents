@@ -306,7 +306,89 @@ The codebase for each step can be found in the commit link
   </Grid.Column>
   ```
 
+### 5. Passing props down to child components
+- In src/app/api folder, there's a sampleData.js file which contains sample data of events that we can use display events information
+- In EventDashboard.jsx file:
+  - Import the sample data file: `import { sampleData } from '../../../app/api/sampleData';`
+  - The EventDashboard component is a parent of the EventList component. Parent can pass properties/props down to child components
+  - Pass the events props to the EventList child component and assign its value to sampleData
+    - `<EventList events={sampleData} />`
+- In EventList.jsx file:
+  - To receive properties/props being passed down from the parent component, simply take `props` as an argument
+    - `export default function EventList(props) { ... }`
+  - Now the EventList component has assess to the events sample data by using the `props.events` notation
+  - We can further destructure the events object from props
+    - `export default function EventList({ events }) { ... }`
+  - Loop over the events array using the .map() method and pass down the event item, as event props, to the EventListItem component
+  ```javascript
+  export default function EventList({ events }) {
+    return (
+      <>
+        {events.map((event) => (
+          <EventListItem event={event} key={event.id} />
+        ))}
+      </>
+    );
+  }
+  ```
+- In EventListItem.jsx file:
+  - Receive the event props as an argument from EventList parent component and destructure it
+    - `export default function EventListItem({ event }) { ... }`
+  - Now we can update the event generic detail information with the event properties, which have the sample data
+  - To display the list of attendees, loop through the event.attendees array using the .map() method and pass down the attendee item, as attendee props, to the EventListAttendee child component
+  ```javascript
+  export default function EventListItem({ event }) {
+    return (
+      <Segment.Group>
+        <Segment>
+          <Item.Group>
+            <Item>
+              <Item.Image size='tiny' circular src={event.hostPhotoURL} />
+              <Item.Content>
+                <Item.Header content={event.title} />
+                <Item.Description>Hosted by {event.hostedBy}</Item.Description>
+              </Item.Content>
+            </Item>
+          </Item.Group>
+        </Segment>
 
+        <Segment>
+          <span>
+            <Icon name='clock' /> {event.date}
+            <Icon name='marker' />
+            {event.venue.address}
+          </span>
+        </Segment>
+
+        <Segment secondary>
+          <List horizontal>
+            {event.attendees.map((attendee) => (
+              <EventListAttendee attendee={attendee} key={attendee.id} />
+            ))}
+          </List>
+        </Segment>
+
+        <Segment clearing>
+          <div>{event.description}</div>
+          <Button color='teal' floated='right' content='View' />
+        </Segment>
+      </Segment.Group>
+    );
+  }
+  ```
+- In EventListAttendee.jsx file:
+  - Receive the attendee props as an argument from EventListItem parent component and destructure it
+    - `export default function EventListAttendee({ attendee }) { ... }`
+  - Replace the image source with `attendee.photoURL`
+  ```javascript
+  export default function EventListAttendee({ attendee }) {
+    return (
+      <List.Item>
+        <Image size='mini' circular src={attendee.photoURL} />
+      </List.Item>
+    );
+  }
+  ```
 
 
 
