@@ -2,7 +2,13 @@ import cuid from 'cuid';
 import React, { useState } from 'react';
 import { Button, Form, Header, Segment } from 'semantic-ui-react';
 
-function EventForm({ setFormOpen, setEvents, createEvent, selectedEvent }) {
+function EventForm({
+	setFormOpen,
+	setEvents,
+	createEvent,
+	selectedEvent,
+	updateEvent
+}) {
 	// ?? is the null conditional operator
 	// The ?? means that if selectedEvent is null, the initialValues is set to whatever is on the right of the ??
 	// If selectedEvent is NOT null, set the initialValues to the values of selectedEvent
@@ -17,13 +23,15 @@ function EventForm({ setFormOpen, setEvents, createEvent, selectedEvent }) {
 	const [values, setValues] = useState(initialValues);
 
 	function handleFormSubmit() {
-		createEvent({
-			...values,
-			id: cuid(),
-			hostedBy: 'Bob',
-			attendees: [],
-			hostPhotoURL: '/assets/user.png'
-		});
+		selectedEvent
+			? updateEvent({ ...selectedEvent, ...values })
+			: createEvent({
+					...values,
+					id: cuid(),
+					hostedBy: 'Bob',
+					attendees: [],
+					hostPhotoURL: '/assets/user.png'
+			  });
 		setFormOpen(false);
 		// console.log(values);
 	}

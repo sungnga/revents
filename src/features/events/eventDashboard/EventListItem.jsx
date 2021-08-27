@@ -19,7 +19,7 @@ function EventListItem({ event, selectEvent }) {
 			<Segment>
 				<span>
 					<Icon name='clock' /> {event.date}
-					<Icon name='marker' /> {event.venue.address}
+					<Icon name='marker' /> {event.venue}
 				</span>
 			</Segment>
 			<Segment secondary>
