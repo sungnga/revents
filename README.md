@@ -761,6 +761,39 @@ The codebase for each step can be found in the commit link
     ```
 
 
+## ROUTING IN REACT
+
+### Intro to react-router
+- Routing
+  - SPAs (single page applications) need routers
+  - We only have one page (index.html). We don't have the ability to change the page that the user is on
+  - We need the facility to redirect users to component rather than to another html page. More complex applications need React Router
+- React Router is broken into 3 packages:
+  - react-router
+  - react-router-dom
+  - react-router-native (mobile version)
+- React-router-dom and react-router-native re-export all of react-router. React-router contains all of the main functionality. So we only need to install react-router-dom and we get all of the react-router functionality
+- The Router
+  - `<BrowserRouter>` component
+    - We surround our App component in the BrowserRouter component
+    - It handles dynamic requests
+  - `<HashRouter>`
+    - Useful for static websites
+  - Can only have a single child component
+  - Surround our `<App />` component to work with this limitation
+- History
+  - The history object is part of the browser. Every browser has a history object
+  - The way the routing system works is it uses a history object which:
+    - Keeps track of the current location
+    - Re-renders whenever that changes and displays whatever components we are routing to
+  - The history object comes with a number of methods
+    - What we typically do is use the push() method to push a new route into history and this will cause the component to re-render and display what it is we're routing to on the page
+  
+**Install react-router-dom**
+  - Install: `npm i react-router-dom`
+
+
+
 
 
 ## LIBRARIES AND PACKAGES USED IN THIS PROJECT
