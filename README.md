@@ -775,7 +775,7 @@ The codebase for each step can be found in the commit link
 - React-router-dom and react-router-native re-export all of react-router. React-router contains all of the main functionality. So we only need to install react-router-dom and we get all of the react-router functionality
 - The Router
   - `<BrowserRouter>` component
-    - We surround our App component in the BrowserRouter component
+    - We surround our App component in the BrowserRouter component. This will give our App component a routing capability
     - It handles dynamic requests
   - `<HashRouter>`
     - Useful for static websites
@@ -807,6 +807,37 @@ The codebase for each step can be found in the commit link
   - Import React: `import React from 'react';`
   - Write a EventDetailedPage functional component that render a 'Event Detailed Page' text for now
 
+### [2. Routing configuration]()
+- Website: https://reactrouter.com/web/guides/quick-start
+- In index.js file:
+  - Import BrowserRouter component: `import { BrowserRouter } from 'react-router-dom';`
+  - Wrap the App component inside the BrowserRouter component
+  - This will give our App component a routing capability
+  ```javascript
+  function render() {
+    ReactDOM.render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>,
+      rootEl
+    );
+  }
+  ```
+- So now our App component has routing capability. We can setup the routes inside there
+- In App.jsx file:
+  - Import the Route component: `import { Route } from 'react-router-dom';`
+  - Create routes using the Route component for HomePage, EventDashboard, EventDetailedPage, and EventForm components. Each route has a unique path
+  ```javascript
+  <Container className='main'>
+    <Route path='/' exact component={HomePage} />
+    <Route path='/events' exact component={EventDashboard} />
+    <Route path='/events/:id' exact component={EventDetailedPage} />
+    <Route path='/createEvent' exact component={EventForm} />
+  </Container>
+  ```
+
+
+
 
 
 
@@ -818,6 +849,10 @@ The codebase for each step can be found in the commit link
 - cuid, a unique identifier
   - Install: `npm i cuid`
   - Import in EventForm.jsx file: `import cuid from 'cuid';`
+- React Router 5
+  - Docs: https://reactrouter.com/web/guides/quick-start
+  - Install: `npm i react-router-dom`
+  - Import in App.jsx file: `import { Route, useLocation } from 'react-router-dom';`
 
 
 ## VSCode extensions used:
