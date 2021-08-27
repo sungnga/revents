@@ -792,6 +792,20 @@ The codebase for each step can be found in the commit link
 **Install react-router-dom**
   - Install: `npm i react-router-dom`
 
+### [1. Adding HomePage and EventDetailedPage components]()
+- In our Revents application, we will use react-router to direct users to these pages:
+  - Home page
+  - Event dashboard page
+  - Event detailed page
+  - Event form page
+- In features folder, create a new folder called home. In home folder, create a component/file called HomePage.jsx
+- In HomePage.jsx file:
+  - Import React: `import React from 'react';`
+  - Write a HomePage functional component that renders a 'Homepage' text for now
+- In features/events folder, create a new folder called eventDetailed. In eventDetailed folder, create a component/file called EventDetailedPage.jsx
+- In EventDetailedPage.jsx file:
+  - Import React: `import React from 'react';`
+  - Write a EventDetailedPage functional component that render a 'Event Detailed Page' text for now
 
 
 
