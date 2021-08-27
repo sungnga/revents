@@ -1,15 +1,17 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { Button, Container, Menu } from 'semantic-ui-react';
 
 function NavBar({ setFormOpen }) {
 	return (
 		<Menu inverted fixed='top'>
 			<Container>
-				<Menu.Item header>
-					<img src='/assets/logo.png' alt='logo' />
+				<Menu.Item as={NavLink} exact to='/' header>
+					<img src='/assets/logo.png' alt='logo' style={{ marginRight: 15 }} />
+					Re-vents
 				</Menu.Item>
-				<Menu.Item name='events' />
-				<Menu.Item>
+				<Menu.Item as={NavLink} to='/events' name='events' />
+				<Menu.Item as={NavLink} to='/createEvent'>
 					<Button
 						onClick={() => setFormOpen(true)}
 						positive
