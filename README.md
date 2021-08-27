@@ -726,6 +726,39 @@ The codebase for each step can be found in the commit link
     }
     ```
 
+### [6. Deleting an event]()
+- In EventDashboard.jsx file:
+  - Write a handleDeleteEvent method removes an event from the events state based on its id
+    - This method takes an eventId as argument
+    - Call the setEvents() method to update the events state
+    - Use the .filter() method on events to filter out all the events that does not match the eventId, hence removes the event that matches
+    ```javascript
+    function handleDeleteEvent(eventId) {
+      setEvents(events.filter((evt) => evt.id !== eventId));
+    }
+    ```
+  - Pass down this handleDeleteEvent method as deleteEvent props to the EventList child component
+    - `<EventList deleteEvent={handleDeleteEvent} />`
+- In EventList.jsx file:
+  - Receive the deleteEvent props as an argument from EventDashboard parent component and destructure it
+    - `export default function EventList({ deleteEvent }) {...}`
+  - Pass down this DeleteEvent method as deleteEvent props to the EventListItem child component
+    - `<EventListItem deleteEvent={deleteEvent} />`
+- In EventListItem.jsx file:
+  - Receive the deleteEvent props as an argument from EventList parent component and destructure it
+    - `export default function EventListItem({ deleteEvent }) {...}`  
+  - In the render section
+    - Create a 'Delete' Button element
+    - In the Delete Button element, add an onClick event listener that executes the deleteEvent() method when the 'Delete' button is clicked
+    - Call the deleteEvent() method inside an arrow function and pass in the event.id
+    ```javascript
+    <Button
+      onClick={() => deleteEvent(event.id)}
+      color='red'
+      floated='right'
+      content='Delete'
+    />
+    ```
 
 
 
