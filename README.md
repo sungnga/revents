@@ -1090,14 +1090,18 @@ The codebase for each step can be found in the commit link
   />
   ```
 
-### [9. EventDetailedPage content]()
+### [9. Adding EventDetailedPage content]()
 - Add content and styles to the following components:
   - EventDetailedHeader.jsx
   - EventDetailedInfo.jsx
   - EventDetailedChat.jsx
   - EventDetailedSidebar.jsx
 
-
+### [10. Cleaning up the unused code]()
+- Cleaning up our code up to this point
+- Add a Link component to the 'Manage Event' button in EventDetailedHeader.jsx component, redirecting to manage event page
+- Add a Link component to the 'Cancel' button in EventForm.jsx component, redirecting to events page
+- We won't have the Create Event form on the right-hand column of the EventDashboard page anymore. When we click on the 'View' button of an event in the events page, it redirect to the EventDetailedPage instead
 
 
 
