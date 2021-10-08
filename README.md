@@ -1123,6 +1123,12 @@ The codebase for each step can be found in the commit link
   - Docs: https://reactrouter.com/web/guides/quick-start
   - Install: `npm i react-router-dom`
   - Import in App.jsx file: `import { Route, useLocation } from 'react-router-dom';`
+- Redux and React-Redux
+  - A state management tool
+  - Install: `npm i redux react-redux`
+- Redux DevTools
+  - Install: `npm i redux-devtools-extension --save-dev`
+  - Gives us the ability to time-travel debugging
 
 
 ## VSCode extensions used:
@@ -1317,6 +1323,22 @@ The codebase for each step can be found in the commit link
     );
   }
   ```
+
+### [Installing Redux DevTools]()
+- Install: `npm i redux-devtools-extension --save-dev`
+**Add the DevTools to Redux store**
+- In app/store/configureStore.js file:
+  - Import the devToolsEnhancer method: `import { devToolsEnhancer } from 'redux-devtools-extension';`
+  - Pass in the devToolsEnhancer to the createStore() method as 2nd arg
+  ```javascript
+  import { devToolsEnhancer } from 'redux-devtools-extension';
+
+  export function configureStore() {
+    return createStore(testReducer, devToolsEnhancer());
+  }
+  ```
+- Go the the Chrome browser and install the Redux DevTools Chrome extension
+- Now whenever a React application uses Redux, you can see the store state changes based on the actions being dispatched using in this Redux DevTools
 
 
 ------------------------------------------------------------------------
