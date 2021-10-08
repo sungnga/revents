@@ -2,7 +2,7 @@ import React from 'react';
 import { useField } from 'formik';
 import { FormField, Label } from 'semantic-ui-react';
 
-function MyTextInput({ label, ...props }) {
+function MyTextArea({ label, ...props }) {
 	const [field, meta] = useField(props);
 
 	// NOTE: the meta.error data comes from Yup validationSchema
@@ -13,7 +13,7 @@ function MyTextInput({ label, ...props }) {
 	return (
 		<FormField error={meta.touched && !!meta.error}>
 			<label>{label}</label>
-			<input {...field} {...props} />
+			<textarea {...field} {...props} />
 			{/* if the field been touched and there's an error, render the error label */}
 			{meta.touched && meta.error ? (
 				<Label basic color='red'>
@@ -24,4 +24,4 @@ function MyTextInput({ label, ...props }) {
 	);
 }
 
-export default MyTextInput;
+export default MyTextArea;
