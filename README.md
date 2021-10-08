@@ -1600,6 +1600,65 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     <MyTextInput name='title' placeholder='Event title' />
     ```
 
+### [5. Cleaning up the event form]()
+- In EventForm.jsx file:
+  - Replace the rest of the FormField input fields `<FormField><Form ... />></FormField>` with the MyTextInput component to create the input fields instead.
+    - Fill in the values for name and placeholder properties for each component
+    - Now our event form looks like this:
+    ```js
+    <Form className='ui form'>
+      <Header sub color='teal' content='Event Details' />
+      <MyTextInput name='title' placeholder='Event title' />
+      <MyTextInput name='category' placeholder='Event category' />
+      <MyTextInput name='description' placeholder='Description' />
+      <Header sub color='teal' content='Event Location Details' />
+      <MyTextInput name='city' placeholder='City' />
+      <MyTextInput name='venue' placeholder='Venue' />
+      <MyTextInput name='date' placeholder='Event date' type='date' />
+
+      <Button type='submit' floated='right' positive content='Submit' />
+      <Button
+        as={Link}
+        to='/events'
+        type='submit'
+        floated='right'
+        content='Cancel'
+      />
+    </Form>
+    ```
+  - In the validationSchema,
+    - Handle the validation logic for all the other inputs as well. Make all input fields required
+    ```javascript
+    const validationSchema = Yup.object({
+      title: Yup.string().required('You must provide a title'),
+      category: Yup.string().required('You must provide a category'),
+      description: Yup.string().required(),
+      city: Yup.string().required(),
+      venue: Yup.string().required(),
+      date: Yup.string().required()
+    });
+    ```
+  - Next, handle the form submission with Formik onSubmit event. Use the form submission handling we wrote before and paste it in here
+    ```js
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        selectedEvent
+          ? dispatch(updateEvent({ ...selectedEvent, ...values }))
+          : dispatch(
+              createEvent({
+                ...values,
+                id: cuid(),
+                hostedBy: 'Bob',
+                attendees: [],
+                hostPhotoURL: '/assets/user.png'
+              })
+            );
+        history.push('/events');
+      }}
+    >
+    ```
 
 
 

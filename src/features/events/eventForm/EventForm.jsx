@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cuid from 'cuid';
 import { Link } from 'react-router-dom';
-import { Button, Header, Segment, FormField, Label } from 'semantic-ui-react';
+import { Button, Header, Segment } from 'semantic-ui-react';
 import { updateEvent, createEvent } from '../eventActions';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import MyTextInput from '../../../app/common/form/MyTextInput';
 
@@ -32,50 +32,44 @@ function EventForm({ match, history }) {
 	};
 
 	const validationSchema = Yup.object({
-		title: Yup.string().required('You must provide a title')
+		title: Yup.string().required('You must provide a title'),
+		category: Yup.string().required('You must provide a category'),
+		description: Yup.string().required(),
+		city: Yup.string().required(),
+		venue: Yup.string().required(),
+		date: Yup.string().required()
 	});
-
-	// function handleFormSubmit() {
-	// 	selectedEvent
-	// 		? dispatch(updateEvent({ ...selectedEvent, ...values }))
-	// 		: dispatch(
-	// 				createEvent({
-	// 					...values,
-	// 					id: cuid(),
-	// 					hostedBy: 'Bob',
-	// 					attendees: [],
-	// 					hostPhotoURL: '/assets/user.png'
-	// 				})
-	// 		  );
-	// 	history.push('/events');
-	// 	// console.log(values);
-	// }
 
 	return (
 		<Segment clearing>
-			<Header content={selectedEvent ? 'Edit the event' : 'Create new event'} />
 			<Formik
 				initialValues={initialValues}
 				validationSchema={validationSchema}
-				onSubmit={(values) => console.log(values)}
+				onSubmit={(values) => {
+					selectedEvent
+						? dispatch(updateEvent({ ...selectedEvent, ...values }))
+						: dispatch(
+								createEvent({
+									...values,
+									id: cuid(),
+									hostedBy: 'Bob',
+									attendees: [],
+									hostPhotoURL: '/assets/user.png'
+								})
+						  );
+					history.push('/events');
+				}}
 			>
 				<Form className='ui form'>
-          <MyTextInput name='title' placeholder='Event title' />
-					<FormField>
-						<Field name='category' placeholder='Category' />
-					</FormField>
-					<FormField>
-						<Field name='description' placeholder='Description' />
-					</FormField>
-					<FormField>
-						<Field name='city' placeholder='City' />
-					</FormField>
-					<FormField>
-						<Field name='venue' placeholder='Venue' />
-					</FormField>
-					<FormField>
-						<Field name='date' placeholder='Event date' type='date' />
-					</FormField>
+					<Header sub color='teal' content='Event Details' />
+					<MyTextInput name='title' placeholder='Event title' />
+					<MyTextInput name='category' placeholder='Event category' />
+					<MyTextInput name='description' placeholder='Description' />
+					<Header sub color='teal' content='Event Location Details' />
+					<MyTextInput name='city' placeholder='City' />
+					<MyTextInput name='venue' placeholder='Venue' />
+					<MyTextInput name='date' placeholder='Event date' type='date' />
+
 					<Button type='submit' floated='right' positive content='Submit' />
 					<Button
 						as={Link}
