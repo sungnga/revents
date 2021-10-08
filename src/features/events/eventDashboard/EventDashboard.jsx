@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import EventList from './EventList';
-import { sampleData } from '../../../app/api/sampleData';
 
 // Semantic UI uses a 16-col grid system
 function EventDashboard() {
-	const [events, setEvents] = useState(sampleData);
+	const { events } = useSelector((state) => state.event);
 
 	// function handleCreateEvent(event) {
 	// 	setEvents([...events, event]);
@@ -19,7 +19,7 @@ function EventDashboard() {
 	// }
 
 	function handleDeleteEvent(eventId) {
-		setEvents(events.filter((evt) => evt.id !== eventId));
+		// setEvents(events.filter((evt) => evt.id !== eventId));
 	}
 
 	return (
