@@ -1354,7 +1354,35 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Specify the key property on the route that contains the EventForm component
     - `<Route path={['/createEvent', '/manage/:id']} component={EventForm} key={key} />`
 
+### [7. Scroll to top: ScrollToTop component]()
+- Currently when we go to a different page, it doesn't automatically take us to the top of the page. React-router-dom doesn't do this automatically
+- In app/layout folder, create a component/file called ScrollToTop.jsx
+- In app/layout/ScrollToTop.jsx file:
+  - Import useEffect hook: `import { useEffect } from 'react';`
+  - Import useLocation hook: `import { useLocation } from 'react-router-dom';`
+  - Get the pathname property from the browser's location object using the useLocation hook
+    - `const { pathname } = useLocation();`
+  - Use useEffect() hook to execute the window.scrollTo() method to scroll to the top of the window when the location pathname property changes
+    ```javascript
+    import { useEffect } from 'react';
+    import { useLocation } from 'react-router-dom';
 
+    export default function ScrollToTop() {
+      const { pathname } = useLocation();
+
+      // The useEffect hook will run when the ScrollToTop component first mounts
+      // Whenever there's a change to a page's pathname URL (useEffect dependency),
+      // the function window.scrollTo() will execute
+      useEffect(() => {
+        window.scrollTo(0, 0);
+      }, [pathname]);
+
+      return null;
+    }
+    ```
+- In the index.js file:
+  - Import the ScrollToTop component: `import ScrollToTop from './app/layout/ScrollToTop';`
+  - Use the ScrollToTop component just above the App component: `<ScrollToTop />`
 
 
 
