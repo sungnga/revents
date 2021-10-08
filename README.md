@@ -1404,10 +1404,10 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - In the render section:
     - Wrap the `<Formik />` component around the entire `<Form />` element
     - In the `<Formik>` component, add the following properties
-      ```javascript
+      ```js
 			<Formik
 				initialValues={initialValues}
-				onSubmit={values => console.log(values)}
+				onSubmit={(values) => console.log(values)}
 			>
       ```
     - Next thing we want to do is pass down the handleChange, handleSubmit, and the values themselves as props from Formik to the Form element. Note that Formik is the parent component and the Form element is children of Formik component. Formik can pass values and methods to its children via props. We're going to make use of the `render` props to achieve this
@@ -1415,11 +1415,11 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
       ```javascript
 			<Formik
 				initialValues={initialValues}
-				onSubmit={values => console.log(values)}
+				onSubmit={(values) => console.log(values)}
 			>
 				{({ values, handleChange, handleSubmit }) => (
-					<Form> ...</Form>
-			)}
+					<Form> ... </Form>
+			  )}
 			</Formik>
       ```
     - Then, inside the Form element:
@@ -1509,7 +1509,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - We can add our own custom error message as well
     ```javascript
     import * as Yup from 'yup';
-    
+
     const validationSchema = Yup.object({
       title: Yup.string().required('You must provide a title')
     });
@@ -1534,6 +1534,71 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     </FormField>
     ```
 
+### [4. Creating a reusable text input field: MyTextInput component]()
+- DOCS for useField() hook: https://formik.org/docs/api/useField 
+- Let's create a reusable text input field component that has input error handling and styling. Use Semantic UI for styling and Formik Field props for error handling
+- Formik's useField() component:
+  - `useField` is a custom React hook that will automatically help you hook up inputs to Formik. You can and should use it to build your own custom input primitives
+- In src/app/common/form folder, create a component/file called MyTextInput.jsx
+- In MyTextInput.jsx file:
+  - Import React: `import React from 'react';`
+  - Import useField hook from Formik: `import { useField } from 'formik';`
+  - Import Semantic UI FormField component: `import { FormField } from 'semantic-ui-react';`
+  - Create a MyTextInput functional component that renders a form input field with error handling message
+    - This component receives props from Formik
+      - `export default function MyTextInput({ label, ...props }) {...}`
+    - Use useField() hook to extract the field and meta properties from Formik Field component
+      - `const [field, meta] = useField(props);`
+    - Render the form input field using Semantic UI
+    ```javascript
+    import React from 'react';
+    import { useField } from 'formik';
+    import { FormField, Label } from 'semantic-ui-react';
+
+    function MyTextInput({ label, ...props }) {
+      const [field, meta] = useField(props);
+
+      // NOTE: the meta.error data comes from Yup validationSchema
+      // meta.error is going to either be an object or a string
+      // the !! will cast a string or object to a boolean
+      // if there's an error string, we want it to be true
+      // if there's no error string, we want it to be false
+      return (
+        <FormField error={meta.touched && !!meta.error}>
+          <label>{label}</label>
+          <input {...field} {...props} />
+          {/* if the field been touched and there's an error, render the error label */}
+          {meta.touched && meta.error ? (
+            <Label basic color='red'>
+              {meta.error}
+            </Label>
+          ) : null}
+        </FormField>
+      );
+    }
+
+    export default MyTextInput;
+    ```
+- In EventForm.jsx file:
+  - Import the MyTextInput component: `import MyTextInput from '../../../app/common/form/MyTextInput';`
+  - Inside the `<Form />` component, instantiate the MyTextInput component and give it a name and placeholder properties
+    - `<MyTextInput name='title' placeholder='Event title' />`
+  - Now we can reduce a form field that looks like this
+    ```js
+    <FormField>
+      <Field name='title' placeholder='Event title' />
+      <ErrorMessage
+        name='title'
+        render={(error) => <Label basic color='red' content={error} />}
+      />
+    </FormField>
+    ```
+    to this
+    ```js
+    import MyTextInput from '../../../app/common/form/MyTextInput';
+
+    <MyTextInput name='title' placeholder='Event title' />
+    ```
 
 
 
