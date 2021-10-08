@@ -1496,6 +1496,45 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     </Formik>
     ```
 
+### [3. Form validation with Formik validationSchema]()
+- Docs: https://formik.org/docs/guides/validation
+- Formik Validation: Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous form-level and field-level validation. Furthermore, it comes with baked-in support for schema-based form-level validation through Yup
+- Install Yup: `npm i yup`
+- Another Formik helper component we will use:
+  - `<ErrorMessage />`: is a component that renders the error message of a given field if that field has been visited (i.e. `touched[name] === true`) (and there is an `error` message present). It expects that all error messages are stored for a given field as a string. Like `<Field />`, `<FastField />`, and `<FieldArray >`, lodash-like dot path and bracket syntax is supported
+- In EventForm.jsx file:
+  - Import Yup: `import * as Yup from 'yup';`
+  - Import Formik ErrorMessage component: `import { Formik, Form, Field, ErrorMessage } from 'formik';`
+  - Use Yup.object() to create a validationSchema
+    - We can add our own custom error message as well
+    ```javascript
+    import * as Yup from 'yup';
+    
+    const validationSchema = Yup.object({
+      title: Yup.string().required('You must provide a title')
+    });
+    ```
+  - In the `<Formik />` component, add a validationSchema property and set it to the validationSchema we've just created
+    ```javascript
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={(values) => console.log(values)}
+    >
+    ```
+  - Use Formik's `<ErrorMessage />` component to render the error message
+    - Use Semantic UI Label to add styles to it
+    ```js
+    <FormField>
+      <Field name='title' placeholder='Event title' />
+      <ErrorMessage
+        name='title'
+        render={(error) => <Label basic color='red' content={error} />}
+      />
+    </FormField>
+    ```
+
+
 
 
 
@@ -1523,7 +1562,10 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - Formik
   - Docs: https://formik.org/docs/api/formik
   - Install package: `npm i formik`
-
+- Yup - form validation with Formik
+  - Docs: https://formik.org/docs/guides/validation
+  - Install Yup: `npm i yup`
+  
 
 ## VSCode extensions used:
 - Auto Import - steoates
