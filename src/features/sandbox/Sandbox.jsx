@@ -6,7 +6,7 @@ import { increment, decrement } from './testReducer';
 function Sandbox() {
 	// Create a dispatch function using useDispatch hook
 	const dispatch = useDispatch();
-	const data = useSelector((state) => state.data);
+	const data = useSelector((state) => state.test.data);
 
 	// Here we can call our dispatch function and dispatch our action creator
 	// The action creator function is looking for an amount

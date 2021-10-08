@@ -1193,6 +1193,8 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Import the action constants: `import { CREATE_EVENT, DELETE_EVENT, UPDATE_EVENT } from './eventConstants';`
   - Create an initial state. This initialState is an object. Initialize the value of the events state property to the sampleData for now
     ```javascript
+    import { sampleData } from '../../app/api/sampleData';
+
     const initialState = {
       events: sampleData
     };
@@ -1206,6 +1208,8 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - In this case, we return a state object and spread in the initial state using the spread operator(`return { ...state, }`). Then specify the state property we want to update, which in this case, the events state property. Note that the events state is an array of objects. So to update the events state, we use an array to spread in the initial events state followed by the thing we want to update(`events: [...state.events, payload]`)
     - The last case in the switch statement is the default case, which returns the current state
     ```javascript
+    import { CREATE_EVENT, DELETE_EVENT, UPDATE_EVENT } from './eventConstants';
+
     export default function eventReducer(state = initialState, { type, payload }) {
       switch (type) {
         case CREATE_EVENT:
@@ -1232,7 +1236,41 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
+### [3. Creating a root reducer]()
+- Even though we can only have a single store in our application, we can have as many reducers as we like. Think of each reducer as a way to access a piece of the store state. We can combine all the reducers into a single rootReducer and pass that to the createStore() method in the configureStore() function
+- In app/store folder, create a file called rootReducer.js
+- In app/store/rootReducer.js file:
+  - Import the combineReducers function: `import { combineReducers } from 'redux';`
+  - Import the eventReducer: `import eventReducer from '../../features/events/eventReducer';`
+  - Import the testReducer: `import testReducer from '../../features/sandbox/testReducer';`
+  - Create a rootReducer by calling the combineReducers() function
+    - The combineReducers() takes an object as an argument
+    - In this object, we can assign different reducers to this object properties
+    - NOTE THAT THE PROPERTY NAME WE ASSIGN TO EACH REDUCER WILL BECOME THE PROPERTY NAME IN THE STORE AND WE ACCESS A PARTICULAR STATE IN THE STORE BY CALLING THE NAME OF THE REDUCER. For example, to access the events array object in the store, we use state.event, because event is the property name we gave to the eventReducer. And the event property is a state object that has the events property
+    ```javascript
+    import { combineReducers } from 'redux';
+    import testReducer from '../../features/sandbox/testReducer';
+    import eventReducer from '../../features/events/eventReducer';
 
+    const rootReducer = combineReducers({
+      test: testReducer,
+      event: eventReducer
+    });
+
+    export default rootReducer;
+    ```
+- In configureStore.js file:
+  - Import the rootReducer: `import rootReducer from './rootReducer';`
+  - Pass in the rootReducer as the first argument to the createStore() method
+  ```javascript
+  import { createStore } from 'redux';
+  import { devToolsEnhancer } from 'redux-devtools-extension';
+  import rootReducer from './rootReducer';
+
+  export function configureStore() {
+    return createStore(rootReducer, devToolsEnhancer());
+  }
+  ```
 
 
 
