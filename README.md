@@ -1104,6 +1104,51 @@ The codebase for each step can be found in the commit link
 - We won't have the Create Event form on the right-hand column of the EventDashboard page anymore. When we click on the 'View' button of an event in the events page, it redirect to the EventDetailedPage instead
 
 
+## REDUX
+
+NOTE: Setting up and configure a Redux store is in the Redux Concepts section
+### [1. Setting up Redux store]()
+- **Install Redux and React-Redux:**
+  - Install: `npm i redux react-redux`
+- **Configure the store:**
+  - In app folder, create a folder called store. In store folder, create a file called configureStore.js
+  - In app/store/configureStore.js file:
+    - Import createStore function from Redux: `import { createStore } from 'redux';`
+    - Write a configureStore function that returns a store using the createStore() method
+      - The createStore() method takes a reducer as an argument
+      ```javascript
+      import { createStore } from 'redux';
+
+      export function configureStore() {
+        return createStore();
+      }
+      ```
+  - So when we initialize our store, we're going to tell about our reducer and our store is going to have some initialState
+- **Connecting the React app to the Redux store:**
+  - Now we what need to do is tell our React application about our new Redux store and to do that we use the React-Redux library
+  - In the main index.js file:
+    - Import the Provider from React-Redux: `import { Provider } from 'react-redux';`
+    - Wrap the Provider around the App component, including the BrowserRouter
+    - Then create a store by calling the configureStore() method that we wrote earlier
+    - Pass in this store to the Provider
+    - Now our React app is connect to the Redux store
+    ```javascript
+    import { Provider } from 'react-redux';
+    import { configureStore } from './app/store/configureStore';
+
+    const store = configureStore();
+
+    function render() {
+      ReactDOM.render(
+        <Provider store={store}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </Provider>,
+        rootEl
+      );
+    }
+    ```
 
 
 
