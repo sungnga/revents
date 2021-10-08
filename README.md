@@ -1106,6 +1106,11 @@ The codebase for each step can be found in the commit link
 
 
 
+
+
+
+
+
 ## LIBRARIES AND PACKAGES USED IN THIS PROJECT
 - Semantic UI React and Semantic UI CSS
   - Website: www.react.semantic-ui.com
@@ -1179,3 +1184,139 @@ The codebase for each step can be found in the commit link
 - JSX adds an XML Syntax to Javascript, which makes React more elegant
 - JSX tags have a tag name, attributes and children. Whilst it looks very similar to HTML, there are a few slight differences
 - Note that we're not allowed to use the word 'class' inside JSX because the word 'class' is a reserved word in Javascript. Instead we use className to style our component
+
+
+## REDUX CONCEPTS
+
+### [Intro to Redux]()
+**What is Redux?**
+- Predictable State Container for Javascript apps. This allows us to store our applications states centrally in a Redux store 
+- Not specific to React
+  - Can be use with other view libraries and JS frameworks (Angular, Vue)
+- It's small - 2kb (including dependencies)
+- It's like having a local database in the client
+- Gives us access to time travel debugging
+
+**Redux Trade Offs - it asks us to:**
+- Describe application state as plain objects and arrays. We can add complex objects to our store. It's not relational database on the client-side. It's a simple state management system
+- Describe changes in the system as plain objects. So when we want to make a change to our store, then we send Redux, a plain object with the information inside it, that we want it to change
+- Describe the logic for handling changes as *pure functions*. This will keep our code clean!
+
+**Pure Functions**
+- Given the same input, will always return the same output
+- Produces no side effects
+
+
+### Redux Terminology
+- **Actions:** are simple objects. Typically when we create an action, we create a constant and this constant is going to describe what the action is going to do
+  ```javascript
+  const ADD_TODO = 'ADD_TODO'
+
+  {
+    type: ADD_TODO,
+    text: 'build my first Redux app'
+  }
+  ```
+- **Action Creators:** a function that returns an action. We wrap an action inside an action creator
+  ```javascript
+  function addTodo(text) {
+    return {
+      type: ADD_TODO,
+      text
+    }
+  }
+  ```
+- **Reducers:** specifies how the application state changes in response to actions sent to the store. We send our action to the reducer. Actions, themselves, they only describe what's happen, but don't describe how the application state changes
+  - Reducers usually uses a switch statement to change the store state
+  ```javascript
+  function todoApp(state = initialState, action) {
+    switch(action.type) {
+      case SET_VISIBILITY_FILTER:
+        return Object.assign({}, state, {
+          visibilityFilter: action.filter
+        })
+      default:
+        return state
+    }
+  }
+  ```
+
+- **Store:**
+  - Holds application state
+  - Allows access to state via getState()
+  - Allows state to be updated via actions. Dispatch an action using the dispatch() method
+  - One store per application
+
+**React-Redux**
+- Redux on its own has no relation to React
+- Redux can be used with Angular, Ember, jQuery or plain JS
+- React-Redux library provides bindings for use with React
+  - Provider, which provides a store to a React application
+- It also provides React-Redux hooks:
+  - useSelector() - listening to changes in the store and notifies the React component
+  - useDispatch() - dispatches an action to the reducer
+
+
+### Setting up Redux Store
+1. Configure the Store
+2. Create a root reducer
+3. Add the store to the index.js file. Then we pass the store via the Provider to our application
+
+**Install Redux and React-Redux**
+- Run: `npm i redux react-redux`
+
+**1. Create and configure Redux Store**
+- Inside the app directory, create a new folder called store
+- In app/store/configureStore.js file:
+  - Import the createStore method: `import {createStore} from 'redux';`
+  ```js
+  import { createStore } from 'redux';
+  import testReducer from '../../features/sandbox/testReducer';
+
+  export function configureStore() {
+    return createStore(testReducer);
+  }
+  ```
+
+**2. Create a root reducer**
+- Inside the features directory, create a folder called sandbox
+- In features/sandbox/testReducer.js file:
+  ```js
+  const initialState = {
+    data: 42
+  };
+
+  function testReducer(state = initialState) {
+    return state;
+  }
+
+  export default testReducer;
+  ```
+
+**3. Add the store to the index.js file**
+- We want to wrap our entire application inside the Provider component provided by Redux. This way our application will have access to the Redux store
+- In the main index.js file:
+  - Import the Provider component from react-redux
+  - Import the configureStore function that we wrote earlier
+  - Right after the imports, execute the `configureStore()` function and store the result in a variable called `store`. This store object is the store of our application
+  - Finally, wrap the `BrowserRouter` and the `App` components inside the `Provider` component. The Provider has a store attribute and we pass our `store` object to the Provider
+  ```js
+  import { Provider } from 'react-redux';
+  import { configureStore } from './app/store/configureStore';
+
+  const store = configureStore();
+
+  function render() {
+    ReactDOM.render(
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>,
+      rootEl
+    );
+  }
+  ```
+
+
+
