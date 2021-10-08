@@ -1309,6 +1309,35 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `{attendees.length} {attendees.length > 1 ? 'People' : 'Person'} Going`
   - Call .map() method on the attendees array to display each attendee's displayName and photo in the attendees section of the page
 
+### [5. Dispatching event actions]()
+- Now that we're able to read events or an event from Redux store, we want to dispatch event actions to update, delete, and create an event in the store
+- In EventListItem.jsx file:
+  - Import the useDispatch hook: `import { useDispatch } from 'react-redux';`
+  - Import the deleteEvent action: `import { deleteEvent } from '../eventActions';`
+  - Create a dispatch function using the useDispatch() hook
+    - `const dispatch = useDispatch();`
+  - In the 'Delete' Button element
+    - When the button is clicked, execute the dispatch() method and pass in the deleteEvent() action creator as an argument to dispatch the action to the reducer. Pass in the event.id to the deleteEvent() action method
+    - `onClick={() => dispatch(deleteEvent(event.id))}`
+- In the EventForm.jsx file:
+  - Import useSelector and useDispatch hooks: `import { useSelector, useDispatch } from 'react-redux';`
+  - Import the createEvent and updateEvent actions: `import { updateEvent, createEvent } from '../eventActions';`
+  - Destructure the match props to get access to the route params
+    - `export default function EventForm({ match }) {...}`
+  - Use the useSelector() hook to get an event from the store based on the event id
+    ```javascript
+    const selectedEvent = useSelector((state) =>
+      state.event.events.find((e) => e.id === match.params.id)
+    );
+    ```
+  - Create a dispatch function using the useDispatch() hook
+    - `const dispatch = useDispatch();`
+  - In the handleFormSubmit() method:
+    - To update an event, call the dispatch() function and pass in the updateEvent() action creator function as an argument
+    - To create an event, call the dispatch() function and pass in the createEvent() action creator function as an argument
+- Everything should work as before except this time we retrieve, update, create, and delete an event from Redux store instead of from the local state
+
+
 
 
 

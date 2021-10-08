@@ -1,15 +1,21 @@
-import cuid from 'cuid';
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import cuid from 'cuid';
 import { Link } from 'react-router-dom';
 import { Button, Form, Header, Segment } from 'semantic-ui-react';
+import { updateEvent, createEvent } from '../eventActions';
 
-function EventForm({
-	setFormOpen,
-	setEvents,
-	createEvent,
-	selectedEvent,
-	updateEvent
-}) {
+function EventForm({ match }) {
+  const dispatch = useDispatch()
+
+	// Use useSelector hook to get the event state from the store
+	// Use find() method to find the event based on event id from the URL params
+	// Hence the selectedEvent holds the event data
+	// Use this data to populate the event form fields
+	const selectedEvent = useSelector((state) =>
+		state.event.events.find((e) => e.id === match.params.id)
+	);
+
 	// ?? is the null conditional operator
 	// The ?? means that if selectedEvent is null, the initialValues is set to whatever is on the right of the ??
 	// If selectedEvent is NOT null, set the initialValues to the values of selectedEvent
@@ -25,15 +31,14 @@ function EventForm({
 
 	function handleFormSubmit() {
 		selectedEvent
-			? updateEvent({ ...selectedEvent, ...values })
-			: createEvent({
+			? dispatch(updateEvent({ ...selectedEvent, ...values }))
+			: dispatch(createEvent({
 					...values,
 					id: cuid(),
 					hostedBy: 'Bob',
 					attendees: [],
 					hostPhotoURL: '/assets/user.png'
-			  });
-		setFormOpen(false);
+			  }));
 		// console.log(values);
 	}
 
