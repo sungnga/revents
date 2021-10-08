@@ -6,7 +6,7 @@ import EventListAttendee from './EventListAttendee';
 import { deleteEvent } from '../eventActions';
 
 function EventListItem({ event }) {
-const dispatch = useDispatch()
+	const dispatch = useDispatch();
 
 	return (
 		<Segment.Group>

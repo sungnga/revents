@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import { Button, Form, Header, Segment } from 'semantic-ui-react';
 import { updateEvent, createEvent } from '../eventActions';
 
-function EventForm({ match }) {
-  const dispatch = useDispatch()
+function EventForm({ match, history }) {
+	const dispatch = useDispatch();
 
 	// Use useSelector hook to get the event state from the store
 	// Use find() method to find the event based on event id from the URL params
@@ -32,13 +32,16 @@ function EventForm({ match }) {
 	function handleFormSubmit() {
 		selectedEvent
 			? dispatch(updateEvent({ ...selectedEvent, ...values }))
-			: dispatch(createEvent({
-					...values,
-					id: cuid(),
-					hostedBy: 'Bob',
-					attendees: [],
-					hostPhotoURL: '/assets/user.png'
-			  }));
+			: dispatch(
+					createEvent({
+						...values,
+						id: cuid(),
+						hostedBy: 'Bob',
+						attendees: [],
+						hostPhotoURL: '/assets/user.png'
+					})
+			  );
+		history.push('/events');
 		// console.log(values);
 	}
 
