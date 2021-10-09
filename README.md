@@ -1776,6 +1776,16 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   }
   ```
 
+### [9. Date-fns package: format Javascript date object into string]()
+- date-fns docs: date-fns.org
+- We have a little issue with our current date value. Our date value is a Javascript date object, not a string. So we need to format a Javascript date object into a string that can be displayed on a page. We will use a date package to help us format dates into strings
+- The react-datepicker library is already using date-fns, but we want to install a date-fns package separately. When installing date-fns, we want to install the same version as the one in react-datepicker. Run `npm ls date-fns` to see the version that react-datepicker is using. Then install date-fns of the same version. This way, we won't run into any issues
+- Install date-fns: `npm i date-fns@2.25.0`
+- In EventListItem.jsx, EventDetailedHeader.jsx, and EventDetailedInfo.jsx files:
+  - Import date-fns: `import { format } from 'date-fns';`
+    - Replace the `{event.id}` Javascript date object with the format version
+    - `{format(event.date, 'MMMM d, yyyy h:mm a')}`
+
 
 
 
@@ -1807,7 +1817,10 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Install Yup: `npm i yup`
 - React Datepicker
   - Install: `npm i react-datepicker`
-  
+- Date-fns library to work with react-datepicker
+  - date-fns docs: date-fns.org
+  - Install: `npm i date-fns@2.25.0`
+
 
 ## VSCode extensions used:
 - Auto Import - steoates
