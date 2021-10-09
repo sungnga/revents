@@ -1702,7 +1702,79 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - Add the `options` property to the component and set its value to `categoryData`. The categoryOptions.js file contains the select options data
     - `<MySelectInput name='category' placeholder='Category' options={categoryData} />`
 
+### [8. Creating a reusable date input field: MyDateInput component]()
+- We'll be using the React Datepicker library. It gives us a consistent datepicker across every different browsers and operating systems
+- Install: `npm i react-datepicker`
+- In src/app/common/form folder, create a component/file called MyDateInput.jsx
+- In MyDateInput.jsx file:
+  - Import the react DatePicker component: `import DatePicker from 'react-datepicker';`
+  - Import react-datepicker css file: `import 'react-datepicker/dist/react-datepicker.css';`
+  - Import useFormikContext() hook from Formik: `import { useField, useFormikContext } from 'formik';`
+  - Copy and paste the code from MySelectInput component as a starter
+  - We need to extract the setFieldValue method from Formik using the useFormikContext() hook. The setFieldValue() method will help us set the value from the datepicker
+    - `const { setFieldValue } = useFormikContext();`
+  - Use the DatePicker component in the render section. Inside the DatePicker component, we need to provide the following:
+    - Bring in all the field properties from the field props using the spread operator: `{...field}`
+    - Bring in all the props as well: `{...props}`
+    - The selected property which brings in the selected date
+    - The onChange event property to set the date value. Use the setFieldValue() method to set the value
+    ```javascript
+    import { useField, useFormikContext } from 'formik';
+    import { FormField, Label } from 'semantic-ui-react';
+    import DatePicker from 'react-datepicker';
+    import 'react-datepicker/dist/react-datepicker.css';
 
+    export default function MyDateInput({ label, ...props }) {
+      const { setFieldValue } = useFormikContext();
+      const [field, meta] = useField(props);
+
+      return (
+        <FormField error={meta.touched && !!meta.error}>
+          <label>{label}</label>
+          <DatePicker
+            {...field}
+            {...props}
+            selected={(field.value && new Date(field.value)) || null}
+            onChange={(value) => setFieldValue(field.name, value)}
+          />
+          {meta.touched && meta.error ? (
+            <Label basic color='red'>
+              {meta.error}
+            </Label>
+          ) : null}
+        </FormField>
+      );
+    }
+    ```
+  - We also want to style the datepicker using the available react-datepicker css. Just import the css file
+- In EventForm.jsx file:
+  - Import the MyDateInput component: `import MyDateInput from '../../../app/common/form/MyDateInput';`
+  - For 'date' input field, use the MyDateInput component instead of the MyTextInput component. And we need to specify the following properties to the component:
+    - a name property
+    - a placeholderText property instead of placeholder property
+    - a timeFormat property to format the time
+    - a showTimeSelect property, so the user can select a time
+    - a timeCaption property
+    - a dateFormat property to format the date in the input when the user selects it
+    ```javascript
+    import MyDateInput from '../../../app/common/form/MyDateInput';
+
+    <MyDateInput
+      name='date'
+      placeholderText='Event date'
+      timeFormat='HH:mm'
+      showTimeSelect
+      timeCaption='time'
+      dateFormat='MMMM d, yyyy h:mm a'
+    />
+    ```
+- Lastly, we want to apply styles to the datepicker so that the date input field takes up the entire width of the form. Do this in global stylesheet
+- In styles.css file:
+  ```css
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+  ```
 
 
 
@@ -1733,6 +1805,8 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - Yup - form validation with Formik
   - Docs: https://formik.org/docs/guides/validation
   - Install Yup: `npm i yup`
+- React Datepicker
+  - Install: `npm i react-datepicker`
   
 
 ## VSCode extensions used:
