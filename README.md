@@ -904,26 +904,25 @@ The codebase for each step can be found in the commit link
   - For the HomePage to appear outside of the NavBar and Container components, we need create another route that renders the NavBar and Container separately from the HomePage
   - This new route takes a path with an expression that says, anything after the / forward slash plus something else, render it differently
   - This new route also takes a render property rather an a component property. This render property takes a function. And inside this function, we can render the NavBar and the Container components. Wrap it inside a fragment tag because it only allows one child component
-  ```javascript
-	return (
-		<>
-			<Route path='/' exact component={HomePage} />
-			<Route
-				path={'/(.+)'}
-				render={() => (
-					<>
-						<NavBar setFormOpen={handleCreateFormOpen} />
-						<Container className='main'>
-							<Route path='/' exact component={HomePage} />
-							<Route path='/events' exact component={EventDashboard} />
-							<Route path='/events/:id' exact component={EventDetailedPage} />
-							<Route path='/createEvent' exact component={EventForm} />
-						</Container>
-					</>
-				)}
-			/>
-		</>
-	);
+  ```js
+  return (
+    <>
+      <Route exact path='/' component={HomePage} />
+      <Route
+        path={'/(.+)'}
+        render={() => (
+          <>
+            <NavBar setFormOpen={handleCreateFormOpen} />
+            <Container className='main'>
+              <Route exact path='/events' component={EventDashboard} />
+              <Route path='/events/:id' component={EventDetailedPage} />
+              <Route path='/createEvent' component={EventForm} />
+            </Container>
+          </>
+        )}
+      />
+    </>
+  );
   ```
 - Since the HomePage component is inside a `<Route />` component, we have access to the routing properties. This is props being passed down to the HomePage component. One of these props is the history object. We can use the history.push() method to push another route onto the history object and push the user to that particular route
 - In HomePage.jsx file:
@@ -1405,39 +1404,35 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - Wrap the `<Formik />` component around the entire `<Form />` element
     - In the `<Formik>` component, add the following properties
       ```js
-			<Formik
-				initialValues={initialValues}
-				onSubmit={(values) => console.log(values)}
-			>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values) => console.log(values)}
+      ></Formik>
       ```
     - Next thing we want to do is pass down the handleChange, handleSubmit, and the values themselves as props from Formik to the Form element. Note that Formik is the parent component and the Form element is children of Formik component. Formik can pass values and methods to its children via props. We're going to make use of the `render` props to achieve this
     - Just above the Form element, render an arrow function that contains the props that we want to pass down. Also, we can destructure the props objects that we're passing down to Form element. And what this arrow function returns is everything that is inside the Form element itself
-      ```javascript
-			<Formik
-				initialValues={initialValues}
-				onSubmit={(values) => console.log(values)}
-			>
-				{({ values, handleChange, handleSubmit }) => (
-					<Form> ... </Form>
-			  )}
-			</Formik>
+      ```js
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values) => console.log(values)}
+      >
+        {({ values, handleChange, handleSubmit }) => (
+          <Form> ... </Form>
+        )}
+      </Formik>
       ```
     - Then, inside the Form element:
       - We can swap the old `handleFormSubmit` method for `handleSubmit` coming from Formik
       - Swap the `handleInputChange` method for all of the input elements for `handleChange`
       ```js
-      import { Formik } from 'formik';
-
-			<Formik
-				initialValues={initialValues}
-				onSubmit={(values) => console.log(values)}
-			>
-				{({ values, handleChange, handleSubmit }) => (
-					<Form onSubmit={handleSubmit}>
-            ...
-          </Form>
-				)}
-			</Formik>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values) => console.log(values)}
+      >
+        {({ values, handleChange, handleSubmit }) => (
+          <Form onSubmit={handleSubmit}> ... </Form>
+        )}
+      </Formik>
       ```
   - Test to make sure Formik is working, create a new event and see if the field values are populated and displayed in the console
 
@@ -1838,7 +1833,102 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     />
     ```
 
+### [11. Modals: create a modalReducer and ModalWrapper component]()
+- When a user clicks on the 'Login' or 'Register' button, we want to display a modal on the screen to allow them to enter login details or register to the application
+- Semantic UI has modals that we can use to create our user login/register form
+- We'll use Redux to store the state of the modal. So we'll need a modalReducer to communicate with the store
+- In src/app/common/modals folder, create a file called modalReducer.js
+- In modalReducer.js file:
+  - Instead of creating separate files for the constants, action creators, and reducer, we're going to put everything in the modalReducer.js file
+  - Create OPEN_MODAL and CLOSE_MODAL constants
+  - Create 2 action creator functions, one for openModal and another for closeModal. Each returns the action object
+  - Create an initialState and set it to null
+  - Create a modalReducer function
+    - 1st arg is the state. Set the default state to initialState
+    - 2nd arg is the action. Destructure the type and payload properties from the action object
+    - Use a switch statement to base on the type
+      - In the case of OPEN_MODAL,
+        - destructure modalType and modalProps that we're going to get from the payload
+        - then return the modalType and modalProps as an object
+      - In the case of CLOSE_MODAL,
+        - simply return null
+      - Default case,
+        - return state
+      ```js
+      // Constants
+      const OPEN_MODAL = 'OPEN_MODAL';
+      const CLOSE_MODAL = 'CLOSE_MODAL';
 
+      // Action creators
+      export function openModal(payload) {
+        return {
+          type: OPEN_MODAL,
+          payload
+        };
+      }
+
+      export function closeModal() {
+        return {
+          type: CLOSE_MODAL
+        };
+      }
+
+      // State
+      const initialState = null;
+
+      // Modal reducer
+      export default function modalReducer(state = initialState, { type, payload }) {
+        switch (type) {
+          case OPEN_MODAL:
+            // destructure what we're going to get from the payload
+            // modalType is the type of modal i.e login or register
+            // modalProps is any properties that that modalType has
+            const { modalType, modalProps } = payload;
+            return { modalType, modalProps };
+          case CLOSE_MODAL:
+            return null;
+          default:
+            return state;
+        }
+      }
+      ```
+- In rootReducer.js file:
+  - Import the modalReducer: `import modalReducer from '../common/modals/modalReducer';`
+  - Add the modalReducer as modals property to the combineReducers() function. This will give us access to the modals state
+    - `modals: modalReducer`
+- Next, we want to create a modal wrapper around any content that we want to put inside the modal itself
+- In src/app/common/modals folder, create a component/file called ModalWrapper.jsx
+- In ModalWrapper.jsx file:
+  - Import the following:
+    ```javascript
+    import React from 'react';
+    import { useDispatch } from 'react-redux';
+    import { Modal } from 'semantic-ui-react';
+    import { closeModal } from './modalReducer';
+    ```
+  - Write a ModalWrapper functional component that renders a modal using Semantic UI
+    - It receives children, size, and header props as an argument. Destructure them
+    - Create a dispatch function using react-redux useDispatch() hook
+    - Render the modal using the Semantic UI Modal component. Specify these following  properties to the Modal component:
+      - set open property to true
+      - on onClose click event, execute the dispatch() method to dispatch the closeModal() action creator function, which doesn't take any arguments
+      - set size property to size
+    - Inside the Modal component:
+      - Check to see if there's a header. If there is, render the modal header inside the `<Modal.Header />`
+      - Render the `{children}` inside the `<Modal.Content />`
+      - NOTE: anything that's inside the parent component is considered `children` of that component. So anything inside of the `<Modal />` component is considered `children` of the Modal component. So we're going to display the children inside of the `<Modal.Content />` component
+    ```javascript
+    export default function ModalWrapper({ children, size, header }) {
+      const dispatch = useDispatch();
+
+      return (
+        <Modal open={true} onClose={() => dispatch(closeModal())} size={size}>
+          {header && <Modal.Header>{header}</Modal.Header>}
+          <Modal.Content>{children}</Modal.Content>
+        </Modal>
+      );
+    }
+    ```
 
 
 
@@ -1873,6 +1963,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Install: `npm i react-datepicker`
 - Date-fns library to work with react-datepicker
   - date-fns docs: date-fns.org
+  - Run: `npm ls date-fns` to see the version that react-datepicker is using
   - Install: `npm i date-fns@2.25.0`
 
 
