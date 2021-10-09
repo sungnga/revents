@@ -7,12 +7,14 @@ import { Container } from 'semantic-ui-react';
 import { Route, useLocation } from 'react-router-dom';
 import EventForm from '../../features/events/eventForm/EventForm';
 import Sandbox from '../../features/sandbox/Sandbox';
+import ModalManager from '../common/modals/ModalManager';
 
 function App() {
 	const { key } = useLocation();
 
 	return (
-		<>
+    <>
+      <ModalManager />
 			<Route exact path='/' component={HomePage} />
 			<Route
 				path={'/(.+)'}
