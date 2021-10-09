@@ -1672,6 +1672,37 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - We can specify the number of rows the textarea will display using the rows property 
     - `<MyTextArea name='description' placeholder='Description' rows={3} />`
 
+### [7. Creating a reusable select input field: MySelectInput component]()
+- This component will have the same error handling functionality as the MyTextInput and MyTextArea components
+- DOC for useField() hook: https://formik.org/docs/api/useField 
+- In src/app/common/form folder, create a component/file called MySelectInput.jsx
+- In MySelectInput.jsx file:
+  - Import Semantic Select component: `import { FormField, Label, Select } from 'semantic-ui-react';`
+  - Copy and paste the code from MyTextInput component as a starter
+  - Bring in the `helpers` property from useField(props) 
+  - We'll use `<Select />` form from Semantic UI
+    ```js
+    const [field, meta, helpers] = useField(props);
+
+    <Select
+      clearable
+      value={field.value || null}
+      onChange={(event, data) => helpers.setValue(data.value)}
+      onBlur={() => helpers.setTouched(true)}
+      {...props}
+    />
+    ```
+- In src/app/api folder, create a file called categoryOptions.js file
+- In categoryOptions.js file:
+  - This file contains the categoryData that the user can choose from in the category select input options in an event form when they want to create or update an event
+- In EventForm.jsx file:
+  - Import the MySelectInput component: `import MySelectInput from '../../../app/common/form/MySelectInput';`
+  - Import the categoryData: `import { categoryData } from '../../../app/api/categoryOptions';`
+  - For the 'category' input field, swap to use the MySelectInput component instead of the MyTextInput component
+    - Add the `options` property to the component and set its value to `categoryData`. The categoryOptions.js file contains the select options data
+    - `<MySelectInput name='category' placeholder='Category' options={categoryData} />`
+
+
 
 
 
