@@ -2339,6 +2339,107 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - Instantiate the component in the render section: `<div><TestPlaceInput /></div>`
   - When typing in the input field, it should give an auto-suggest list of places. And when a place is selected, that selected place will show up in the input field. The lat/long of the place will print in the console
 
+### [3. Creating a custom place input: MyPlaceInput component]()
+- The react-places-autocomplete library gives us:
+  - A `<PlacesAutocomplete />` component
+  - The geocodeByAddress() method:
+    - It takes an address as an argument
+    - It's an async operation and what we get back is either a results or an error. The results is an array
+    - We can then use the first element of this results array and pass it to the getLatLng() method 
+  - The getLatLng() method:
+    - It takes the results from geocodeByAddress() method as an argument
+    - This is an async operation and what we get back is either the latLng of the place or an error
+- In our project, when a user selects a place for venue and city input fields, we want to store, as an object, the text of the address and the lat/lng object so we can use those coordinates to display a map later on
+- The `<PlacesAutocomplete />` component needs the following:
+  - the value property set to address state
+  - the onChange property set to on change event handler (handleChange function)
+  - the onSelect property set to on select event handler (handleSelect function)
+- The following props we get from the PlacesAutocomplete component via render props:
+  - getInputProps() method
+  - suggestions - it's an array of suggestions
+  - getSuggestionItemProps() method
+  - loading
+- In src/app/common/form folder, create a component/file called MyPlaceInput.jsx
+- In MyPlaceInput.jsx file:
+  - Import the following:
+    ```javascript
+    import React from 'react';
+    import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+    import { useField } from 'formik';
+    import { FormField, Label, List, Segment } from 'semantic-ui-react';
+    ```
+  - Write a MyPlaceInput functional component that renders a place autocomplete input field using Formik and Semantic UI
+    - This component receives these props: label, options, ...props
+    - Use useField() hook to extract field, meta, and helpers properties from Formik Field component
+      - `const [field, meta, helpers] = useField(props);`
+    - Write a handleSelect function handler that executes the geocodeByAddress() method 
+      - The geocodeByAddress() method takes an address as an argument
+      - The method takes the address and returns the latLng coordinates
+      - It then sets the address and latLng properties as an object in the Redux store using the helpers.setValue() method
+      - This is an async operation and we'll either get the results and the latLng coordinates or an error. Use .then() and .catch() methods to handle both
+      ```javascript
+      function handleSelect(address) {
+        geocodeByAddress(address)
+          .then((results) => getLatLng(results[0]))
+          .then((latLng) => helpers.setValue({ address, latLng }))
+          .catch((error) => helpers.setError(error));
+      }
+      ```
+    - Instantiate the `<PlacesAutocomplete />` component that's provided by react-places-autocomplete library
+      - Provide the value and event handlers it needs
+      - Use render props to extract the props
+      - Render the input field inside the `<FormField />` component and apply validation logic
+      - Check to see if there's any suggestions in the suggestions array. If there is, map over the array and display each suggestion in a List using Semantic UI
+    ```javascript
+    export default function MyPlaceInput({ label, options, ...props }) {
+      const [field, meta, helpers] = useField(props);
+
+      function handleSelect(address) {
+        geocodeByAddress(address)
+          .then((results) => getLatLng(results[0]))
+          .then((latLng) => helpers.setValue({ address, latLng }))
+          .catch((error) => helpers.setError(error));
+      }
+
+      return (
+        <PlacesAutocomplete
+          // The city (field.value) object will have an address and latLng properties
+			    // The square bracket notation is accessing a property of an object
+          value={field.value['address']}
+          onChange={(value) => helpers.setValue({ address: value })}
+          onSelect={(value) => handleSelect(value)}
+          searchOptions={options}
+        >
+          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+            <FormField error={meta.touched && !!meta.error}>
+              <input {...getInputProps({name: field.name, ...props})} />
+              {meta.touched && meta.error ? (
+                <Label basic color='red'>
+                  {meta.error}
+                </Label>
+              ) : null}
+              {suggestions?.length > 0 && (
+                <Segment loading={loading} style={{ marginTop: 0, position: 'absolute', zIndex: 1000, width: '100%' }}>
+                  <List selection>
+                    {suggestions.map(suggestion => (
+                      <List.Item {...getSuggestionItemProps(suggestion)} key={suggestion.placeId}>
+                        <List.Header>
+                          {suggestion.formattedSuggestion.mainText}
+                        </List.Header>
+                        <List.Description>
+                          {suggestion.formattedSuggestion.secondaryText}
+                        </List.Description>
+                      </List.Item>
+                    ))}
+                  </List>
+                </Segment>
+              )}
+            </FormField>
+          )}
+        </PlacesAutocomplete>
+      );
+    }
+    ```
 
 
 
