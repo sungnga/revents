@@ -16,6 +16,13 @@ function MyPlaceInput({ label, options, ...props }) {
 			.catch((error) => helpers.setError(error));
 	}
 
+	function handleBlur(e) {
+		field.onBlur(e);
+		if (!field.value.latLng) {
+			helpers.setValue({ address: '', latLng: null });
+		}
+	}
+
 	return (
 		<PlacesAutocomplete
 			// The city (field.value) object will have an address and latLng properties
@@ -27,11 +34,17 @@ function MyPlaceInput({ label, options, ...props }) {
 		>
 			{({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
 				<FormField error={meta.touched && !!meta.error}>
-					<input {...getInputProps({ name: field.name, ...props })} />
+					<input
+						{...getInputProps({
+							name: field.name,
+							onBlur: (e) => handleBlur(e),
+							...props
+						})}
+					/>
 					{/* if the field been touched and there's an error, render the error label */}
 					{meta.touched && meta.error ? (
 						<Label basic color='red'>
-							{meta.error}
+							{meta.error['address']}
 						</Label>
 					) : null}
 					{suggestions?.length > 0 && (
