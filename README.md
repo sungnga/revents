@@ -2502,6 +2502,48 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
       />
       ```
 
+### [5. Narrowing the place input search results: EventForm]()
+- What we want to do next is when we select a specific city, we want to see venues that are located in that city area
+- In EventForm.jsx file:
+  - In render props, pass down the `values` props to our form
+    - `{({ isSubmitting, dirty, isValid, values }) => ( ... )}`
+  - In the 'venue' input field, we need to pass two additional properties to the component:
+    - the disabled property. We want to disable the venue input field if there's no city latLng value
+    - the options property. We want to narrow down the venue results based on the type, radius, and location of a latLng/city
+    - add this at the top of the file, because our component doesn't know about the google maps script in index.html file
+      - `/* global google */`
+    ```javascript
+    <MyPlaceInput
+      name='venue'
+      placeholder='Venue'
+      disabled={!values.city.latLng}
+      options={{
+        location: new google.maps.LatLng(values.city.latLng),
+        radius: 1000,
+        types: ['establishment']
+      }}
+    />
+    ```
+- Since the venue and the city of our event are now objects, not strings, we need to reflect this change in our sampleData.js file as well. So the sampleData.js file has been updated
+  ```js
+  city: {
+    address: 'London, UK',
+    latLng: {
+      lat: 51.5118074,
+      lng: -0.12300089999996544
+    }
+  },
+  venue: {
+    address: 'Punch & Judy, Henrietta Street, London, UK',
+    latLng: {
+      lat: 51.5118074,
+      lng: -0.12300089999996544
+    }
+  },
+  ```
+- Lastly, in EventListItem.jsx and EventDetailedInfo.jsx files:
+  - Update `event.venue` to `event.venue.address`
+
 
 
 

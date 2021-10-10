@@ -1,3 +1,4 @@
+/* global google */
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cuid from 'cuid';
@@ -75,7 +76,7 @@ function EventForm({ match, history }) {
 					history.push('/events');
 				}}
 			>
-				{({ isSubmitting, dirty, isValid }) => (
+				{({ isSubmitting, dirty, isValid, values }) => (
 					<Form className='ui form'>
 						<Header sub color='teal' content='Event Details' />
 						<MyTextInput name='title' placeholder='Event title' />
@@ -87,7 +88,17 @@ function EventForm({ match, history }) {
 						<MyTextArea name='description' placeholder='Description' rows={3} />
 						<Header sub color='teal' content='Event Location Details' />
 						<MyPlaceInput name='city' placeholder='City' />
-						<MyPlaceInput name='venue' placeholder='Venue' />
+						{/* disable the venue input field if there's no latLng values for city field */}
+						<MyPlaceInput
+							name='venue'
+							disabled={!values.city.latLng}
+							placeholder='Venue'
+							options={{
+								location: new google.maps.LatLng(values.city.latLng),
+								radius: 1000,
+								types: ['establishment']
+							}}
+						/>
 						<MyDateInput
 							name='date'
 							placeholderText='Event date'
