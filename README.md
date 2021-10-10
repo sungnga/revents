@@ -2294,6 +2294,30 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `<Dropdown pointing='top left' text={String(currentUser.email).split('@')[0] || 'User'}>`
 
 
+## GOOGLE MAPS INTEGRATION
+- Google MapsPlaces Autocomplete
+  - Provides dropdown and lookup for locations
+  - Can provide different levels: countries, cities, businesses, etc.
+- Google Maps integration with React
+  - Provides a map of an area with given coordinates
+  - Takes a Lat/Lng
+
+### [1. Enable Google Maps APIs, generate Google API key]()
+- Go to Google Developer Console site and login with Google account
+  - https://console.developers.google.com/
+1. Click on the 'New Project' button to create a new project. Name the project
+2. In the APIs & Services menu, select Library. In the search bar, find these 3 APIs and click on the Enable button for each one
+  - Maps Javascript API
+  - Geocoding API
+  - Places API
+3. We need to manually set the requests limit for all of these API services so that we won't get charged no matter what. We are required to provide billing info to use Google Maps. In the IAM & Admin menu, select Quotas:
+  - In the Quotas section, there's a dropdown menu that will have the 3 Maps APIs
+  - Go into each one and set the requests limit to 100
+4. In the APIs & Services menu, select Credentials
+  - Click the '+ CREATE CREDENTIALS' button at the top. This will generate the Google API key. Copy this key
+5. While we are developing our application, don't worry about setting the Key restrictions. We will come back to set API restrictions once we deployed our application
+
+
 
 
 
