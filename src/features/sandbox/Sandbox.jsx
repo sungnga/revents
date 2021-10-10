@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'semantic-ui-react';
 import { openModal } from '../../app/common/modals/modalReducer';
+import TestPlaceInput from './TestPlaceInput';
 import { increment, decrement } from './testReducer';
 
 function Sandbox() {
@@ -31,7 +32,10 @@ function Sandbox() {
 				}
 				content='Open Modal'
 				color='teal'
-			/>
+      />
+      <div style={{ marginTop: 15 }}>
+        <TestPlaceInput />
+      </div>
 		</>
 	);
 }

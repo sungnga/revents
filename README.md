@@ -2295,7 +2295,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 
 
 ## GOOGLE MAPS INTEGRATION
-- Google MapsPlaces Autocomplete
+- Google Maps Places Autocomplete
   - Provides dropdown and lookup for locations
   - Can provide different levels: countries, cities, businesses, etc.
 - Google Maps integration with React
@@ -2315,7 +2315,29 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Go into each one and set the requests limit to 100
 4. In the APIs & Services menu, select Credentials
   - Click the '+ CREATE CREDENTIALS' button at the top. This will generate the Google API key. Copy this key
-5. While we are developing our application, don't worry about setting the Key restrictions. We will come back to set API restrictions once we deployed our application
+5. While we are developing our application, don't worry about setting the Key restrictions. We will come back to set API restrictions once we publish our application to Firebase
+
+### [2. Setting up React Places Autocomplete, test Google Places in Sandbox]()
+- The react-places-autocomplete library is a React component to build a customized UI for Google Maps Places Autocomplete
+- Docs: https://github.com/hibiken/react-places-autocomplete
+- Install: `npm i react-places-autocomplete`
+- Add this script to index.html file just above the project `<title />` tag. Replace the Google API key you get from Google APIs for this project
+  - `<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>`
+- Later on when we deploy the project, we will restrict the API key to our project site only
+- **Testing out Google Places:**
+  - In sandbox folder, create a component/file called TestPlaceInput.jsx
+  - In TestPlaceInput.jsx file, copy and paste the demo code from the above github website. Then make the following changes:
+    - Change from class component to functional component
+    - Delete the constructor and add address state using useState() hook:
+      - `const [address, setAddress] = useState('');`
+    - Change the arrow event handler functions to regular functions
+    - Remove all 'this' keyword
+    - In the handleSelect() function, call setAddress method to set the address as the last thing. So when a place is selected from the auto-suggest list, the selected place will show up in the input field
+    - Add a key to the div tag when mapping over the `suggestions` array
+  - In Sandbox.jsx file:
+    - Import the TestPlaceInput component
+    - Instantiate the component in the render section: `<div><TestPlaceInput /></div>`
+  - When typing in the input field, it should give an auto-suggest list of places. And when a place is selected, that selected place will show up in the input field. The lat/long of the place will print in the console
 
 
 
@@ -2353,6 +2375,9 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - date-fns docs: date-fns.org
   - Run: `npm ls date-fns` to see the version that react-datepicker is using
   - Install: `npm i date-fns@2.25.0`
+- React Places Autocomplete
+  - Docs: https://github.com/hibiken/react-places-autocomplete
+  - Install: `npm i react-places-autocomplete`
 
 
 ## VSCode extensions used:
