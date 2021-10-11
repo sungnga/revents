@@ -2626,6 +2626,68 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     export default TestMap;
     ```
 
+### [7. Adding the map to the EventDetailedPage: EventDetailedMap component]()
+  - On the EventDetailedPage, when we click on the 'Show Map' button, we get to see a map of where the event is taking place. The 'Hide Map' button will hide the map
+  - In src/features/events/eventDetailed folder, create a component/file called EventDetailedMap.jsx
+  - In EventDetailedMap.jsx file:
+    - Import React: `import React from 'react';`
+    - Import googleMapReact component: `import GoogleMapReact from 'google-map-react';`
+    - Import Semantic UI components: `import { Icon, Segment } from 'semantic-ui-react';`
+    - Write a EventDetailedMap functional component to display a map of where the event takes place
+      - This component receives (event venue) latLng props from the EventDetailedInfo parent component
+      - Instantiate the `<GoogleMapReact />` component and specify the bootstrapURLKeys, center, and zoom properties. This is similar to what we had done in the TestMap.jsx component in Sandbox
+    - Write a Marker functional component to display a marker icon using Semantic UI
+    - Use the `<Marker />` component inside the `<GoogleMapReact />` component and pass down the lat and lng props. This will display the marker on the map where the venue is located
+    ```javascript
+    import React from 'react';
+    import { Icon, Segment } from 'semantic-ui-react';
+    import GoogleMapReact from 'google-map-react';
+
+    function Marker() {
+      return <Icon name='marker' size='big' color='red' />;
+    }
+
+    function EventDetailedMap({ latLng }) {
+      const zoom = 14;
+
+      return (
+        <Segment attached='bottom' style={{ padding: 0 }}>
+          <div style={{ height: 300, width: '100%' }}>
+            <GoogleMapReact
+              bootstrapURLKeys={{ key: 'GOOGLE_MAPS_API_KEY' }}
+              center={latLng}
+              zoom={zoom}
+            >
+              <Marker lat={latLng.lat} lng={latLng.lng} />
+            </GoogleMapReact>
+          </div>
+        </Segment>
+      );
+    }
+
+    export default EventDetailedMap;
+    ```
+- In EventDetailedInfo.jsx file:
+  - Import the EventDetailedMap component: `import EventDetailedMap from './EventDetailedMap';`
+  - As the last item inside the `<Segment.Group>` component, use the EventDetailedMap component and pass down the latLng props. This is the coordinate values of the venue
+    - `<EventDetailedMap latLng={event.venue.latLng} />`
+  - Next, we only want to show the map on the EventDetailedPage when the 'Show Map' is clicked. So we need to create a local state to toggle between the show and hide map
+  - Create a mapOpen state using useState() hook and set the initial value to false. Initially the map is hidden
+    - `const [mapOpen, setMapOpen] = useState(false);`
+  - For the 'Show Map' Button element, we want to toggle the 'Show Map' and 'Hide Map' button depending on the mapOpen state
+    - On onClick event, switch the mapOpen state using the setMapOpenToggle() method
+    - Then for the Button content, if mapOpen state is true, show 'Hide Map'. If mapOpen is false, show 'Show Map'
+    ```javascript
+    <Button
+      onClick={() => setMapOpenToggle(!mapOpen)}
+      color='teal'
+      size='tiny'
+      content={mapOpen ? 'Hide Map' : 'Show Map'}
+    />
+    ```
+  - Then in the render section, write a condition to only show the map if mapOpen state is true
+    - `{mapOpen && <EventDetailedMap latLng={event.venue.latLng} />}`
+
 
 
 
