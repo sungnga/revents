@@ -2404,7 +2404,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
       return (
         <PlacesAutocomplete
           // The city (field.value) object will have an address and latLng properties
-			    // The square bracket notation is accessing a property of an object
+          // The square bracket notation is accessing a property of an object
           value={field.value['address']}
           onChange={(value) => helpers.setValue({ address: value })}
           onSelect={(value) => handleSelect(value)}
@@ -2544,6 +2544,88 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - Lastly, in EventListItem.jsx and EventDetailedInfo.jsx files:
   - Update `event.venue` to `event.venue.address`
 
+### [6. google-map-react lib: displaying google maps onto a page in Sandbox]()
+- Docs: https://www.npmjs.com/package/google-map-react
+- Install: `npm i google-map-react`
+- Display a Google map based on the given city's latLng coordinates. We'll use the google-map-react library to display the map. We'll first test out the Google maps in sandbox to display a map based on the city's latLng coordinates that the user typed in the 'Search Places' input field
+- **Displaying Google map onto a page in Sandbox:**
+- In Sandbox.jsx file:
+  - The plan of action:
+    - First, we need to create a location state in the Sandbox component
+    - Then we can pass down the setLocation method as props to the TestPlaceInput child component to get the city's latLng and store it in the location state in the Sandbox component
+    - Once we have the latLng in the state, we can pass down the location state as props to the TestMap component to display a map based on the location latLng
+  - Create an initial location state object
+    ```javascript
+    const defaultProps = {
+      center: {
+        lat: 59.95,
+        lng: 30.33
+      },
+      zoom: 11
+    };
+    ```
+  - Create a location state using useState() hook and set the initial value to defaultProps. Location state is an object
+    - `const [location, setLocation] = useState(defaultProps);`
+  - Write a handleSetLocation function that sets the center property to be the lat/lng coordinates
+    ```javascript
+    function handleSetLocation(latLng) {
+      setLocation({ ...location, center: { lat: latLng.lat, lng: latLng.lng } });
+    }
+    ```
+  - Pass down the handleSetLocation method as setLocation props to the TestPlaceInput child component
+    - `<TestPlaceInput setLocation={handleSetLocation} />`
+  - Pass down the location state as location props to the TestMap child component
+    - `<TestMap location={location} />`
+- In TestPlaceInput.jsx file:
+  - Receive the setLocation method props from Sandbox parent component
+  - In the handleSelect function, when calling the getLatLng() method and the latLng result comes back, call the setLocation() method to set the location state to latLng. Now the location state in the Sandbox component will have the updated latLng coordinates
+    ```javascript
+    function handleSelect(address) {
+      geocodeByAddress(address)
+        .then((results) => getLatLng(results[0]))
+        .then((latLng) => {
+          setLocation(latLng)
+          console.log('Success', latLng);
+        })
+        .catch((error) => console.error('Error', error));
+      setAddress(address);
+    }
+    ```
+- In sandbox folder, create a component/file called TestMap.jsx
+- In TestMap.jsx file:
+  - Copy and paste the example code from the npm google-map-react website. Switch to using a functional component instead of a class component
+  - Receive the location state props from Sandbox parent component
+  - In the `<GoogleMapReact />` component:
+    - Provide the google_maps_api_key as a string
+    - Set the center and zoom properties to location.center and location.zoom
+    - In the `<AnyReactComponent />` component, provide the lat/lng coordinates
+    ```javascript
+    import React from 'react';
+    import GoogleMapReact from 'google-map-react';
+
+    const AnyReactComponent = ({ text }) => <div>{text}</div>;
+
+    function TestMap({ location }) {
+      // console.log(location);
+      const { lat, lng } = location.center;
+
+      return (
+        // Important! Always set the container height explicitly
+        <div style={{ height: '100vh', width: '100%' }}>
+          <GoogleMapReact
+            bootstrapURLKeys={{ key: 'GOOGLE_MAPS_API_KEY' }}
+            center={location.center}
+            zoom={location.zoom}
+          >
+            <AnyReactComponent lat={lat} lng={lng} text='My Marker' />
+          </GoogleMapReact>
+        </div>
+      );
+    }
+
+    export default TestMap;
+    ```
+
 
 
 
@@ -2583,6 +2665,9 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - React Places Autocomplete
   - Docs: https://github.com/hibiken/react-places-autocomplete
   - Install: `npm i react-places-autocomplete`
+- Google Map React - display google map
+  - Docs: https://www.npmjs.com/package/google-map-react
+  - Install: `npm i google-map-react`
 
 
 ## VSCode extensions used:
