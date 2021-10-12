@@ -2741,21 +2741,19 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   const ASYNC_ACTION_FINISH = 'ASYNC_ACTION_FINISH';
   const ASYNC_ACTION_ERROR = 'ASYNC_ACTION_ERROR';
 
-  // Action creator
+  // Async action creator functions
   export function asyncActionStart() {
     return {
       type: ASYNC_ACTION_START
     };
   }
 
-  // Action creator
   export function asyncActionFinish() {
     return {
       type: ASYNC_ACTION_FINISH
     };
   }
 
-  // Action creator
   export function asyncActionERROR(error) {
     return {
       type: ASYNC_ACTION_ERROR,
@@ -2772,17 +2770,20 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   // Async reducer
   export default function asyncReducer(state = initialState, { type, payload }) {
     switch (type) {
+      // Turns the loading indicator on
       case ASYNC_ACTION_START:
         return {
           ...state,
           loading: true,
           error: null
         };
+      // Turns the loading indicator off
       case ASYNC_ACTION_FINISH:
         return {
           ...state,
           loading: false
         };
+      // Stores error message getting back from async operation
       case ASYNC_ACTION_ERROR:
         return {
           ...state,
@@ -2799,6 +2800,86 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Import the asyncReducer: `import asyncReducer from '../async/asyncReducer';`
   - Add the asyncReducer to the combineReducers() method as the value for async property: `async: asyncReducer`
 
+### [2. Returning async functions in action creators]()
+- In src/app/common/util folder, create a file called util.js. Any functions that don't belong anywhere else that we can apply anywhere in our application go in this folder
+- In util.js file:
+  - Write a delay function that delays for a certain amount of time in millisecond (ms)
+    - In order for something to be able to wait for this particular function to finish, what we need do is to return a `new Promise()`
+    - The promise will end in either resolve or reject
+    - In this case, we're going to resolve and we're going to call the `setTimeout()` function, which allows us to add a delay
+    - In the setTimeout() function, we pass in the `resolve` and the `ms` (millisecond) that we get from the delay function as an argument
+    ```javascript
+    export function delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    ```
+
+**Testing out async action creators in Sandbox:**
+- When we installed redux-thunk, it allows us to return a function inside another function. In our action creator function, instead of returning a simple object, we can return an asynchronous function. This allows us to dispatch multiple actions inside an action creator function
+- An asynchronous function has the `async` keyword in front of it: `async function () {...}`
+- This async function can take, as a parameter, a dispatch method that we get from react-redux store. We use this dispatch method to dispatch multiple actions
+- In testReducer.js file:
+  - Import the async action creators from the asyncReducer.js file: `import { asyncActionStart, asyncActionError, asyncActionFinish } from '../../app/async/asyncReducer';`
+  - Import the delay function: `import { delay } from '../../app/common/util/util';`
+  - Inside the increment action creator function:
+    - We can return an asynchronous function. This will allow us to dispatch multiple actions inside the increment action creator function
+    - To mark a function as an async function, add the `async` keyword in front of it
+    - This async function takes a dispatch as an argument. It is a dispatch() method coming from react-redux to dispatch actions
+    - Then in this return async function,
+      - first, dispatch the asyncActionStart() action. This will turn the loading state to true
+      - since we're using an async function, use the `await` keyword and call the delay() function to delay the request for 1 second. The await keyword will wait for the delay() function to finish before performing the next task
+      - after that, we want to dispatch another action with the type of INCREMENT_COUNTER and the payload is the amount
+      - lastly, dispatch the asyncActionFinish() action. This will turn the loading state back to false
+      - note that we want to call the delay() function and dispatch the INCREMENT_COUNTER and asyncActionFinish() actions inside a try/catch block. This way, if there's any problem with this asynchronous action, it's going to be caught by whatever is inside the catch block
+      - if an error occurs during the async operation, we catch the error inside the `catch` block. Then we dispatch the asyncActionError() action to send this error to the Redux store in the async reducer. We can do whatever we want with that error in the future
+    ```javascript
+    import {
+      asyncActionError,
+      asyncActionFinish,
+      asyncActionStart
+    } from '../../app/async/asyncReducer';
+    import { delay } from '../../app/common/util/utils';
+
+    // Action constant
+    const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
+    const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
+
+    // Action creator
+    export function increment(amount) {
+      // We can return an async function because of redux-thunk
+      // We get the dispatch method from react-redux
+      // This allows us to dispatch multiple actions
+      return async function (dispatch) {
+        // This will turn the loading indicator from false to true
+        dispatch(asyncActionStart());
+        try {
+          // Delay for 1 second before dispatching the next action
+          await delay(1000);
+          dispatch({ type: INCREMENT_COUNTER, payload: amount });
+          // Turn the loading indicator off - from true to false
+          dispatch(asyncActionFinish());
+        } catch (error) {
+          // If there's an error, send the error to the store
+          dispatch(asyncActionError(error));
+        }
+      };
+    }
+    ```
+  - Do the same thing for the decrement action creator function
+  - So now when the 'Increment' or 'Decrement' button is clicked, it'll delay for the amount of time set before it will increment or decrement the counter
+- We can use the loading state by displaying a loading icon to the user that something is happening
+- In Sandbox.jsx file:
+  - Extract and destructure the loading state property from the async reducer using the useSelector() hook
+    - `const { loading } = useSelector((state) => state.async);`
+  - Then in the 'Increment' Button element, specify the loading property and set its value to the loading state. Do the same thing for the 'Decrement' Button
+    ```javascript
+    <Button
+      loading={loading}
+      onClick={() => dispatch(increment(10))}
+      content='Increment'
+      color='green'
+    />
+    ```
 
 
 
@@ -3268,22 +3349,20 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   const ASYNC_ACTION_FINISH = 'ASYNC_ACTION_FINISH';
   const ASYNC_ACTION_ERROR = 'ASYNC_ACTION_ERROR';
 
-  // Action creator
+  // Async action creator functions
   export function asyncActionStart() {
     return {
       type: ASYNC_ACTION_START
     };
   }
 
-  // Action creator
   export function asyncActionFinish() {
     return {
       type: ASYNC_ACTION_FINISH
     };
   }
 
-  // Action creator
-  export function asyncActionERROR(error) {
+  export function asyncActionError(error) {
     return {
       type: ASYNC_ACTION_ERROR,
       payload: error
@@ -3299,17 +3378,20 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   // Async reducer
   export default function asyncReducer(state = initialState, { type, payload }) {
     switch (type) {
+      // Turns the loading indicator on
       case ASYNC_ACTION_START:
         return {
           ...state,
           loading: true,
           error: null
         };
+      // Turns the loading indicator off
       case ASYNC_ACTION_FINISH:
         return {
           ...state,
           loading: false
         };
+      // Stores error message getting back from async operation
       case ASYNC_ACTION_ERROR:
         return {
           ...state,
@@ -3321,20 +3403,84 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
   }
   ```
-- Add the asyncReducer to the rootReducer so it is connected to Redux store
-- In rootReducer.js file:
-  - Import the asyncReducer: `import asyncReducer from '../async/asyncReducer';`
-  - Add the asyncReducer to the combineReducers() method as the value for async property: `async: asyncReducer`
-  ```js
-  import asyncReducer from '../async/asyncReducer';
 
-  const rootReducer = combineReducers({
-    test: testReducer,
-    event: eventReducer,
-    modals: modalReducer,
-    auth: authReducer,
-    async: asyncReducer
-  });
+### [2. Returning async functions in action creators]()
+- In src/app/common/util folder, create a file called util.js. Any functions that don't belong anywhere else that we can apply anywhere in our application go in this folder
+- In util.js file:
+  - Write a delay function that delays for a certain amount of time in millisecond (ms)
+    - In order for something to be able to wait for this particular function to finish, what we need do is to return a `new Promise()`
+    - The promise will end in either resolve or reject
+    - In this case, we're going to resolve and we're going to call the `setTimeout()` function, which allows us to add a delay
+    - In the setTimeout() function, we pass in the `resolve` and the `ms` (millisecond) that we get from the delay function as an argument
+    ```javascript
+    export function delay(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+    ```
 
-  export default rootReducer;
-  ```
+**Testing out async action creators in Sandbox:**
+- When we installed redux-thunk, it allows us to return a function inside another function. In our action creator function, instead of returning a simple object, we can return an asynchronous function. This allows us to dispatch multiple actions inside an action creator function
+- An asynchronous function has the `async` keyword in front of it: `async function () {...}`
+- This async function can take, as a parameter, a dispatch method that we get from react-redux store. We use this dispatch method to dispatch multiple actions
+- In testReducer.js file:
+  - Import the async action creators from the asyncReducer.js file: `import { asyncActionStart, asyncActionError, asyncActionFinish } from '../../app/async/asyncReducer';`
+  - Import the delay function: `import { delay } from '../../app/common/util/util';`
+  - Inside the increment action creator function:
+    - We can return an asynchronous function. This will allow us to dispatch multiple actions inside the increment action creator function
+    - To mark a function as an async function, add the `async` keyword in front of it
+    - This async function takes a dispatch as an argument. It is a dispatch() method coming from react-redux to dispatch actions
+    - Then in this return async function,
+      - first, dispatch the asyncActionStart() action. This will turn the loading state to true
+      - since we're using an async function, use the `await` keyword and call the delay() function to delay the request for 1 second. The await keyword will wait for the delay() function to finish before performing the next task
+      - after that, we want to dispatch another action with the type of INCREMENT_COUNTER and the payload is the amount
+      - lastly, dispatch the asyncActionFinish() action. This will turn the loading state back to false
+      - note that we want to call the delay() function and dispatch the INCREMENT_COUNTER and asyncActionFinish() actions inside a try/catch block. This way, if there's any problem with this asynchronous action, it's going to be caught by whatever is inside the catch block
+      - if an error occurs during the async operation, we catch the error inside the `catch` block. Then we dispatch the asyncActionError() action to send this error to the Redux store in the async reducer. We can do whatever we want with that error in the future
+    ```javascript
+    import {
+      asyncActionError,
+      asyncActionFinish,
+      asyncActionStart
+    } from '../../app/async/asyncReducer';
+    import { delay } from '../../app/common/util/utils';
+
+    // Action constant
+    const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
+    const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
+
+    // Action creator
+    export function increment(amount) {
+      // We can return an async function because of redux-thunk
+      // We get the dispatch method from react-redux
+      // This allows us to dispatch multiple actions
+      return async function (dispatch) {
+        // This will turn the loading indicator from false to true
+        dispatch(asyncActionStart());
+        try {
+          // Delay for 1 second before dispatching the next action
+          await delay(1000);
+          dispatch({ type: INCREMENT_COUNTER, payload: amount });
+          // Turn the loading indicator off - from true to false
+          dispatch(asyncActionFinish());
+        } catch (error) {
+          // If there's an error, send the error to the store
+          dispatch(asyncActionError(error));
+        }
+      };
+    }
+    ```
+  - Do the same thing for the decrement action creator function
+  - So now when the 'Increment' or 'Decrement' button is clicked, it'll delay for the amount of time set before it will increment or decrement the counter
+- We can use the loading state by displaying a loading icon to the user that something is happening
+- In Sandbox.jsx file:
+  - Extract and destructure the loading state property from the async reducer using the useSelector() hook
+    - `const { loading } = useSelector((state) => state.async);`
+  - Then in the 'Increment' Button element, specify the loading property and set its value to the loading state. Do the same thing for the 'Decrement' Button
+    ```javascript
+    <Button
+      loading={loading}
+      onClick={() => dispatch(increment(10))}
+      content='Increment'
+      color='green'
+    />
+    ```
