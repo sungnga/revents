@@ -2906,7 +2906,50 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     />
     ```
 
-
+### [4. Adding toast notifications: react-toastify library]()
+- Let's add the ability to notify the user when there's a problem. We'll use a toast notification library called react-toastify
+- Install: `npm i react-toastify`
+- Toasts, like modals, they need to appear anywhere in our application. For that, we use toasts at the top of the application inside the App.jsx file
+- In App.jsx file:
+  - Import the react-toastify ToastContainer component: `import { ToastContainer } from 'react-toastify';`
+  - Instantiate the `<ToastContainer />` component right after the `<ModalManager />` component
+    - Specify the position property and set it to 'bottom-right'
+    - Add the hideProgressBar property. This will hide the progress bar when toast notification pops up
+    - `<ToastContainer position='bottom-right' hideProgressBar />`
+- In index.js file:
+  - Import the react-toastify css stylesheet right after the Semantic UI stylesheet
+    - `import 'react-toastify/dist/ReactToastify.min.css';`
+  - NOTE: the order of these stylesheets is important!
+- In testReducer.js file:
+  - Import toast: `import { toast } from 'react-toastify';`
+  - In the catch block of the action creator functions, call the toast.error() method and pass in the error received from the catch block
+    ```js
+    catch (error) {
+      // If there's an error, send the error to the store
+      dispatch(asyncActionError(error));
+      // Display a notification to user of the error
+      toast.error(error);
+    }
+    ```
+  - To test that the Toast notification is working, throw an error message right after the delay() function in one of the action creators. A toast notification with an error massage 'oops' will pop up when clicking on the 'decrement' button
+    ```js
+    export function decrement(amount) {
+      return async function (dispatch) {
+        // This will turn the loading indicator from false to true
+        dispatch(asyncActionStart());
+        try {
+          await delay(1000);
+          throw 'oops';
+          dispatch({ type: DECREMENT_COUNTER, payload: amount });
+          // Turn the loading indicator off - from true to false
+          dispatch(asyncActionFinish());
+        } catch (error) {
+          dispatch(asyncActionError(error));
+          toast.error(error);
+        }
+      };
+    }
+    ```
 
 
 
@@ -2951,6 +2994,9 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Install: `npm i google-map-react`
 - Redux Thunk - a middleware that allows us to write async code to Redux store
   - Install: `npm i redux-thunk`
+- React Toastify - notifications to users
+  - Install: `npm i react-toastify`
+
  
 
 ## VSCode extensions used:
