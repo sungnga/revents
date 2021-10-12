@@ -2814,7 +2814,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
-**Testing out async action creators in Sandbox:**
+**Testing out async action creators in counter Sandbox:**
 - When we installed redux-thunk, it allows us to return a function inside another function. In our action creator function, instead of returning a simple object, we can return an asynchronous function. This allows us to dispatch multiple actions inside an action creator function
 - An asynchronous function has the `async` keyword in front of it: `async function () {...}`
 - This async function can take, as a parameter, a dispatch method that we get from react-redux store. We use this dispatch method to dispatch multiple actions
@@ -2880,6 +2880,33 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
       color='green'
     />
     ```
+
+### [3. Isolating the loading indicators: counter Sandbox]()
+- Right now both of the increment and decrement button loading indicators are loading when only one button is clicked. So first we need to identify which button is actually clicked. We can specify a `name` property for each button element. We can then get this name value on the onClick event handler by calling `event.target.name`. For the increment button element, we can name it 'increment' and for the decrement button, name it 'decrement'
+- Sandbox.jsx file:
+  - Create a target local state using the useState() hook and initialize its value to null
+    - `const [target, setTarget] = useState(null);`
+  - Inside each of the increment and decrement Button element:
+    - Specify the button name property and set the value to 'increment'
+    - On the onClick event handler, dispatch the increment action and also call the setTarget() method and pass in `e.target.name`. This will set `name` value of the button element in the target local state
+    - So when we click on a button, we're setting the target local state to the name of that button element
+    - Then we can use the target state to control the loading indicator. We only show the loading indicator if the target state is equal to the button name AND if the loading state in Redux store is true
+    ```javascript
+    const [target, setTarget] = useState(null);
+
+    <Button
+      name='increment'
+      loading={loading && target === 'increment'}
+      onClick={(e) => {
+        dispatch(increment(10));
+        setTarget(e.target.name);
+      }}
+      content='Increment'
+      color='green'
+    />
+    ```
+
+
 
 
 
@@ -3418,7 +3445,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
-**Testing out async action creators in Sandbox:**
+**Testing out async action creators in counter Sandbox:**
 - When we installed redux-thunk, it allows us to return a function inside another function. In our action creator function, instead of returning a simple object, we can return an asynchronous function. This allows us to dispatch multiple actions inside an action creator function
 - An asynchronous function has the `async` keyword in front of it: `async function () {...}`
 - This async function can take, as a parameter, a dispatch method that we get from react-redux store. We use this dispatch method to dispatch multiple actions
