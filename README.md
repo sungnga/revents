@@ -2689,6 +2689,117 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `{mapOpen && <EventDetailedMap latLng={event.venue.latLng} />}`
 
 
+## ASYNCHRONOUS CODE
+
+- We need a way to handle asynchronous operations, such as retrieving and storing data in the cloud, in our Redux store. It takes time to read and write data which is stored at some distance away from the client's computer. Redux Thunk is a popular solution for Redux
+
+**Redux Thunk**
+- A thunk is a function that wraps an expression to delay its evaluation
+- Allows Action Creators to return a function instead of a plain object. Up to this point our action creators have been returning an object which contains a TYPE and a PAYLOAD optionally
+- Receives the store's dispatch method which is used to dispatch regular synchronous action when the asynchronous operations have completed. What we want is have our action creator to return the store's dispatch method. This allows us to dispatch actions, wait for something to happen, and then dispatch other actions as well. We use async/await to achieve this
+- Acts as middleware that we add to our Redux store. This middleware allows us to use the store's dispatch function inside our Action Creators
+
+**Async/Await**
+- ES2017 feature
+- Built on top of promises Javascript - cannot be used with plain callbacks
+- Makes async code look and behave more like non async code
+- Cleaner code than using the .then() method from promises JS
+
+**Install Redux Thunk**
+- Install: `npm i redux-thunk`
+
+### [1. Setting up Redux Thunk, create an asyncReducer]()
+- In configureStore.js file:
+  - The createStore() method takes 3 params: a reducer, a preloadedState(optional), and an enhancer
+  - An example of an enhancer is the Redux devTool that we have installed and use earlier. The only store enhancer that ships with Redux is applyMiddleware(). The middleware that we're going to apply is the Redux thunk, but we've also got a devToolEnhancer(). So in order to use both of the devToolEnhancer() and Redux thunk, we're going to bring in the composeWithDevTools() method from redux-devtools-extension. The composeWithDevTools() is already come with the devToolEnhancer()
+    - `import { composeWithDevTools } from 'redux-devtools-extension';`
+  - Import Redux thunk: `import thunk from 'redux-thunk';`
+  - Also import the applyMiddleware method: `import { createStore, applyMiddleware } from 'redux';`
+  - In the createStore() method, we're going to pass in the composeWithDevTools() method as a 2nd param. Then call the applyMiddleware() method and pass in thunk
+    - `return createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));`
+  - Now we have both the devToolEnhancer() and applyMiddleware(thunk) enhancers
+  ```js
+  import { createStore, applyMiddleware } from 'redux';
+  import { composeWithDevTools } from 'redux-devtools-extension';
+  import rootReducer from './rootReducer';
+  import thunk from 'redux-thunk';
+
+  export function configureStore() {
+    // 1st arg is a reducer
+    // 2nd arg is an enhancer
+    // We have 2 enhancers: redux thunk and redux devTool
+    return createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
+  }
+  ```
+- Next is we want to create a reducer (controlling a state in the store) for async functions. This particular reducer is going to control the loading state of what's going on in our application. This asyncReducer also controls the error state that we may get back from the async operations.
+- In src/app/async folder, create a file called asyncReducer.js
+- In asyncReducer.js file:
+  - We'll create the async constants, action creators, and reducer in one file
+  ```javascript
+  // Constants
+  const ASYNC_ACTION_START = 'ASYNC_ACTION_START';
+  const ASYNC_ACTION_FINISH = 'ASYNC_ACTION_FINISH';
+  const ASYNC_ACTION_ERROR = 'ASYNC_ACTION_ERROR';
+
+  // Action creator
+  export function asyncActionStart() {
+    return {
+      type: ASYNC_ACTION_START
+    };
+  }
+
+  // Action creator
+  export function asyncActionFinish() {
+    return {
+      type: ASYNC_ACTION_FINISH
+    };
+  }
+
+  // Action creator
+  export function asyncActionERROR(error) {
+    return {
+      type: ASYNC_ACTION_ERROR,
+      payload: error
+    };
+  }
+
+  // Initial state
+  const initialState = {
+    loading: false,
+    error: null
+  };
+
+  // Async reducer
+  export default function asyncReducer(state = initialState, { type, payload }) {
+    switch (type) {
+      case ASYNC_ACTION_START:
+        return {
+          ...state,
+          loading: true,
+          error: null
+        };
+      case ASYNC_ACTION_FINISH:
+        return {
+          ...state,
+          loading: false
+        };
+      case ASYNC_ACTION_ERROR:
+        return {
+          ...state,
+          loading: false,
+          error: payload
+        };
+      default:
+        return state;
+    }
+  }
+  ```
+- Add the asyncReducer to the rootReducer so it is connected to Redux store
+- In rootReducer.js file:
+  - Import the asyncReducer: `import asyncReducer from '../async/asyncReducer';`
+  - Add the asyncReducer to the combineReducers() method as the value for async property: `async: asyncReducer`
+
+
 
 
 
@@ -2730,7 +2841,9 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - Google Map React - display google map
   - Docs: https://www.npmjs.com/package/google-map-react
   - Install: `npm i google-map-react`
-
+- Redux Thunk - a middleware that allows us to write async code to Redux store
+  - Install: `npm i redux-thunk`
+ 
 
 ## VSCode extensions used:
 - Auto Import - steoates
@@ -3102,3 +3215,126 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   ```
 ------------------------------------------------------------------------------
 
+
+## REDUX THUNK CONCEPTS
+
+- We need a way to handle asynchronous operations, such as retrieving and storing data in the cloud, in our Redux store. It takes time to read and write data which is stored at some distance away from the client's computer. Redux Thunk is a popular solution for Redux
+
+**Redux Thunk**
+- A thunk is a function that wraps an expression to delay its evaluation
+- Allows Action Creators to return a function instead of a plain object. Up to this point our action creators have been returning an object which contains a TYPE and a PAYLOAD optionally
+- Receives the store's dispatch method which is used to dispatch regular synchronous action when the asynchronous operations have completed. What we want is have our action creator to return the store's dispatch method. This allows us to dispatch actions, wait for something to happen, and then dispatch other actions as well. We use async/await to achieve this
+- Acts as middleware that we add to our Redux store. This middleware allows us to use the store's dispatch function inside our Action Creators
+
+**Async/Await**
+- ES2017 feature
+- Built on top of promises Javascript - cannot be used with plain callbacks
+- Makes async code look and behave more like non async code
+- Cleaner code than using the .then() method from promises JS
+
+**Install Redux Thunk**
+- Install: `npm i redux-thunk`
+
+### [1. Setting up Redux Thunk, create an asyncReducer]()
+- In configureStore.js file:
+  - The createStore() method takes 3 params: a reducer, a preloadedState(optional), and an enhancer
+  - An example of an enhancer is the Redux devTool that we have installed and use earlier. The only store enhancer that ships with Redux is applyMiddleware(). The middleware that we're going to apply is the Redux thunk, but we've also got a devToolEnhancer(). So in order to use both of the devToolEnhancer() and Redux thunk, we're going to bring in the composeWithDevTools() method from redux-devtools-extension. The composeWithDevTools() is already come with the devToolEnhancer()
+    - `import { composeWithDevTools } from 'redux-devtools-extension';`
+  - Import Redux thunk: `import thunk from 'redux-thunk';`
+  - Also import the applyMiddleware method: `import { createStore, applyMiddleware } from 'redux';`
+  - In the createStore() method, we're going to pass in the composeWithDevTools() method as a 2nd param. Then call the applyMiddleware() method and pass in thunk
+    - `return createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));`
+  - Now we have both the devToolEnhancer() and applyMiddleware(thunk) enhancers
+  ```js
+  import { createStore, applyMiddleware } from 'redux';
+  import { composeWithDevTools } from 'redux-devtools-extension';
+  import rootReducer from './rootReducer';
+  import thunk from 'redux-thunk';
+
+  export function configureStore() {
+    // 1st arg is a reducer
+    // 2nd arg is an enhancer
+    // We have 2 enhancers: redux thunk and redux devTool
+    return createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
+  }
+  ```
+- Next is we want to create a reducer (controlling a state in the store) for async functions. This particular reducer is going to control the loading state of what's going on in our application. This asyncReducer also controls the error state that we may get back from the async operations.
+- In src/app/async folder, create a file called asyncReducer.js
+- In asyncReducer.js file:
+  - We'll create the async constants, action creators, and reducer in one file
+  ```javascript
+  // Constants
+  const ASYNC_ACTION_START = 'ASYNC_ACTION_START';
+  const ASYNC_ACTION_FINISH = 'ASYNC_ACTION_FINISH';
+  const ASYNC_ACTION_ERROR = 'ASYNC_ACTION_ERROR';
+
+  // Action creator
+  export function asyncActionStart() {
+    return {
+      type: ASYNC_ACTION_START
+    };
+  }
+
+  // Action creator
+  export function asyncActionFinish() {
+    return {
+      type: ASYNC_ACTION_FINISH
+    };
+  }
+
+  // Action creator
+  export function asyncActionERROR(error) {
+    return {
+      type: ASYNC_ACTION_ERROR,
+      payload: error
+    };
+  }
+
+  // Initial state
+  const initialState = {
+    loading: false,
+    error: null
+  };
+
+  // Async reducer
+  export default function asyncReducer(state = initialState, { type, payload }) {
+    switch (type) {
+      case ASYNC_ACTION_START:
+        return {
+          ...state,
+          loading: true,
+          error: null
+        };
+      case ASYNC_ACTION_FINISH:
+        return {
+          ...state,
+          loading: false
+        };
+      case ASYNC_ACTION_ERROR:
+        return {
+          ...state,
+          loading: false,
+          error: payload
+        };
+      default:
+        return state;
+    }
+  }
+  ```
+- Add the asyncReducer to the rootReducer so it is connected to Redux store
+- In rootReducer.js file:
+  - Import the asyncReducer: `import asyncReducer from '../async/asyncReducer';`
+  - Add the asyncReducer to the combineReducers() method as the value for async property: `async: asyncReducer`
+  ```js
+  import asyncReducer from '../async/asyncReducer';
+
+  const rootReducer = combineReducers({
+    test: testReducer,
+    event: eventReducer,
+    modals: modalReducer,
+    auth: authReducer,
+    async: asyncReducer
+  });
+
+  export default rootReducer;
+  ```
