@@ -3171,6 +3171,58 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - At the moment there's no functionality to the calender, but later on we will be able to filter events using this calendar
 
 
+## INTRO TO FIRESTORE
+
+**Firestore**
+- Firestore is another type of database in the Google Firebase architecture
+- Firestore is an area where we can have Collections contain Documents. Those Documents can contain Collections. And the Documents can contain Fields. The Fields can be key/value pairs or objects. An object is made up of key/value properties
+- Firestore is NOT a relational database. Firestore is more optimized for reading data rather than writing database
+- NoSQL database. That means we can't write structured-query-language queries to query database
+- Firestore is more structured than Firebase. Firebase was just one giant json document of keys and values
+- Easier to query, can sort and filter at the same time
+- Scalable
+
+**Realtime database** 
+- We maintain a persistent connection to the database. And anytime there's an update, anybody who's browsing our application and listening to that particular collection in Firestore will get live updates
+- For example, if somebody creates a new event in our application and we send that up to Firestore, then anybody who's connected is also going to receive live of that event
+- This means that we don't have to write Javascript code to update our application because we maintain that connection to Firestore. As soon as Firestore is updated, then we get the updates on our application without needing to do the extra work
+
+### [1. Setting up Firebase, create Firestore]()
+- Website: https://console.firebase.google.com/ Login to the Firebase console with a Google account
+- Click the 'Add project' button to create a new project. Give the project a name. If the billing plan screen pops up, choose a different project name. This project is called `re-vents`
+- Disable the Google Analytics for this project
+- Next is we need to add configuration to our application. Under Home menu, click on the 'Web' icon
+  - Register the app and give the app a nickname. Call it re-vents
+  - It then gives us a whole bunch of keys and information about the configuration of our Firebase project
+  - Copy the code inside the `firebaseConfig` body
+- Install the Firebase Javascript SDK
+  - `npm i firebase`
+- In src/app/config folder, create a file called firebase.js
+- In firebase.js file:
+  - After installing the Firebase Javascript SDK, we can import various aspects and individual elements of Firebase we want to use in our our app
+    ```javascript
+    import firebase from 'firebase/app';
+    import 'firebase/firestore';
+    import 'firebase/database';
+    import 'firebase/auth';
+    import 'firebase/storage';
+    ```
+  - Create a firebaseConfig object and paste in the code
+    ```javascript
+    const firebaseConfig = {
+      PASTE_FIREBASE_CONFIG_HERE
+    }
+    ```
+  - We can then initialize our app with firebase and initialize the firestore part
+    ```javascript
+    firebase.initializeApp(firebaseConfig);
+    firebase.firestore();
+
+    export default firebase;
+    ```
+
+
+
 
 
 
@@ -3217,6 +3269,8 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Install: `npm i react-toastify`
 - React Calendar widget
   - Install: `npm i react-calendar`
+- Firebase Javascript SDK
+  -Install: `npm i firebase`
  
 
 ## VSCode extensions used:
