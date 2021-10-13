@@ -3061,6 +3061,61 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `if (loading) return <LoadingComponent />;`
   - If we are not loading or finished loading, then we want to return/display the JSX
 
+### [7. Using placeholders to improve the UI: EventListItemPlaceholder component]()
+- Instead of having a loading indictor taking up the entire page while we are waiting for the content to load, we can indicate the loading using a Semantic UI Placeholder component. A placeholder is used to reserve space for content that soon will appear in a layout. This is a common practice. So we can design where the EventListItem component is showing that it's loading while we're waiting for its content
+- In src/features/events/eventDashboard folder, create a component/file called EventListItemPlaceholder.jsx
+- In EventListItemPlaceholder.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic components: `import { Segment, Button, Placeholder } from 'semantic-ui-react';`
+  - Write a EventListItemPlaceholder functional component that renders a loading placeholder using Semantic UI
+    ```javascript
+    import React from 'react';
+    import { Segment, Button, Placeholder } from 'semantic-ui-react';
+
+    function EventListItemPlaceholder() {
+      return (
+        <Placeholder fluid>
+          <Segment.Group>
+            <Segment style={{ minHeight: 110 }}>
+              <Placeholder>
+                <Placeholder.Header image>
+                  <Placeholder.Line />
+                  <Placeholder.Line />
+                </Placeholder.Header>
+                <Placeholder.Paragraph>
+                  <Placeholder.Line />
+                </Placeholder.Paragraph>
+              </Placeholder>
+            </Segment>
+            <Segment>
+              <Placeholder>
+                <Placeholder.Line />
+                <Placeholder.Line />
+              </Placeholder>
+            </Segment>
+            <Segment secondary style={{ minHeight: 70 }} />
+            <Segment clearing>
+              <Button disabled color='blue' floated='right' content='View' />
+            </Segment>
+          </Segment.Group>
+        </Placeholder>
+      );
+    }
+
+    export default EventListItemPlaceholder;
+    ```
+- In EventDashboard.jsx file:
+  - Import the EventListItemPlaceholder component: `import EventListItemPlaceholder from './EventListItemPlaceholder';`
+  - We can now remove the LoadingComponent component and use the EventListItemPlaceholder component as loading indicator instead
+  - Just above the `<EventList />` component, write a conditional that if `loading` state is true, then render the EventListItemPlaceholder component (render it twice)
+    ```javascript
+    {loading && (
+      <>
+        <EventListItemPlaceholder />
+        <EventListItemPlaceholder />
+      </>
+    )}
+    ```
 
 
 
