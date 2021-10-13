@@ -3221,6 +3221,26 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     export default firebase;
     ```
 
+### [2. Firestore document fields, add events Collection]()
+- We're going to manually add data to Firestore database to get a feel of the database structure
+- In Firebase, there are two types of database we can create. One is the **Firebase database** and the other is the **Firestore database**
+- In Firebase re-vent main dashboard:
+  - We want the 'Cloud Firestore' database. Select this in the menu bar
+  - Next, click on the 'Create database' button. Select the 'Start in test mode' option
+  - Select a 'Cloud Firestore location' closest to you
+- Now a cloud Firestore database has been generated for the project
+- On the Cloud Firestore page, click on the 'Start collection' button and give the Collection an ID. Call it `events`
+- In the `events` Collection:
+  - Click on the 'Auto-ID' button. This auto-generates a Document ID for the Collection
+  - Fill out the document with the details of an event we've been using. For example,
+    - a Field is title, with a Type of string, and a Value of Firestore test event
+    - next Field is category, with a Type of string, and a Value of travel
+    - the Type for a date Field is timestamp
+    - the Type for an object Field is map
+    - the Type for attendees Field is an array. Each item in the array is an object Field
+  - We're filling in this document data one time to get a feel of the Collection structure
+
+
 
 
 
