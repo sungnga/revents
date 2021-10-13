@@ -19,7 +19,7 @@ export function loadEvents() {
 			const events = await fetchSampleData();
 			// console.log(events)
 			dispatch({ type: FETCH_EVENTS, payload: events });
-			dispatch(asyncActionFinish);
+			dispatch(asyncActionFinish());
 		} catch (error) {
 			dispatch(asyncActionError(error));
 		}
