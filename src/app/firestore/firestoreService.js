@@ -2,6 +2,27 @@ import firebase from '../config/firebase';
 
 const db = firebase.firestore();
 
+export function dataFromSnapshot(snapshot) {
+	// If snapshot doesn't exist, return undefined
+	if (!snapshot.exists) return undefined;
+	// If it does exist, get the data from snapshot
+	const data = snapshot.data();
+
+	for (const prop in data) {
+		if (data.hasOwnProperty(prop)) {
+			if (data[prop] instanceof firebase.firestore.Timestamp) {
+				data[prop] = data[prop].toDate();
+			}
+		}
+	}
+
+	// Return the existing data and the id from snapshot.id
+	return {
+		...data,
+		id: snapshot.id
+	};
+}
+
 export function getEVentsFromFirestore(observer) {
 	// .onSnapshot method is listening to the data
 	return db.collection('events').onSnapshot(observer);
