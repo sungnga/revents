@@ -3408,7 +3408,42 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - In our case, the dependency is the dispatch() method. We can list dispatch as a dependency in the dependency array
       - `useEffect(callback, [dispatch])`
 
-
+### [5. Restoring the loading indicator]()
+- What happens when we listen to data from Firestore is we don't get a promise from Firestore. We're observing the data
+- There's actually three parts to the `observer` response we get from Firestore:
+  - `next` - we get to say what happens next, i.e we can dispatch an action to update the events in Redux store
+  - `error` - we may get an error and we can do whatever we want with this
+  - `complete` - when we're listening to the data, we actually will never get to this point. When we're listening to the data, we're either listening or we're unsubscribing
+- Let's turn on our loading indicator when we're getting data from Firestore and turn off the loading indicator when we're done
+- In EventDashboard.jsx file:
+  - Import async actions: `import { asyncActionError, asyncActionFinish, asyncActionStart } from '../../../app/async/asyncReducer';`
+  - Inside useEffect() hook:
+    - Before we start listening to Firestore data, we can turn on the loading indicator by dispatching the asyncActionStart() action
+    - Once we have the data, we can turn off the loading indicator by dispatching the asyncActionFinish() action
+    - Also if there's an error returned, dispatch the asyncActionError() action to store the error in Redux store
+    ```javascript
+    useEffect(() => {
+      // turn on loading indicator
+      dispatch(asyncActionStart());
+      const unsubscribe = getEVentsFromFirestore({
+        // what to do next with the data
+        next: (snapshot) => {
+          dispatch(
+            listenToEvents(
+              snapshot.docs.map((docSnapshot) => dataFromSnapshot(docSnapshot))
+            )
+          );
+          // turn off loading indicator
+          dispatch(asyncActionFinish());
+        },
+        // store the error message in Redux store
+        error: (error) => dispatch(asyncActionError(error)),
+        // when listening to the data, we'll never get to this point
+        complete: () => console.log('you will never see this message')
+      });
+      return unsubscribe;
+    }, [dispatch]);
+    ```
 
 
 

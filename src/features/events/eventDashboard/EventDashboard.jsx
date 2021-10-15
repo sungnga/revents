@@ -9,6 +9,11 @@ import { listenToEvents } from '../eventActions';
 import EventFilters from './EventFilters';
 import EventList from './EventList';
 import EventListItemPlaceholder from './EventListItemPlaceholder';
+import {
+	asyncActionError,
+	asyncActionFinish,
+	asyncActionStart
+} from '../../../app/async/asyncReducer';
 
 // Semantic UI uses a 16-col grid system
 function EventDashboard() {
@@ -16,15 +21,24 @@ function EventDashboard() {
 	const { events } = useSelector((state) => state.event);
 	const { loading } = useSelector((state) => state.async);
 
-	useEffect(() => {
+  useEffect(() => {
+		// turn on loading indicator
+		dispatch(asyncActionStart());
 		const unsubscribe = getEVentsFromFirestore({
-			next: (snapshot) =>
+			// what to do next with the data
+			next: (snapshot) => {
 				dispatch(
 					listenToEvents(
 						snapshot.docs.map((docSnapshot) => dataFromSnapshot(docSnapshot))
 					)
-				),
-			error: (error) => console.log(error)
+				);
+				// turn off loading indicator
+				dispatch(asyncActionFinish());
+			},
+			// store the error message in Redux store
+			error: (error) => dispatch(asyncActionError(error)),
+			// when listening to the data, we'll never get to this point
+			complete: () => console.log('you will never see this message')
 		});
 		return unsubscribe;
 	}, [dispatch]);
