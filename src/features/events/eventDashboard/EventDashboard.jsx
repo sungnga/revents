@@ -1,19 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
-import {
-	dataFromSnapshot,
-	getEVentsFromFirestore
-} from '../../../app/firestore/firestoreService';
+import { listenToEVentsFromFirestore } from '../../../app/firestore/firestoreService';
 import { listenToEvents } from '../eventActions';
 import EventFilters from './EventFilters';
 import EventList from './EventList';
 import EventListItemPlaceholder from './EventListItemPlaceholder';
-import {
-	asyncActionError,
-	asyncActionFinish,
-	asyncActionStart
-} from '../../../app/async/asyncReducer';
+import useFirestoreCollection from '../../../app/hooks/useFirestoreCollection';
 
 // Semantic UI uses a 16-col grid system
 function EventDashboard() {
@@ -21,27 +14,12 @@ function EventDashboard() {
 	const { events } = useSelector((state) => state.event);
 	const { loading } = useSelector((state) => state.async);
 
-  useEffect(() => {
-		// turn on loading indicator
-		dispatch(asyncActionStart());
-		const unsubscribe = getEVentsFromFirestore({
-			// what to do next with the data
-			next: (snapshot) => {
-				dispatch(
-					listenToEvents(
-						snapshot.docs.map((docSnapshot) => dataFromSnapshot(docSnapshot))
-					)
-				);
-				// turn off loading indicator
-				dispatch(asyncActionFinish());
-			},
-			// store the error message in Redux store
-			error: (error) => dispatch(asyncActionError(error)),
-			// when listening to the data, we'll never get to this point
-			complete: () => console.log('you will never see this message')
-		});
-		return unsubscribe;
-	}, [dispatch]);
+	// using a custom useEffect() hook
+	useFirestoreCollection({
+		query: () => listenToEVentsFromFirestore(),
+		data: (events) => dispatch(listenToEvents(events)),
+		deps: [dispatch]
+	});
 
 	return (
 		<Grid>
