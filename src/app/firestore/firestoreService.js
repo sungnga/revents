@@ -23,6 +23,12 @@ export function dataFromSnapshot(snapshot) {
 	};
 }
 
+// querying the events collection
 export function listenToEVentsFromFirestore() {
 	return db.collection('events');
+}
+
+// querying an event document in events collection
+export function listenToEventFromFirestore(eventId) {
+	return db.collection('events').doc(eventId);
 }
