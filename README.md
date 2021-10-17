@@ -3634,7 +3634,44 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Check to see if loading state is true or if there's no event in the store. If one of these cases is true, return the `<LoadingComponent />` component instead of JSX
     - `if (loading || !event) return <LoadingComponent content='Loading event...' />;`
 
-
+### [8. Handling not found documents]()
+- When we try to fetch an event from Redux store or from Firestore, we use the event id from the URL params of the EventDetailedPage. When we try to get a document in Firestore based on the event id and it can't find it, Firestore will not return an error. However, it will still return a snapshot object and in the snapshot, there's an `exists` property that's set to `false`
+- We can use this `exists` property to check if a document data is found in Firestore. If this `exists` property is false, we can dispatch an asyncActionError() action and provide a custom code and message about the error
+- In useFirestoreDoc.js file:
+  - Write a condition to check if snapshot.exists property is false
+  - If it is, dispatch the asyncActionError() action and provide a custom error code and message
+  - And then return. This means the function will stop executing any code after this
+    ```javascript
+    useEffect(() => {
+      dispatch(asyncActionStart());
+      const unsubscribe = query().onSnapshot(
+        (snapshot) => {
+          // check to see what we're getting back in snapshot object
+          console.log(snapshot)
+          // if the exists property in snapshot is set to false
+          // dispatch the error action and give a custom error message and code
+          if (!snapshot.exists) {
+            dispatch(
+              asyncActionError({
+                code: 'not-found',
+                message: 'Could not find document'
+              })
+            );
+            // stop any code after this from running
+            return;
+          }
+          // shaping the data in snapshot and pass it to data function
+          data(dataFromSnapshot(snapshot));
+          dispatch(asyncActionFinish());
+        },
+        (error) => dispatch(asyncActionError(error))
+      );
+      return () => {
+        unsubscribe();
+      };
+    }, deps); // eslint-disable-line react-hooks/exhaustive-deps
+    ```
+- So in the event that we don't get back an event doc from Firestore (event doesn't exist), we're rendering the `<LoadingComponent />` component. However, the loading indicator keeps running and we're not turning it off as long as we don't have an event doc for the EventDetailedPage
 
 
 
