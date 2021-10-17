@@ -3673,6 +3673,55 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     ```
 - So in the event that we don't get back an event doc from Firestore (event doesn't exist), we're rendering the `<LoadingComponent />` component. However, the loading indicator keeps running and we're not turning it off as long as we don't have an event doc for the EventDetailedPage
 
+### [9. Adding an error component: ErrorComponent]()
+- The current problem we're having is if no event document is found, the `<LoadingComponent />` is continuously running. Also, we're not letting our user know what's going on or why we're not able to display the event detail on the page. So we're going to create an error component to handle errors and redirect user
+- In src/app/common/errors folder, create a component/file called ErrorComponent.jsx
+- In ErrorComponent.jsx file:
+  - Import the following:
+    ```javascript
+    import React from 'react';
+    import { useSelector } from 'react-redux';
+    import { Button, Header, Segment } from 'semantic-ui-react';
+    import { Link } from 'react-router-dom';
+    ```
+  - Write an ErrorComponent functional component that displays an error message and a button that directs the user to the events page
+    - Extract the error property from asyncReducer using useSelector() hook
+      - `const { error } = useSelector((state) => state.async);`
+    ```javascript
+    export default function ErrorComponent() {
+      const { error } = useSelector((state) => state.async);
+
+      return (
+        <Segment placeholder>
+          <Header
+            textAlign='center'
+            content={error?.message || 'Oops - we have an error'}
+          />
+          <Button
+            as={Link}
+            to='/events'
+            primary
+            style={{ marginTop: 20 }}
+            content='Return to events page'
+          />
+        </Segment>
+      );
+    }
+    ```
+- In App.jsx file:
+  - Import the ErrorComponent: `import ErrorComponent from '../common/errors/ErrorComponent';`
+  - Create a route for the ErrorComponent
+    - `<Route path='/error' component={ErrorComponent} />`
+    - When we redirect user to '/error', the ErrorComponent will render
+- In EventDetailedPage.jsx file:
+  - Import the Redirect component: `import { Redirect } from 'react-router-dom';`
+  - Extract the error property from asyncReducer using useSelector() hook
+    - `const { loading, error } = useSelector((state) => state.async);`
+  - If loading is true OR if there's no event AND no error, render the LoadingComponent
+    - `if (loading || (!event && !error)) return <LoadingComponent content='Loading event...' />;`
+  - Write a condition that checks for the error state. If there's an error, render the `<Redirect />` component (from react-router-dom) and set the path to '/error'. The route of this '/error' path will render the ErrorComponent on the error page
+    - `if (error) return <Redirect to='/error' />;`
+
 
 
 
