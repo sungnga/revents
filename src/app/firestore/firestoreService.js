@@ -26,7 +26,7 @@ export function dataFromSnapshot(snapshot) {
 
 // querying the events collection
 export function listenToEVentsFromFirestore() {
-	return db.collection('events');
+	return db.collection('events').orderBy('date');
 }
 
 // querying an event document in events collection

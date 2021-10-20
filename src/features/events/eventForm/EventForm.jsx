@@ -67,6 +67,11 @@ function EventForm({ match, history }) {
 	});
 
 	useFirestoreDoc({
+		// cast the match.params.id into a boolean
+		// by default, shouldExecute is set to true
+		// if no event id (shouldExecute is false), return early
+		// this stops from listening to firestore
+		shouldExecute: !!match.params.id,
 		// query an event doc in the events collection in Firestore db
 		query: () => listenToEventFromFirestore(match.params.id),
 		// store the event in Redux store
@@ -74,8 +79,7 @@ function EventForm({ match, history }) {
 		deps: [match.params.id, dispatch]
 	});
 
-	if (loading || (!selectedEvent && !error))
-		return <LoadingComponent content='Loading event...' />;
+	if (loading) return <LoadingComponent content='Loading event...' />;
 
 	if (error) return <Redirect to='/error' />;
 
