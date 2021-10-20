@@ -15,6 +15,7 @@ import MyPlaceInput from '../../../app/common/form/MyPlaceInput';
 import useFirestoreDoc from '../../../app/hooks/useFirestoreDoc';
 import {
 	addEventToFirestore,
+	cancelEventToggle,
 	listenToEventFromFirestore,
 	updateEventInFirestore
 } from '../../../app/firestore/firestoreService';
@@ -132,6 +133,19 @@ function EventForm({ match, history }) {
 							dateFormat='MMMM d, yyyy h:mm a'
 						/>
 
+						{selectedEvent && (
+							<Button
+								type='button'
+								floated='left'
+								color={selectedEvent.isCancelled ? 'green' : 'red'}
+								content={
+									selectedEvent.isCancelled
+										? 'Reactivate event'
+										: 'Cancel event'
+								}
+								onClick={() => cancelEventToggle(selectedEvent)}
+							/>
+						)}
 						<Button
 							loading={isSubmitting}
 							disabled={!isValid || !dirty || isSubmitting}
