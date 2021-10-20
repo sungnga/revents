@@ -3929,6 +3929,73 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     )}
     ```
 
+### [14. Adding a confirmation prompt]()
+- When the user clicks on the 'Cancel Event' or 'Reactivate Event' button, we want to display a confirmation dialog box for them to confirm. Semantic UI has a Confirm component that we can use to achieve this
+- In EventForm.jsx file:
+  - Import the cancelEventToggle function: `import { cancelEventToggle } from '../../../app/firestore/firestoreService';`
+  - Import Semantic Confirm component: `import { Confirm } from 'semantic-ui-react';`
+  - Create a loadingCancel state using useState() hook and initialize its value to false
+    - `const [loadingCancel, setLoadingCancel] = useState(false);`
+  - Create a confirmOpen state using useState() hook and initialize its value to false
+    - `const [confirmOpen, setConfirmOpen] = useState(false);`
+  - Write an async handleCancelToggle function to handle the onConfirm event from the Confirm component. onConfirm, this function executes the cancelEventToggle() function to toggle the isCancelled property in Firestore
+    - This function takes an event as an argument
+    - Toggle the isCancelled property in a try/catch block
+    - Since this is an async operation where it takes sometime to complete, we want to indicate the loading state as well
+    - If there's an error, use toast.error() method to send a notification that an error has occurred
+    ```javascript
+    const [loadingCancel, setLoadingCancel] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
+    async function handleCancelToggle(event) {
+      setConfirmOpen(false);
+      setLoadingCancel(true);
+      try {
+        await cancelEventToggle(event);
+        setLoadingCancel(false);
+      } catch (error) {
+        setLoadingCancel(true);
+        toast.error(error.message);
+      }
+    }
+    ```
+  - In the 'Cancel Event' or 'Reactivate Event' Button element:
+    - Add a loading property and set it to loadingCancel state
+    - On the onClick event handling, call the setConfirmOpen() and set it to true. So when the button is clicked, the Confirm dialog box will open
+    ```javascript
+    {selectedEvent && (
+      <Button
+        loading={loadingCancel}
+        type='button'
+        floated='left'
+        color={selectedEvent.isCancelled ? 'green' : 'red'}
+        content={
+          selectedEvent.isCancelled
+            ? 'Reactivate Event'
+            : 'Cancel Event'
+        }
+        onClick={() => setConfirmOpen(true)}
+      />
+    )}
+    ```
+  - Right after the `<Formik />` component, instantiate the Semantic UI `<Confirm />` component
+    - If the 'Cancel' button is clicked, the Confirm dialog box will close
+    - If the 'Confirm' button is clicked, the handleCancelToggle() function is executed
+    - Depending on the isCancelled state, one of the two messages will display
+    - NOTE: add a `?` after the `selectedEvent` to indicate that selectedEvent is optional
+    ```javascript
+    <Confirm
+      content={
+        selectedEvent?.isCancelled
+          ? 'This will reactivate the event - are you sure?'
+          : 'This will cancel the event - are you sure?'
+      }
+      open={confirmOpen}
+      onCancel={() => setConfirmOpen(false)}
+      onConfirm={() => handleCancelToggle(selectedEvent)}
+    />
+    ```
+
 
 
 
