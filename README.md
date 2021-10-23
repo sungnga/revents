@@ -3997,6 +3997,82 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     ```
 
 
+## AUTHENTICATION
+
+**Firebase Authentication**
+- Tightly integrated with Firebase services. We use this to secure our application when we create some security rules
+- Token based (JWT). Uses Jason Web Token to pass with every request that goes to Firebase and Firestore. And it is stored in the client's browser for persistence
+- Email and password. We can use email and password for authentication
+- Social logins. Can also utilize social logins like Facebook and Google
+- We will look into 3 options: email/password, Facebook, and Google
+
+**Users**
+- Firestore User properties
+  - Unique ID (uid)
+  - Email address
+  - Name
+  - PhotoURL
+- Cannot add additional properties to the User object directly
+- We're going store user profile which have more flexibility. Can store additional properties in Firestore
+
+### [1. Logging in with email and password]()
+- We want a user to login to our application with their email and password. To enable this functionality, we first need to enable email and password sign-in method in Firebase authentication. Then the Firebase SDK comes with a handle of auth methods that we can use to authenticate a user
+- **Enable email and password sign-in method in Firebase:**
+- Go to Google Firebase console: https://console.firebase.google.com/
+- Click on Authentication in main menu. Then in Authentication page, select 'Sign-in method' at the top menu bar
+  - It'll list all the different options
+  - Enable Email/Password, the first item on the list
+- Let's create a user manually with email/password
+- Select 'Users' at the top menu bar
+  - Click on 'Add user' button to add a user
+  - Fill in the Email and Password for the user
+  - Once a user has been created, a user UID is created for this user
+  - All the users are listed in this 'Users' tab
+- **Add the functionality of sign in user with email and password:**
+  - Firebase has a method that we can use to sign in a user with the email and password they provide from the login form
+- In src/app/firestore folder, create a file called firebaseService.js
+- In firebaseService.js file:
+  - Import firebase from config folder to get access to Firebase SDK: `import firebase from '../config/firebase';`
+  - Write a signInWithEmail function that signs in a user in Firebase with email and password
+    - This function accepts `creds` (user's email and password from LoginForm) as an argument
+    - Call the firebase.auth().signInWithEmailAndPassword() method and pass in the email and password
+    - Once this is submitted to Firebase auth, the result returned is information about this user. The result of this user will be used as a payload when dispatching the signInUser() action creator
+    ```javascript
+    import firebase from '../config/firebase';
+
+    // The creds is user's email and password coming from LoginForm
+    // The result returned from firebase is an auth user object
+    // The user object contains data about this user
+    export function signInWithEmail(creds) {
+      return firebase
+        .auth()
+        .signInWithEmailAndPassword(creds.email, creds.password);
+    }
+    ```
+- In authActions.js file:
+  - Update the signInUser action function:
+    - This function accepts user as an argument
+    - This function returns an action object
+      - with action type of SIGN_IN_USER
+      - and payload of user. This user object contains information about this particular user when they signed in to Firebase. Now we're storing it in the authReducer
+    ```javascript
+    export function signInUser(user) {
+      return {
+        type: SIGN_IN_USER,
+        payload: user
+      };
+    }
+    ```
+- In authReducer.jsx file:
+  - Let's also update the `initialState` object where by default a user is not authenticated and we have no current user
+    ```javascript
+    const initialState = {
+      authenticated: false,
+      currentUser: null
+    };
+    ```
+
+
 
 
 

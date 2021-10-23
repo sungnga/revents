@@ -1,13 +1,11 @@
 import { SIGN_IN_USER, SIGN_OUT_USER } from './authConstants';
 
 const initialState = {
-	authenticated: true,
-	currentUser: {
-		email: 'bob@test.com',
-		photoURL: '/assets/user.png'
-	}
+	authenticated: false,
+	currentUser: null
 };
 
+// the payload here is the result we got back from firebase of the auth user credential
 function authReducer(state = initialState, { type, payload }) {
 	switch (type) {
 		case SIGN_IN_USER:
@@ -21,6 +19,7 @@ function authReducer(state = initialState, { type, payload }) {
 			};
 		case SIGN_OUT_USER:
 			return {
+				...state,
 				authenticated: false,
 				currentUser: null
 			};

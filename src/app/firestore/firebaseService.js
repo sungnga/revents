@@ -1,0 +1,10 @@
+import firebase from '../config/firebase';
+
+// The creds is user's email and password coming from LoginForm
+// The result returned from firebase is an auth user object
+// The user object contains data about this user
+export function signInWithEmail(creds) {
+	return firebase
+		.auth()
+		.signInWithEmailAndPassword(creds.email, creds.password);
+}
