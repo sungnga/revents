@@ -8,3 +8,8 @@ export function signInWithEmail(creds) {
 		.auth()
 		.signInWithEmailAndPassword(creds.email, creds.password);
 }
+
+// Sign out user in firebase
+export function signOutFirebase() {
+	return firebase.auth().signOut();
+}

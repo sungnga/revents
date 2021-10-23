@@ -4141,6 +4141,42 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }}
     ```
 
+### [3. Signing out the user in Firebase]()
+- When a user clicks on the 'Sign out' button, we want the user sign out in Firebase. Firebase auth has a .signOut() method that we can use to achieve this
+- In firebaseService.js file:
+  - Write a signOutFirebase function that signs out user in Firebase
+    - This function doesn't take any arguments
+    - Call the firebase.auth().signOut() method to sign out the user in Firebase auth
+    ```javascript
+    export function signOutFirebase() {
+      return firebase.auth().signOut();
+    }
+    ```
+- In SignedInMenu.jsx file:
+  - Import the signOutFirebase method: `import { signOutFirebase } from '../../app/firestore/firebaseService';`
+  - Import toast: `import { toast } from 'react-toastify';`
+  - Write an async handleSignOut function to handle signing out a user in Firebase when the 'Sign out' button is clicked
+    - Since this is an async function we'll run the code inside a try/catch block
+    - If there's any problems with signing out, call the toast.error() method to display a notification of the error
+    - Call the signOutFirebase() method and add the 'await' keyword in front of it
+    - We want to wait for the signOutFirebase() function to complete, signed out in Firebase, before pushing the user to homepage.
+    ```javascript
+    import { signOutFirebase } from '../../app/firestore/firebaseService';
+    import { toast } from 'react-toastify';
+
+    async function handleSignOut() {
+      try {
+        await signOutFirebase();
+        history.push('/');
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
+    ```
+  - On the onClick event handler for 'Sign out' Dropdown, call the handleSignOut method
+    - `<Dropdown.Item onClick={handleSignOut} text='Sign out' icon='power' />`
+- By signing out a user, the auth state in Firebase is changed. Our verifyAuth action creator is continuously listening to the user auth state change. So if there's a change in auth state, the verifyAuth function will execute. The verifyAuth function will dispatch the signInUser action creator if there's a user or dispatch the signOutUser action creator if there's no user. This updates the authReducer in Redux store
+
 
 
 
