@@ -4072,6 +4072,74 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     };
     ```
 
+### [2. Persisting the login]()
+- What Firebase and Firestore uses to retain information inside the browser to persist things like user login is inside the Application/Storage/IndexedDB/firebaseLocalStorageDb
+- When we login with a user or do anything with authentication, then Firebase gives us a listener for when the authentication state is changed. The `firebase.auth().onAuthStateChanged()` method adds an observer for changes to the user's sign-in state. So when a user logs in or a user logs out, then this particular method is going to listen for that particular status. And then we can dispatch actions when the authentication state is changed
+- We'll use this method and what it returns is a Firebase user object. So we're going to check to see if we have a user. If a user is authenticated, then we have a user object
+- In authActions.js file:
+  - Import firebase from config folder to get access to Firebase SDK: `import firebase from '../../app/config/firebase';`
+  - Write a verifyAuth action function that listens to the firebase authentication state change
+    - This function returns a regular function that takes in a dispatch as an argument
+    - Inside this return function, we're going to call the firebase.auth().onAuthStateChange() method. This method will return a user object
+    - Write an if statement to check if there's a user
+    - If there is a user, dispatch the signInUser() action and pass in the user object
+    - If there isn't a user, dispatch the signOutUser() action. This function sets the authenticated property to false and the currentUser property to null
+    ```javascript
+    import firebase from '../../app/config/firebase';
+
+    export function verifyAuth() {
+      return function (dispatch) {
+        return firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            dispatch(signInUser(user));
+          } else {
+            dispatch(signOutUser());
+          }
+        });
+      };
+    }
+    ```
+- We can dispatch this verifyAuth() action directly in our store configuration. So when we initialize our store, we dispatch this action and we're going to be continuously listening to the authentication state
+- In configureStore.js file:
+  - Import the verifyAuth() action function: `import { verifyAuth } from '../../features/auth/authActions';`
+  - We're going to make an adjustment to the store object. We don't want to return the store directly. We want to do something to the store and then return the store
+  - First, create a `store` variable to store the store object when we call the createStore() method
+  - Then call the dispatch function on the store to dispatch the verifyAuth() action to the store
+  - Then return the store
+    ```javascript
+    import { verifyAuth } from '../../features/auth/authActions';
+
+    export function configureStore() {
+      // The createStore method takes a reducer and an enhancer as arguments
+      const store = createStore(
+        rootReducer,
+        composeWithDevTools(applyMiddleware(thunk))
+      );
+
+      // Continuously listening to user auth state change
+      store.dispatch(verifyAuth());
+
+      return store;
+    }
+    ```
+- Next is we want to display a loading indicator while the user authentication process is taking place on Firebase
+- In LoginForm.jsx file:
+  - Import the signInWithEmail function: `import { signInWithEmail } from '../../app/firestore/firebaseService';`
+  - Since the signInWithEmail() function is an async function, we need to turn the arrow function that handles the onSubmit event into an async/await function by adding the `async` keyword in front of it
+  - Also, we need to run the code inside a try/catch block. This way, if an error occurs during the request we can catch it
+  - Call the signInWithEmail() method and pass in the values. Add the 'await' keyword in front of this function because we're waiting for this function to complete
+    ```javascript
+    onSubmit={async (values, { setSubmitting }) => {
+      try {
+        await signInWithEmail(values);
+        setSubmitting(false);
+        dispatch(closeModal());
+      } catch (error) {
+        setSubmitting(false);
+        console.log(error);
+      }
+    }}
+    ```
 
 
 
