@@ -64,3 +64,12 @@ export function cancelEventToggle(event) {
 		isCancelled: !event.isCancelled
 	});
 }
+
+// set user profile data in users collection
+export function setUserProfileData(user) {
+	return db.collection('users').doc(user.uid).set({
+		displayName: user.displayName,
+		email: user.email,
+		createdAt: firebase.firestore.FieldValue.serverTimestamp()
+	});
+}

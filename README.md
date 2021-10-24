@@ -4343,6 +4343,57 @@ In the LoginForm, we want to display an error message to the user if they aren't
     )}
     ```
 
+### [6. Setting user profile data in Firestore and Firebase]()
+- After we registered a new user in Firebase we want to add the user profile data into Firestore database as well. And we want to do this all in one function. By storing user profile in Firestore db, we get live updates when they make changes to their profile information. So we're going to add users profile data into Firestore db. Right now we have events collection in Firestore. We're going to have a collection of document for each user that registers to our application
+- In firestoreService file:
+  - Write a setUserProfileData function that creates a 'users' collection in Firestore db that contains a collection of user profile documents
+    - This function takes user as an argument
+    - Call the db.collection('users').doc(user.uid).set() method to create and set a document in a collection
+      - We don't need to have a collection already in place. If the specified collection doesn't exist, it will create one
+      - A .set() method allows us to specify a document reference (user.uid) ourselves even though we're creating this document at the same time
+      - Specify the document, the document's Fields, inside the .set() method
+      - For each user document, create the 'displayName', 'email', and 'createdAt' fields
+    ```javascript
+    // Set user profile data in users collection
+    export function setUserProfileData(user) {
+      return db.collection('users').doc(user.uid).set({
+        displayName: user.displayName,
+        email: user.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    ```
+- The Firebase's registerInFirebase() function performs three operations in sequential order:
+  - Registers a new user with their email and password in Firebase auth
+  - Adds the displayName property to the user object
+  - Attempts to set the user profile data in Firestore db and returns this user document
+- In firebaseService file:
+  - Import the setUserProfileData function: `import { setUserProfileData } from './firestoreService';`
+  - In the registerInFirebase function:
+    - Call the setUserProfileData() method and pass in result.user as an argument. Add the 'await' keyword in front of it because we need to wait for this function to complete. Also add 'return' in front of it, so that we can use the returned result in our application
+    ```javascript
+    import { setUserProfileData } from './firestoreService';
+
+    // Register new user in firebase
+    // After registering a user is completed, add the displayName property to the user object
+    // After register a user in firebase, set the user profile data in firestore db
+    export async function registerInFirebase(creds) {
+      try {
+        const result = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(creds.email, creds.password);
+        await result.user.updateProfile({
+          displayName: creds.displayName
+        });
+        return await setUserProfileData(result.user);
+      } catch (error) {
+        throw error;
+      }
+    }
+    ```
+
+
+
 
 
 
