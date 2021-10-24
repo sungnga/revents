@@ -1,13 +1,15 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import LoginForm from '../../../features/auth/LoginForm';
 import TestModal from '../../../features/sandbox/TestModal';
+import LoginForm from '../../../features/auth/LoginForm';
+import RegisterForm from '../../../features/auth/RegisterForm';
 
 function ModalManager() {
 	// modalType to lookup will be listed here
 	const modalLookup = {
 		TestModal,
-		LoginForm
+		LoginForm,
+		RegisterForm
 	};
 	// get the modals state from the store
 	const currentModal = useSelector((state) => state.modals);

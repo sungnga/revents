@@ -13,3 +13,18 @@ export function signInWithEmail(creds) {
 export function signOutFirebase() {
 	return firebase.auth().signOut();
 }
+
+// Register new user in firebase
+// After registering a user is completed, add the displayName property to the user object
+export async function registerInFirebase(creds) {
+	try {
+		const result = await firebase
+			.auth()
+			.createUserWithEmailAndPassword(creds.email, creds.password);
+		return await result.user.updateProfile({
+			displayName: creds.displayName
+		});
+	} catch (error) {
+		throw error;
+	}
+}
