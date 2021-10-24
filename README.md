@@ -4280,6 +4280,68 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - On the onSubmit event handler, call the registerInFirebase() method inside the try block and pass in the values as an argument. Add the 'await' keyword in front of it since this is an async operation
     - `await registerInFirebase(values);`
 
+### [5. Handling auth errors in LoginForm and RegisterForm]()
+- Let's handle errors with user authentication - something went wrong when they attempt to login or register as a new user
+In the LoginForm, we want to display an error message to the user if they aren't able to login
+- In LoginForm.jsx file:
+  - Import Semantic Label component: `import { Label } from 'semantic-ui-react';`
+  - In the onSubmit event handler:
+    - Extract the setErrors props from Formik
+    - Inside the catch block:
+      - Call the setErrors() method and we can add an additional `auth` key to the `errors` object. Also, we can set our own custom error message to the user rather than using the error message we got from firebase. We can set an error message like 'Problem with username or password'
+    ```javascript
+    onSubmit={async (values, { setSubmitting, setErrors }) => {
+      try {
+        await signInWithEmail(values);
+        setSubmitting(false);
+        dispatch(closeModal());
+      } catch (error) {
+        // Setting a custom error message rather than error message from firebase
+        setErrors({ auth: 'Problem with username or password' });
+        setSubmitting(false);
+      }
+    }}
+    ```
+  - Then in the render props:
+    - Extract the `errors` object props
+      - `{({ isSubmitting, isValid, dirty, errors }) => ( .. )`
+    - Just above the Button element, check to see if there's an error in `errors.auth`
+    - If there is, render a Label with the error message displayed
+    ```javascript
+    {errors.auth && (
+      <Label
+        basic
+        color='red'
+        style={{ marginBottom: 10 }}
+        content={errors.auth}
+      />
+    )}
+    ```
+- In the RegisterForm.jsx file:
+  - Do the exact same thing as the LoginForm. But for the RegisterForm, we want to display the error.message coming from Firebase
+    ```javascript
+    onSubmit={async (values, { setSubmitting, setErrors }) => {
+      try {
+        await registerInFirebase(values);
+        setSubmitting(false);
+        dispatch(closeModal());
+      } catch (error) {
+        setErrors({ auth: error.message });
+        setSubmitting(false);
+      }
+    }}
+    ```
+  - Render the error message just above the button element on the RegisterForm
+    ```js
+    {errors.auth && (
+      <Label
+        basic
+        color='red'
+        style={{ marginBottom: 10 }}
+        content={errors.auth}
+      />
+    )}
+    ```
 
 
 
