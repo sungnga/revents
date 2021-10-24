@@ -4392,7 +4392,35 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-
+### [7. Creating a social login component: SocialLogin component]()
+- In src/features/auth folder, create a component/file called SocialLogin.jsx
+- In SocialLogin.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic Button component: `import { Button } from 'semantic-ui-react';`
+  - Write a SocialLogin functional component that renders a Facebook and Google login buttons 
+    ```javascript
+    import React from 'react';
+    import { Button } from 'semantic-ui-react';
+    
+    export default function SocialLogin() {
+      return (
+        <>
+          <Button icon='facebook' fluid color='facebook' style={{ marginBottom: 10 }} content='Login with Facebook' />
+          <Button icon='google' fluid color='google plus' content='Login with Google' />
+        </>
+      );
+    }
+    ```
+- In LoginForm.jsx and RegisterForm.jsx files:
+  - Import Semantic Button component: `import { Divider } from 'semantic-ui-react';`
+  - Import the SocialLogin component: `import SocialLogin from './SocialLogin';`
+  - Inside the Form component:
+    - Right after the Button element, add a horizontal Semantic Divider component with the text Or
+    - Underneath that, render the SocialLogin component
+    ```javascript
+    <Divider horizontal>Or</Divider>
+    <SocialLogin />
+    ```
 
 
 
