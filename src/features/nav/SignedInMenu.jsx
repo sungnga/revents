@@ -25,10 +25,7 @@ function SignedInMenu() {
 				spaced='right'
 				src={currentUser.photoURL || '/assets/user.png'}
 			/>
-			<Dropdown
-				pointing='top left'
-				text={String(currentUser.email).split('@')[0] || 'User'}
-			>
+			<Dropdown pointing='top left' text={currentUser.displayName}>
 				<Dropdown.Menu>
 					<Dropdown.Item
 						as={Link}

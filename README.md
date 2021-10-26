@@ -4657,6 +4657,40 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Make this dropdown as a link and set the pathname to '/account'
   - `<Dropdown.Item as={Link} to='/account' text='My account' icon='settings' />`
 
+### [12. Adding additional user info into the authReducer]()
+- Once a user is successfully logged into our app, either through email/password, Facebook, or Google, Firebase Auth returns the user data from the provider. One of the properties called `providerData` contains the property `providerId` that tells the method which the user used to sign into the application. We can display different content on the page based on how they signed in
+- In authReducer.js file:
+  - In the SIGN_IN_USER case, add additional properties to the currentUser object
+    ```javascript
+    // the provider is the method the user signed into the app
+    // email/password = password, fb = facebook.com, google = google.com
+		case SIGN_IN_USER:
+			return {
+				...state,
+				authenticated: true,
+				currentUser: {
+					email: payload.email,
+					photoURL: payload.photoURL,
+					uid: payload.uid,
+					displayName: payload.displayName,
+					providerId: payload.providerData[0].providerId
+				}
+			};
+    ```
+- In SignedInMenu.jsx file:
+  - Once the user is logged in, we want to display their displayName instead of their email address at the top NavBar
+  - In the Dropdown component, change the text property to currentUser.displayName
+    - `<Dropdown pointing='top left' text={currentUser.displayName}>`
+- In AccountPage.jsx file:
+  - Import useSelector() hook: `import { useSelector } from 'react-redux';`
+  - Extract the currentUser property from authReducer using useSelector() hook
+    - `const { currentUser } = useSelector((state) => state.auth);`
+  - The currentUser.providerId property will tell which provider the user used to log into our application. It's either password, facebook, or google. We only want to display the relevant content based on the provider they used to login
+  - In the render section:
+    - Add conditional logic to display the proper content based on the provider the user used to login. Do this for all three providers
+    - `{currentUser.providerId === 'password' && ( ... )`
+    - `{currentUser.providerId === 'facebook.com' && ( ... )`
+    - `{currentUser.providerId === 'google.com' && ( ... )`
 
 
 
