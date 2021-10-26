@@ -4554,6 +4554,111 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - Enable Google Sign-in. Provide Project support email and click Save. Easy peasy
 - Now when a user logs in with Google, if they're a new user to our application, a user object will be created in Firebase Auth and a user document created in Firestore db
 
+### [11. Adding an account page: AccountPage component]()
+- Create an account page that allows users to change their password. We will use Formik form validation before submitting the new password. If they logged in with Facebook or Google we provide a link to Facebook or Google to change their password there
+- In src/features/auth folder, create a component/file called AccountPage.jsx
+- In AccountPage.jsx file:
+  - Import the following:
+    ```javascript
+    import React from 'react';
+    import { Form, Formik } from 'formik';
+    import { Link } from 'react-router-dom';
+    import { Button, Header, Label, Segment } from 'semantic-ui-react';
+    import * as Yup from 'yup';
+    import MyTextInput from '../../app/common/form/MyTextInput';
+    ```
+  - Write a AccountPage functional component that renders the user account page using Formik and Semantic UI
+    - This account page allows user to change their password
+    - If they signed in with Facebook or Google, buttons that take them to Facebook or Google website to update their account there
+    ```javascript
+    export default function AccountPage() {
+      return (
+        <Segment>
+          <Header dividing size='large' content='Account' />
+          <div>
+            <Header color='teal' sub content='Change Password' />
+            <p>Use this form to change your password</p>
+            <Formik
+              initialValues={{ newPassword1: '', newPassword2: '' }}
+              validationSchema={Yup.object({
+                newPassword1: Yup.string().required('Password is required'),
+                newPassword2: Yup.string().oneOf(
+                  [Yup.ref('newPassword1'), null],
+                  'Passwords do not match'
+                )
+              })}
+              onSubmit={(values) => {
+                console.log(values);
+              }}
+            >
+              {({ errors, isSubmitting, isValid, dirty }) => (
+                <Form className='ui form'>
+                  <MyTextInput
+                    name='newPassword1'
+                    type='password'
+                    placeholder='New Password'
+                  />
+                  <MyTextInput
+                    name='newPassword2'
+                    type='password'
+                    placeholder='Confirm Password'
+                  />
+                  {errors.auth && (
+                    <Label
+                      basic
+                      color='red'
+                      style={{ marginBottom: 10 }}
+                      content={errors.auth}
+                    />
+                  )}
+                  <Button
+                    type='submit'
+                    disabled={!isValid || !dirty || isSubmitting}
+                    size='large'
+                    positive
+                    content='Update password'
+                  />
+                </Form>
+              )}
+            </Formik>
+          </div>
+          <div>
+            <Header color='teal' sub content='Facebook account' />
+            <p>Please visit Facebook to update your account</p>
+            <Button
+              icon='facebook'
+              color='facebook'
+              as={Link}
+              to='https://facebook.com'
+              content='Go to Facebook'
+            />
+          </div>
+          <div>
+            <Header color='teal' sub content='Google account' />
+            <p>Please visit Google to update your account</p>
+            <Button
+              icon='google'
+              color='google plus'
+              as={Link}
+              to='https://google.com'
+              content='Go to Google'
+            />
+          </div>
+        </Segment>
+      );
+    }
+    ```
+- In App.jsx file:
+  - Import the AccountPage component: `import AccountPage from '../../features/auth/AccountPage';`
+  - Create a route for the AccountPage component. Set the path to '/account'
+    - `<Route path='/account' component={AccountPage} />`
+- In SignedInMenu.jsx file:
+  - Right after the 'My profile' Dropdown.Item, add a 'My account' Dropdown.Item
+  - Make this dropdown as a link and set the pathname to '/account'
+  - `<Dropdown.Item as={Link} to='/account' text='My account' icon='settings' />`
+
+
+
 
 
 
