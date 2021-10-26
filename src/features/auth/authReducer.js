@@ -14,7 +14,7 @@ function authReducer(state = initialState, { type, payload }) {
 				authenticated: true,
 				currentUser: {
 					email: payload.email,
-					photoURL: '/assets/user.png'
+					photoURL: payload.photoURL
 				}
 			};
 		case SIGN_OUT_USER:
