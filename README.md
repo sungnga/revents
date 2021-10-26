@@ -4548,7 +4548,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
   ```
 - NOTE: if there's a problem logging in with Facebook with error messages such as this URL is not available and try later or privacy issues, wait for a little while (4 hours) and try to login again with the Test User email and password
 
-
+### [10. Google login setup]()
+- Go to Google Firebase console: https://console.firebase.google.com/
+- Click on Authentication in main menu. Then in Authentication page, select 'Sign-in method' at the top menu bar
+- Enable Google Sign-in. Provide Project support email and click Save. Easy peasy
+- Now when a user logs in with Google, if they're a new user to our application, a user object will be created in Firebase Auth and a user document created in Firestore db
 
 
 
