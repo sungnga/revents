@@ -1,13 +1,15 @@
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Header, Label, Segment } from 'semantic-ui-react';
 import MyTextInput from '../../app/common/form/MyTextInput';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { updateUserPassword } from '../../app/firestore/firebaseService';
 
 function AccountPage() {
 	const { currentUser } = useSelector((state) => state.auth);
+	const [updateSuccess, setUpdateSuccess] = useState(false);
 
 	return (
 		<Segment>
@@ -27,8 +29,16 @@ function AccountPage() {
 									'Passwords do not match'
 								)
 						})}
-						onSubmit={(values) => {
-							console.log(values);
+						onSubmit={async (values, { setSubmitting, setErrors }) => {
+							try {
+								await updateUserPassword(values);
+								setUpdateSuccess(true);
+							} catch (error) {
+								setErrors({ auth: error.message });
+							} finally {
+								// run this code no matter what
+								setSubmitting(false);
+							}
 						}}
 					>
 						{({ errors, isSubmitting, isValid, dirty }) => (
@@ -51,9 +61,19 @@ function AccountPage() {
 										content={errors.auth}
 									/>
 								)}
+								{updateSuccess && (
+									<Label
+										basic
+										color='green'
+										style={{ marginBottom: 10 }}
+										content='Update password success'
+									/>
+								)}
 								<Button
+									style={{ display: 'block' }}
 									type='submit'
 									disabled={!isValid || isSubmitting || !dirty}
+									loading={isSubmitting}
 									size='large'
 									positive
 									content='Update password'
