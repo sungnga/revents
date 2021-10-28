@@ -4825,7 +4825,101 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 
 
+## USER PROFILES
 
+### [1. Adding a profile page: ProfilePage and ProfileHeader components]()
+- Let's start creating the user profile page. This page contains the profile header and profile content
+- The profile header contains:
+  - user profile image
+  - user display name
+  - the number of followers
+  - the number of following
+  - a button that displays whether the authenticated user is following this user or not. This button can toggle between following and unfollow
+- In src/features/profiles/profilePage folder, create a component/file called ProfilePage.jsx
+- In ProfilePage.jsx file:
+  - Import the following:
+    ```js
+    import React from 'react';
+    import { Grid } from 'semantic-ui-react';
+    import ProfileHeader from './ProfileHeader';
+    ```
+  - Write a ProfilePage functional component that renders the ProfileHeader and ProfileContent components using Semantic UI
+    - Render the ProfileHeader component and Profile content inside a 16-width grid column
+    ```javascript
+    export default function ProfilePage() {
+      return (
+        <Grid>
+          <Grid.Column width={16}>
+            <ProfileHeader />
+            <h1>Profile content</h1>
+          </Grid.Column>
+        </Grid>
+      );
+    }
+    ```
+- In features/profiles/profilePage folder, create a component/file called ProfileHeader.jsx
+- In ProfileHeader.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic components: `import { Button, Divider, Grid, Header, Item, Reveal, Segment, Statistic } from 'semantic-ui-react';`
+  - Write a ProfileHeader functional component that renders 
+    - a 12-width column grid of the user profile picture and display name
+    - a 4-width column grid of the user's statistics of number of following and followers
+    ```javascript
+    export default function ProfileHeader() {
+      return (
+        <Segment>
+          <Grid>
+            <Grid.Column width={12}>
+              <Item.Group>
+                <Item>
+                  <Item.Image avatar size='small' src='/assets/user.png' />
+                  <Item.Content verticalAlign='middle'>
+                    <Header
+                      as='h1'
+                      style={{ display: 'block', marginBottom: 10 }}
+                      content='Display name'
+                    />
+                  </Item.Content>
+                </Item>
+              </Item.Group>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <Statistic.Group>
+                <Statistic label='Followers' value={10} />
+                <Statistic label='Following' value={5} />
+              </Statistic.Group>
+              <Divider />
+              <Reveal animated='move'>
+                <Reveal.Content visible style={{ width: '100%' }}>
+                  <Button fluid color='teal' content='Following' />
+                </Reveal.Content>
+                <Reveal.Content hidden style={{ width: '100%' }}>
+                  <Button basic fluid color='red' content='Unfollow' />
+                </Reveal.Content>
+              </Reveal>
+            </Grid.Column>
+          </Grid>
+        </Segment>
+      );
+    }
+    ```
+- Setup a link so that we can visit the ProfilePage
+- In App.jsx file:
+  - Import the ProfilePage component: `import ProfilePage from '../../features/profiles/profilePage/ProfilePage';`
+  - Create a route for the ProfilePage component right after the route for AccountPage
+    - The path contains the user id
+    - `<Route path='/profile/:id' component={ProfilePage} />`
+- In SignedInMenu.jsx file:
+  - In the jsx section:
+    - Make the 'My profile' Dropdown.Item component as a Link and specify the pathname
+    ```javascript
+    <Dropdown.Item
+      as={Link}
+      to={`/profile/${currentUser?.uid}`}
+      text='My profile'
+      icon='user'
+    />
+    ```
 
 
 
