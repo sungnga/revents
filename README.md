@@ -4921,7 +4921,35 @@ In the LoginForm, we want to display an error message to the user if they aren't
     />
     ```
 
+### [2. Adding the profile content: ProfileContent component]()
+- The layout of the ProfileContent component is we have two columns. On the right column is a vertical menu tab which contains various information about the user. On the left column is the detail content of each menu item
+- In features/profiles/profilePage folder, create a component/file called ProfileContent.jsx
+- In ProfileContent.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic Tab component: `import { Tab } from 'semantic-ui-react';`
+  - Write a ProfileContent functional component that renders the user profile content
+    ```javascript
+    export default function ProfileContent() {
+      const panes = [
+        { menuItem: 'About', render: () => <Tab.Pane>About User</Tab.Pane> },
+        { menuItem: 'Photos', render: () => <Tab.Pane>Photos</Tab.Pane> },
+        { menuItem: 'Events', render: () => <Tab.Pane>Events</Tab.Pane> },
+        { menuItem: 'Followers', render: () => <Tab.Pane>Followers</Tab.Pane> },
+        { menuItem: 'Following', render: () => <Tab.Pane>Following</Tab.Pane> }
+      ];
 
+      return (
+        <Tab
+          menu={{ fluid: true, vertical: true }}
+          menuPosition='right'
+          panes={panes}
+        />
+      );
+    }
+    ```
+- In ProfilePage.jsx file:
+  - Import the ProfileContent component: `import ProfileContent from './ProfileContent';`
+    - In jsx, instantiate the ProfileContent component right after the ProfileHeader component: `<ProfileContent />`
 
 
 
