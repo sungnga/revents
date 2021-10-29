@@ -5084,6 +5084,74 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Set the Header content to display the profile displayName
     - `content={profile.displayName}`
 
+### [5. Adding an about page: AboutTab component]()
+- The About tab displays information about the user. If this profile belongs to the currentUser, the 'Edit' button is available for them to edit their profile information
+- In features/profiles/profilePage folder, create a component/file called AboutTab.jsx
+- In AboutTab.jsx file:
+  - Import the following:
+    ```javascript
+    import React, { useState } from 'react';
+    import { Button, Grid, Header, Tab } from 'semantic-ui-react';
+    import { format } from 'date-fns';
+    ```
+  - Write an AboutTab functional component that renders the user about tab
+    - Receives profile as props from ProfileContent parent component
+    - Create an editMode state using useState() hook and set its initial value to false
+      - The reason why we have the editMode state is the user could edit this page if they like. If it's in editMode, we want to display a form to the user. Else, we want to display the about content
+      - `const [editMode, setEditMode] = useState(false);`
+    - There's a button that toggles between 'Cancel' or 'Edit', depending on the editMode state
+    - The content is wrapped in a `<Tab.Pane />` component. So when a user clicks on the About tab on the right column, the About content is displayed in a pane on the left column
+    ```javascript
+    export default function AboutTab({ profile }) {
+      const [editMode, setEditMode] = useState(false);
+
+      return (
+        <Tab.Pane>
+          <Grid>
+            <Grid.Column width={16}>
+              <Header
+                floated='left'
+                icon='user'
+                content={`About ${profile.displayName}`}
+              />
+              <Button
+                onClick={() => setEditMode(!editMode)}
+                floated='right'
+                basic
+                content={editMode ? 'Cancel' : 'Edit'}
+              />
+            </Grid.Column>
+            <Grid.Column width={16}>
+              {editMode ? (
+                <p>Profile form</p>
+              ) : (
+                <>
+                  <div style={{ marginBottom: 10 }}>
+                    <strong>
+                      Member since: {format(profile.createdAt, 'dd MMM yyyy')}
+                    </strong>
+                    <div>{profile.description || null}</div>
+                  </div>
+                </>
+              )}
+            </Grid.Column>
+          </Grid>
+        </Tab.Pane>
+      );
+    }
+    ```
+- In ProfileContent.jsx file:
+  - Import the AboutTab component: `import AboutTab from './AboutTab';`
+  - The ProfileContent component receives profile as props from ProfilePage parent component. Destructure profile
+    - `export default function ProfileContent({ profile }) { ... }`
+  - Inside the 'About' menuItem:
+    - Render the AboutTab component inside the arrow function
+    - Then pass down the profile props to the AboutTab child component
+    - `{ menuItem: 'About', render: () => <AboutTab profile={profile} /> }`
+
+
+
+
 
 
 
