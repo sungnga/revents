@@ -82,3 +82,24 @@ export function setUserProfileData(user) {
 export function getUserProfile(userId) {
 	return db.collection('users').doc(userId);
 }
+
+// update user profile in Firebase Auth and Firestore db
+export async function updateUserProfile(profile) {
+	//get the currentUser object from firebase auth
+	const user = firebase.auth().currentUser;
+
+	// if the displayName in firebase auth is different from the submitted profile displayName
+	// update the firebase displayName with the submitted displayName
+	// then update the user profile in firestore based on the user uid
+	// if an error occurs, throw the error back to the form
+	try {
+		if (user.displayName !== profile.displayName) {
+			await user.updateProfile({
+				displayName: profile.displayName
+			});
+		}
+		return await db.collection('users').doc(user.uid).update(profile);
+	} catch (error) {
+		throw error;
+	}
+}

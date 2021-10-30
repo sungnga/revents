@@ -5150,6 +5150,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - `{ menuItem: 'About', render: () => <AboutTab profile={profile} /> }`
 
 ### [6. Adding the profile form: ProfileForm component]()
+- The ProfileForm allows the user to edit and update their profile displayName and profile description. This form has form validation (using Formik) where they must provide a displayName. There's also a Cancel button to exit out of ProfileForm
 - In features/profiles/profilePage folder, create a component/file called ProfileForm.jsx
 - In ProfileForm.jsx file:
   - Import the following:
@@ -5207,6 +5208,71 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Pass down the profile props to the ProfileForm child component
     - `{editMode ? ( <ProfileForm profile={profile} /> ) : ( ... )}`
 					
+### [7. Adding the update user actions: updateUserProfile]()
+- When the 'Update profile' button is clicked, we want to update the user profile in Firebase Auth and in the user document in Firestore users collection. And since we're listening to Firebase user profile, the profileReducer in Redux store will receive the update and then the update is display in the page
+- To get this done, we want to check if the currentUser object in the authReducer has a differently displayName. If it does, then we want to update the firebase.auth().currentUser profile in the Firebase using the .updateProfile() method. We also want to update the user profile document in Firestore users collection
+- In firestoreService.js file:
+  - Write an async updateUserProfile function that updates the user profile in Firebase auth and Firestore user document
+    - This function accepts profile as an argument
+    - First, get the currentUser from firebase.auth() and assign it to a user variable
+    - Then use a try/catch block to write the conditional
+    - If there's an error, throw the error back to the form
+    - In the try block:
+      - Write an if statement to check if the user's displayName in Firebase Auth is different from the submitted profile's displayName
+        - If it is, call the .updateProfile() method on the `user` variable and we want to set the displayName property to the displayName of the submitted profile. This is an async operation, so add the 'await' keyword in front of it
+        - This will update the displayName property of the currentUser in Firebase Auth
+      - Once the above is completed, we want to make another async operation to update the user document in Firestore db in the users collection by using the .update() method and pass in profile as an argument
+        - Do this outside of the if statement
+        - Add the 'await' keyword in front of it since we need to wait for this to complete
+        - Lastly, add the return to this operation because we want to use this data that is returned later
+    ```javascript
+    export async function updateUserProfile(profile) {
+      //get the currentUser object from firebase auth
+      const user = firebase.auth().currentUser;
+      
+      // if the displayName in firebase auth is different from the submitted profile displayName
+      // update the firebase displayName with the submitted displayName
+      // then update the user profile in firestore based on the user uid
+      // if an error occurs, throw the error back to the form
+      try {
+        if (user.displayName !== profile.displayName) {
+          await user.updateProfile({
+            displayName: profile.displayName
+          });
+        }
+        return await db.collection('users').doc(user.uid).update(profile);
+      } catch (error) {
+        throw error;
+      }
+    }
+    ```
+- In ProfileForm.jsx file:
+  - When the 'Update profile' button is clicked, the onSubmit event handler will call the updateUserProfile() function asynchronously and takes in the given values to update the user profile 
+  - Import the updateUserProfile function: `import { updateUserProfile } from '../../../app/firestore/firestoreService';`
+  - Import toast: `import { toast } from 'react-toastify';`
+  - In the onSubmit event handler:
+    - Turn the arrow function event handler into an async/await function since the function it's going to call we must wait for it to complete. Add the 'async' keyword in front of the arrow function
+    - This arrow function receives the values and the setSubmitting props as arguments
+    - Inside the arrow function, use a try/catch block to run the async code
+    - If there's an error, call the toast.error() method to display a notification of the error.message from Firestore
+    - In the try block:
+      - Call the updateUserProfile() method and pass in the values as an argument. Add an 'await' in front of it as we must wait for this operation to complete
+    - Finally, use the setSubmitting() method and set it to false. This will turn off the loading indicator
+    ```javascript
+    onSubmit={async (values, { setSubmitting }) => {
+      try {
+        await updateUserProfile(values);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setSubmitting(false);
+      }
+    }}
+    ```
+- NOTE: even though the user profile data is updated in both Firebase Auth and Firestore db, the user displayName in the Navbar does not automatically update unless the user refreshes the page. This is because this displayName in NavBar is listening to Firebase Auth state change from authReducer and not listening to user profile data
+
+
+
 
 
 
