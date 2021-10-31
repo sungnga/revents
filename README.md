@@ -5523,8 +5523,49 @@ In the LoginForm, we want to display an error message to the user if they aren't
 		},
     ```
 
+### [2. Adding a photo upload widget: PhotoUploadWidget component]()
+- In the PhotosTab, when a user clicks on the 'Add Photo' button, it'll take them to the photo upload widget. The PhotoUploadWidget component takes the user step by step to add a photo, resize the photo, and preview and upload the photo
+- In src/app/common/photos folder, create a component/file called PhotoUploadWidget.jsx
+- In PhotoUploadWidget.jsx file:
+  - Import React: `import React from 'react';`
+  - Import Semantic UI components: `import { Grid, Header } from 'semantic-ui-react';`
+  - Write a PhotoUploadWidget functional component creates a structure for the photo upload widget using Semantic UI
+    ```javascript
+    export default function PhotoUploadWidget() {
+      return (
+        <Grid>
+          <Grid.Column width={4}>
+            <Header color='teal' sub content='Step 1 - Add Photo' />
+          </Grid.Column>
+          <Grid.Column width={1} />
 
+          <Grid.Column width={4}>
+            <Header color='teal' sub content='Step 2 - Resize' />
+          </Grid.Column>
+          <Grid.Column width={1} />
 
+          <Grid.Column width={4}>
+            <Header color='teal' sub content='Step 3 - Preview & Upload' />
+          </Grid.Column>
+        </Grid>
+      );
+    }
+    ```
+- In PhotosTab.jsx file:
+  - Import the PhotoUploadWidget component: `import PhotoUploadWidget from '../../../app/common/photos/PhotoUploadWidget';`
+  - In JSX, right where the editMode state is true, render the PhotoUploadWidget component
+    - `{editMode ? ( <PhotoUploadWidget /> ) : ( ... )}`
+- In ProfileContent.jsx file:
+  - By default, whenever we finished performing a task on the active tab, Semantic UI routes the user to the first tab which is the About tab. We want to change this behavior so that it'll always stay on the current active tab
+  - In Semantic UI Tab component, add an activeIndex property and set it to the value 1
+  ```js
+  <Tab
+    menu={{ fluid: true, vertical: true }}
+    menuPosition='right'
+    panes={panes}
+    activeIndex={1}
+  />
+  ```
 
 
 
