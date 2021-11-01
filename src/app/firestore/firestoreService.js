@@ -103,3 +103,34 @@ export async function updateUserProfile(profile) {
 		throw error;
 	}
 }
+
+// update user profile photo in firebase.auth and firestore if there isn't a photoURL
+// create a photos collection inside of the firestore user document
+export async function updateUserProfilePhoto(downloadURL, filename) {
+	const user = firebase.auth().currentUser;
+	const userDocRef = db.collection('users').doc(user.uid);
+
+	try {
+		// Get user document data in firestore
+		// This is getting the data only once. Not listening to the data
+		const userDoc = await userDocRef.get();
+		// If there isn't a photoURL, perform these 2 operations
+		// Update the photoURL in firestore user document to the provided downloadURL
+		// Update the photoURL in firebase.auth currentUser to the provided downloadURL
+		if (!userDoc.data().photoURL) {
+			await db.collection('users').doc(user.uid).update({
+				photoURL: downloadURL
+			});
+			await user.updateProfile({
+				photoURL: downloadURL
+			});
+		}
+		// Inside the user document object, add a photos collection
+		return await db.collection('users').doc(user.uid).collection('photos').add({
+			name: filename,
+			url: downloadURL
+		});
+	} catch (error) {
+		throw error;
+	}
+}
