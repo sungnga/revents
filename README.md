@@ -5567,6 +5567,106 @@ In the LoginForm, we want to display an error message to the user if they aren't
   />
   ```
 
+### [3. React-dropzone library: PhotoWidgetDropzone component]()
+- We're going to use the react-dropzone library to help us upload a file from the computer. This the 'Step 1' of the PhotoUploadWidget component
+- React-dropzone docs: https://www.npmjs.com/package/react-dropzone
+- Install react-dropzone library: `npm i react-dropzone`
+- In src/app/common/photos folder, create a component/file called PhotoWidgetDropzone.jsx
+- In PhotoWidgetDropzone.jsx file:
+  - Copy and paste the example demo code from the react-dropzone docs website
+  - Console log the `acceptedFiles` to see what we get when we drag and drop a file
+    ```javascript
+    import React, { useCallback } from 'react';
+    import { useDropzone } from 'react-dropzone';
+
+    export default function PhotoWidgetDropzone() {
+      const onDrop = useCallback((acceptedFiles) => {
+        console.log(acceptedFiles)
+      }, []);
+      const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+      return (
+        <div {...getRootProps()}>
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p>Drop the files here ...</p>
+          ) : (
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          )}
+        </div>
+      );
+    }
+    ```
+- In PhotoUploadWidget.jsx file:
+  - Import the PhotoWidgetDropzone component: `import PhotoWidgetDropzone from './PhotoWidgetDropzone';`
+  - Right after the Header component, instantiate the PhotoWidgetDropzone component
+    - `<PhotoWidgetDropzone />`
+- We should now be able to click on the widget to add a file or drag-n-drop a file to the widget. In the console, we can see the file being uploaded. Next thing we want to do is add styling to the dropzone photo widget
+- In PhotoWidgetDropzone.jsx file:
+  - Create a dropzoneStyles object and specify the style in there
+    ```javascript
+    const dropzoneStyles = {
+      border: 'dashed 3px #eee',
+      borderRadius: '5%',
+      paddingTop: '30px',
+      textAlign: 'center'
+    };
+    ```
+  - Create a dropzoneActive object to add styles when the dropzone is active
+    ```javascript
+    const dropzoneActive = {
+      border: 'dashed 3px green'
+    };
+    ```
+- In PhotoUploadWidget.jsx file:
+  - Import useState() hook: `import React, { useState } from 'react';`
+  - Create a files state using useState() hook and initialize its value to an empty array
+    - `const [files, setFiles] = useState([]);`
+  - Pass down the setFiles method as props to the PhotoWidgetDropzone child component
+    - `<PhotoWidgetDropzone setFiles={setFiles} />`
+- In PhotoWidgetDropzone.jsx file:
+  - Receive the setFiles props from the PhotoUploadWidget parent component and destructure it
+  - Once we have the files/acceptedFiles array, we want to map over the array to get each file image and call setFiles() method to set the file in files state. We also want to set a `preview` property on the file so we can see a preview of the image
+  - Inside the useCallback() hook:
+    - This hook takes an arrow function as 1st arg and a dependencies array as 2nd arg
+    - In the arrow function:
+      - It accepts the acceptedFiles as an argument
+      - Call the setFiles() method and pass in the acceptFiles
+      - Map over the acceptedFiles array to access the individual file using .map() method
+      - For each file, call the Object.assign() method and pass in the file as the 1st argument. The 2nd argument is an object to set a `preview` property of `URL.createObjectURL(file)`. This will give us the ability to preview the image
+    - As for the 2nd arg, list setFiles as a dependency in the dependencies array. Whenever there's a change in setFiles, it causes the PhotoWidgetDropzone component to re-render
+    ```javascript
+    const onDrop = useCallback(
+      (acceptedFiles) => {
+        // console.log(acceptedFiles);
+        setFiles(
+          acceptedFiles.map((file) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file)
+            })
+          )
+        );
+      },
+      [setFiles]
+    );
+    ```
+  - Then in JSX:
+    - Apply the styles objects to the dropzone widget depending on the isDragActive
+    - Also add an upload icon and a Header text
+    ```javascript
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+    return (
+      <div {...getRootProps()} style={isDragActive ? {...dropzoneStyles, ...dropzoneActive} : dropzoneStyles}>
+        <input {...getInputProps()} />
+        <Icon name='upload' size='huge' />
+        <Header content='Drop image here' />
+      </div>
+    );
+    ```
+- Now when we drag an image file to the dropzone widget, the border should turn green. When it's not active, it should have a grey dashed border. Also, the `files` state of the PhotoUploadWidget component should contain the image file we just uploaded
+
+
 
 
 
@@ -5616,7 +5716,10 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Install: `npm i react-calendar`
 - Firebase Javascript SDK
   -Install: `npm i firebase`
- 
+- React-dropzone - image upload widget
+  - Docs: https://www.npmjs.com/package/react-dropzone
+  - Install: `npm i react-dropzone`
+
 
 ## VSCode extensions used:
 - Auto Import - steoates
