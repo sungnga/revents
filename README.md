@@ -5795,8 +5795,8 @@ In the LoginForm, we want to display an error message to the user if they aren't
             style={{ minHeight: 200, minWidth: 200, overflow: 'hidden' }}
           />
           <Button.Group>
-					<Button style={{ width: 100 }} positive icon='check' />
-					<Button style={{ width: 100 }} icon='close' />
+            <Button style={{ width: 100 }} positive icon='check' />
+            <Button style={{ width: 100 }} icon='close' />
 					</Button.Group>
         </>
       )}
@@ -5871,8 +5871,124 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-
-
+### [6. Using the upload method in the photo widget]()
+- In src/app/common/util/util.js file:
+  - Write a getFileExtension util function to get a file extension
+    ```javascript
+    export function getFileExtension(filename) {
+      return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2);
+    }
+    ```
+- In PhotoUploadWidget.jsx file:
+  - Import the following:
+    ```javascript
+    import cuid from 'cuid';
+    import { toast } from 'react-toastify';
+    import { getFileExtension } from '../util/util';
+    import { uploadToFirebaseStorage } from '../../firestore/firebaseService'
+    import { updateUserProfilePhoto } from '../../firestore/firestoreService';
+    ```
+  - Create a loading state to handle the loading indicator. Use useState() hook and initialize its value to false
+    - `const [loading, setLoading] = useState(false);`
+  - Write a handleUploadImage function that uploads the photo to FirebaseStorage, updates the photoURL property in Firestore user doc and in user profile firebase.auth, and adds the photo to the Firestore photos collection. It's done by executing the uploadToFirebaseStorage() and updateUserProfilePhoto() methods
+    - First thing is call the setLoading() method to set the loading indicator to true
+    - Second, we want to give each of the image we upload a unique name. To do that we'll make use of the cuid library to give us a unique id and a utility function to give us the file extension
+    - Third, create an uploadTask by calling the uploadToFirebaseStorage() method with the image and filename to upload to FirebaseStorage
+      - The uploadTask will return a snapshot or we can get a snapshot from the uploadTask
+    - Fourth, use uploadTask.on() method to listen to state-changes. This allows us to track the progress of how much of the file is being uploaded in the snapshot
+      - 1st arg is set to 'state_changed'
+      - 2nd arg is a function that takes snapshot as an argument. This function tracks the file upload progress
+      - 3rd arg is a function that takes error as an argument and handles the error with toast.error() method to display the error.message
+      - 4th arg is a callback function, what to do when this file upload is complete. In this callback:
+        - First, we want to get the downloadURL from the snapshot by calling the `uploadTask.snapshot.ref.getDownloadURL()` method. This method will return a promise, so we can use the .then() operator and pass in a callback function to handle the downloadURL that we get back
+        - Second, once we have the downloadURL, inside this promise callback function, we call the updateUserProfileProfile() and pass in the downloadURL and filename as arguments. This will update the user photo in Firebase and Firestore. This method is also an async operation and it returns a promise. Use the .then() operator and pass in a callback function to handle success. And use the .catch() operator and pass in a callback function to handle the error
+        - If this is completed successfully, inside this promise callback function,
+          - Call setLoading() method and set it to false
+          - Call the handleCancelCrop() method. This will remove the image from the photo widget and returns to how they were originally
+          - Call setEditMode() method and set it to false
+        - If there's an error being returned, in the callback function,
+          - take the error as an argument
+          - call the toast.error() method to display the error.message
+          - call setLoading() method and set it to false to turn off the loading indicator
+    ```javascript
+    function handleUploadImage() {
+      setLoading(true);
+      const filename = cuid() + '.' + getFileExtension(files[0].name);
+      const uploadTask = uploadToFirebaseStorage(image, filename);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+        },
+        (error) => {
+          toast.error(error.message);
+        },
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            updateUserProfilePhoto(downloadURL, filename)
+              .then(() => {
+                setLoading(false);
+                handleCancelCrop();
+                setEditMode(false);
+              })
+              .catch((error) => {
+                toast.error(error.message);
+                setLoading(false);
+              });
+          });
+        }
+      );
+    }
+    ```
+  - Write a handleCancelCrop function that resets the files and image states to empty
+    ```javascript
+    function handleCancelCrop() {
+      setFiles([]);
+      setImage(null);
+    }
+    ```
+- In PhotosTab.jsx file:
+  - Pass down the setEditMode method as props to the PhotoUploadWidget child component
+    - `<PhotoUploadWidget setEditMode={setEditMode} />`
+- Back to the PhotoUploadWidget.jsx file:
+  - Receive the setEditMode props from the PhotosTab parent component
+  - In JSX:
+    - In the 'check' Button element:
+      - Call the handleUploadImage method to handle the onClick event
+      - Set the loading property to loading state
+      ```javascript
+      <Button
+        onClick={handleUploadImage}
+        loading={loading}
+        style={{ width: 100 }}
+        positive
+        icon='check'
+      />
+      ```
+    - In the 'close' Button element:
+      - Call the handleCancelCrop method to handle the onClick event
+      - Set the disabled property to loading state
+      ```javascript
+      <Button
+        onClick={handleCancelCrop}
+        disabled={loading}
+        style={{ width: 100 }}
+        icon='close'
+      />
+      ```
+- Go to Firebase console website: https://console.firebase.google.com/
+  - Select Storage from the main menu
+  - Click on the 'Get Started' button and accept the default bucket rules
+  - This will create a storage for our application
+- To test our upload image functionality:
+  - Signin as one of the users we created
+  - Click on the My Profile from the dropdown menu of currentUser
+  - Go through the image upload process
+  - If the user doesn't have a photoURL it'll use the uploaded image as the main profile photo. We should be able to see the profile image displayed on the user profile page and also the currentUser avatar on the navbar
+  - Next go to the Firebase dashboard and click on the Storage icon from the main menu. Here, we should a folder (folder name is the user.uid) that contains the uploaded image. Any future image upload by this particular user will be store in this folder
+  
 
 
 
