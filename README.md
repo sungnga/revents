@@ -5985,10 +5985,107 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - To test our upload image functionality:
   - Signin as one of the users we created
   - Click on the My Profile from the dropdown menu of currentUser
-  - Go through the image upload process
-  - If the user doesn't have a photoURL it'll use the uploaded image as the main profile photo. We should be able to see the profile image displayed on the user profile page and also the currentUser avatar on the navbar
-  - Next go to the Firebase dashboard and click on the Storage icon from the main menu. Here, we should a folder (folder name is the user.uid) that contains the uploaded image. Any future image upload by this particular user will be store in this folder
-  
+  - Go through the process of uploading an image
+  - If the user doesn't have a photoURL it'll use the uploaded image as the main profile photo. We should be able to see it displayed on the user profile page and also being used as the avatar image from the navbar
+  - Next go to the Firebase dashboard and click on the 'Storage' icon from the main menu. Here, we should see a folder (folder name is the user.uid) that contains the uploaded image. Any future image upload by this particular user will be stored in this folder
+  - Then click on the 'Firestore Database' icon from the main menu. If this user document didn't have a photoURL, the photoURL property will be updated. Then inside this user document, a 'photos' collection folder has also been created. This folder contains the uploaded image
+
+### [7. Displaying the images in PhotosTab]()
+- Now that we're able to upload photos to firebaseStorage, firebase.auth, and Firestore, we want to create a new constant, a new action, and new reducer to store photos in Redux store. We can listen to the 'photos' collection and update the photos property in profileReducer when there's a change. After that we can display the user photos collection (getting them from the profileReducer) in the PhotosTab
+- In profileConstants.js file:
+  - Create a new constant for LISTEN_TO_USER_PHOTOS
+  - `export const LISTEN_TO_USER_PHOTOS = 'LISTEN_TO_USER_PHOTOS';`
+- In profileActions.js file:
+  - Import the constant: `import { LISTEN_TO_USER_PHOTOS } from "./profileConstants";`
+  - Write a listenToUserPhotos action creator function that listens to user photos in Firestore
+    - This function takes photos as an argument
+    - This function returns as an object,
+      - the action type of LISTEN_TO_USER_PHOTOS
+      - the payload of photos
+    ```javascript
+    export function listenToUserPhotos(photos) {
+      return {
+        type: LISTEN_TO_USER_PHOTOS,
+        payload: photos
+      };
+    }
+    ```
+- In profileReducer.js file:
+  - Import the constant: `import { LISTEN_TO_USER_PHOTOS } from './profileConstants';`
+  - In the initialState object, add a photos property and initialize it to an empty array
+    ```javascript
+    const initialState = {
+      currentUserProfile: null,
+      selectedUserProfile: null,
+      photos: []
+    };
+    ```
+  - In the profileReducer function:
+    - Add a new case in the switch statement for LISTEN_TO_USER_PHOTOS action type
+      - This action returns as an object, the existing state and the photos property of payload
+      - When this action is dispatched, photos property in the profileReducer redux store will contain an array of photos from Firestore photos collection
+    ```javascript
+    case LISTEN_TO_USER_PHOTOS:
+      return {
+        ...state,
+        photos: payload
+      };
+    ```
+- In firestoreService.js file:
+  - Write a query getUserPhotos function that gets user photos from Firestore photos collection
+    - This function takes userUid as an argument
+    - It returns the photos from Firestore photos collection
+    ```javascript
+    export function getUserPhotos(userUid) {
+      return db.collection('users').doc(userUid).collection('photos');
+    }
+    ```
+- In PhotosTab.jsx file:
+  - Import the useFirestoreCollection() hook: `import useFirestoreCollection from '../../../app/hooks/useFirestoreCollection';`
+  - Import the getUserPhotos method: `import { getUserPhotos } from '../../../app/firestore/firestoreService';`
+  - Import the listenToUserPhotos() action: `import { listenToUserPhotos } from '../profileActions';`
+  - Create a dispatch method using useDispatch() hook
+    - `const dispatch = useDispatch();`
+  - Extract the loading property from asyncReducer using useSelector() hook
+    - `const { loading } = useSelector((state) => state.async); `
+  - Extract the photos property from profileReducer using useSelector() hook
+    - `const { photos } = useSelector((state) => state.profile);`
+  - Use the custom useFirestoreCollection() hook:
+    - This custom hook takes query, data, and deps parameters as an object
+    - For query param, the arrow function is going to call the query getUserPhotos() method and pass in profile.id as an argument
+    - For data param, the arrow function takes photos that we got back from the query as an argument and then dispatches the listenToUserPhotos() action that takes the photos as an argument
+    - For deps param, list profile.id and dispatch as two dependencies in the dependencies array. Any changes to these dependencies will cause the component to re-render
+    ```javascript
+    // When the PhotosTab component loads, this hook runs
+    // Get user photos from firestore photos collection
+    // Store the photos in photos property in profileReducer
+    useFirestoreCollection({
+      query: () => getUserPhotos(profile.id),
+      data: (photos) => dispatch(listenToUserPhotos(photos)),
+      deps: [profile.id, dispatch]
+    });
+    ```
+  - In JSX:
+    - The `<Tab.Pane>` component can take loading property and set it to loading state: `<Tab.Pane loading={loading}>`
+    - Then we're going to map over the photos array and display each photo in a Card component
+      - Since this is an array of photos, the Card component will need to be given a key and set it to photo.id
+      - The Image src set to photo.url
+      ```javascript
+      <Card.Group itemsPerRow={5}>
+        {photos.map((photo) => (
+          <Card key={photo.id}>
+            <Image src={photo.url} />
+            <Button.Group fluid width={2}>
+              <Button basic color='green' content='Main' />
+              <Button basic color='red' icon='trash' />
+            </Button.Group>
+          </Card>
+        ))}
+      </Card.Group>
+      ```
+- Now we should be able to see the user photos collection in the PhotosTab
+
+
 
 
 
