@@ -4,7 +4,9 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Button, Card, Grid, Header, Image, Tab } from 'semantic-ui-react';
 import PhotoUploadWidget from '../../../app/common/photos/PhotoUploadWidget';
+import { deleteFromFirebaseStorage } from '../../../app/firestore/firebaseService';
 import {
+	deletePhotoFromCollection,
 	getUserPhotos,
 	setMainPhoto
 } from '../../../app/firestore/firestoreService';
@@ -17,6 +19,7 @@ function PhotosTab({ profile, isCurrentUser }) {
 	const { loading } = useSelector((state) => state.async);
 	const { photos } = useSelector((state) => state.profile);
 	const [updating, setUpdating] = useState({ isUpdating: false, target: null });
+	const [deleting, setDeleting] = useState({ isDeleting: false, target: null });
 
 	// When the PhotosTab component loads, this hook runs
 	// Get user photos from firestore photos collection
@@ -35,6 +38,18 @@ function PhotosTab({ profile, isCurrentUser }) {
 			toast.error(error.message);
 		} finally {
 			setUpdating({ isUpdating: false, target: null });
+		}
+	}
+
+	async function handleDeletePhoto(photo, target) {
+		setDeleting({ isDeleting: true, target });
+		try {
+			await deleteFromFirebaseStorage(photo.name);
+			await deletePhotoFromCollection(photo.id);
+		} catch (error) {
+			toast.error(error.message);
+		} finally {
+			setDeleting({ isDeleting: false, target: null });
 		}
 	}
 
@@ -61,6 +76,7 @@ function PhotosTab({ profile, isCurrentUser }) {
 								<Card key={photo.id}>
 									<Image src={photo.url} />
 									<Button.Group>
+										{/* disable the Main button if the photo is already set to profile photo */}
 										<Button
 											name={photo.id}
 											loading={
@@ -72,7 +88,18 @@ function PhotosTab({ profile, isCurrentUser }) {
 											color='green'
 											content='Main'
 										/>
-										<Button basic color='red' icon='trash' />
+										{/* disable the delete button if the photo is the profile photo */}
+										<Button
+											loading={
+												deleting.isDeleting && deleting.target === photo.id
+											}
+											disabled={photo.url === profile.photoURL}
+											name={photo.id}
+											onClick={(e) => handleDeletePhoto(photo, e.target.name)}
+											basic
+											color='red'
+											icon='trash'
+										/>
 									</Button.Group>
 								</Card>
 							))}

@@ -6194,9 +6194,99 @@ In the LoginForm, we want to display an error message to the user if they aren't
     />    
     ```
 
-
-
-
+### [9. Deleting a photo]()
+- When deleting a photo, we want to remove it from firebaseStorage and from Firestore db 'photos' collection. However, if the photo is set as their main profile photo, we want to prevent them from deleting it
+- In firebaseService.js file:
+  - Write a deleteFromFirebaseStorage function that deletes a photo from firebaseStorage
+    - This function takes filename as an argument
+    - First, get the current user uid from firebase.auth and assign it to userUid variable
+    - Then get a reference to storage from firebase and assign it to storageRef variable
+    - Then we need to get a reference to the individual image itself. The .child() method returns a reference to photo based on the given reference pathname. Assign this reference to photoRef variable
+    - Lastly, call the .delete() method on photoRef to delete the image from firebaseStorage
+    ```javascript
+    export function deleteFromFirebaseStorage(filename) {
+      const userUid = firebase.auth().currentUser.uid;
+      const storageRef = firebase.storage().ref();
+      const photoRef = storageRef.child(`${userUid}/user_images/${filename}`);
+      return photoRef.delete();
+    }
+    ```
+- In firestoreService.js file:
+  - Write a deletePhotoFromCollection function that deletes an image from Firestore photos collection based on the given photoId
+    - This function takes photoId as an argument
+    - First, get the current user uid from firebase.auth and assign it to userUid variable
+    - Call the .delete() method on the photos collection document of the given photoId
+    ```javascript
+    export function deletePhotoFromCollection(photoId) {
+      const userUid = firebase.auth().currentUser.uid;
+      return db
+        .collection('users')
+        .doc(userUid)
+        .collection('photos')
+        .doc(photoId)
+        .delete();
+    }
+    ```
+- In PhotosTab.jsx file:
+  - Import the following:
+    ```javascript
+    import { deleteFromFirebaseStorage } from '../../../app/firestore/firebaseService';
+    import { deletePhotoFromCollection } from '../../../app/firestore/firestoreService';
+    ```
+  - Create a deleting state using useState() hook and set the initial state as an object
+    - `const [deleting, setDeleting] = useState({ isDeleting: false, target: null });`
+  - Write an async handleDeletePhoto function that deletes a photo from firebaseStorage and from Firestore photos collection. This function executes the deleteFromFirebaseStorage and deletePhotoFromCollection functions to get this done
+    - This function takes photo and target as arguments
+    - First, call the setUpdating() method to set the isDeleting property to true and set target to target
+    - Then use the try/catch block
+    - If there's an error, call the toast.error() method and display the error.message
+    - In the try block:
+      - Call the deleteFromFirebaseStorage() method and pass in photo.name as an argument. This is an async operation, so add the 'await' keyword in front of it
+      - Then call the deletePhotoFromCollection() method and pass in photo.id as an argument. This is an async operation, so add the 'await' keyword in front of it
+    - Finally, call the setDeleting() method again to set the isDeleting property to back to false and target back to null. This will turn off the loading indicator when delete is done
+    ```javascript
+    async function handleDeletePhoto(photo, target) {
+      setDeleting({ isDeleting: true, target });
+      try {
+        await deleteFromFirebaseStorage(photo.name);
+        await deletePhotoFromCollection(photo.id);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setDeleting({ isDeleting: false, target: null });
+      }
+    }
+    ```
+  - In the 'trash' icon Button element:
+    - Add a name property and set it to photo.id
+    - Add a loading property and set it to `deleting.isDeleting && deleting.target === photo.id`. The loading indicator will only run if isDeleting is true AND the deleting target is equal to photo.id, which is the name attribute of the Button element
+    - Add a disabled property and set it to `photo.url === profile.photoURL`. This prevents the user from deleting the photo if this photo is the profile photo. They would need to swap another photo for the profile photo first before deleting this particular photo
+    - For the onClick event handler, 
+      - call the handleDeletePhoto() method inside a callback function since we need to pass in parameters to the method 
+      - the callback takes the e/event as an argument
+      - The handleDeletePhoto() method takes photo and e.target.name as arguments
+    ```javascript
+    <Button
+      name={photo.id}
+      onClick={(e) => handleDeletePhoto(photo, e.target.name)}
+      loading={
+        deleting.isDeleting && deleting.target === photo.id
+      }
+      disabled={photo.url === profile.photoURL}
+      basic
+      color='red'
+      icon='trash'
+    />
+    ```
+- Lastly, when the profile page refreshes we want the AboutTab to be the default active tab. Remove the `activeIndex` attribute
+  ```js
+  <Tab
+    menu={{ fluid: true, vertical: true }}
+    menuPosition='right'
+    panes={panes}
+    // activeIndex={1}
+  />
+  ```
 
 
 
