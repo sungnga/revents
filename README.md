@@ -6289,6 +6289,68 @@ In the LoginForm, we want to display an error message to the user if they aren't
   ```
 
 
+## FIRESTORE RELATIONSHIPS
+- Firestore Database design
+  - Adding users to the events
+  - Firestore queries - how we're going to query the data
+- Firestore "Relationships"
+- Adding user sign up to events functionality:
+  - Join event
+  - Cancel attendance
+
+### Firestore Database design
+- Firestore is a no SQL database. That means there's no relationship - no join tables. There is no such a thing as join query
+- Firestore design - design by the queries
+  - We want to know which events the currently logged in user is going to, so that we can display those events
+  - We want to know which events the currently logged in user is hosting, so that we can display those events
+  - Query by attendees
+- In Firestore, we're being billed by the number of queries we make
+- We're going to design our Firestore Database based on the queries we know we're going to be making
+- Firestore rules:
+  - Can only query simple arrays of strings. Cannot query an array that contains an object or an array of objects
+  - Each document can be a maximum size of 1MB
+  - An array can be a maximum of 20,000 rows
+  - Firestore is designed to scale with millions of documents inside a collection
+
+### [1. Adding attendances to an event]()
+- Let's update the addEventToFirestore function so the fields populate the data dynamically when we create an event and we want to add additional fields to the event object
+- In firestoreService.js file:
+  - In addEventToFirestore() function:
+    - What we have going on at the moment when we're creating an event is we're manually adding static data to the fields. Now that we have the information we need to dynamically populate these fields when we create an event, we're going to update this function
+    - First, we're going to get a reference to the currently logged in user from firebase.auth and assign it to a user variable
+    - Then we're going to modify the properties that we pass to the .add() method
+      - hostedBy, set it to user.displayName
+      - hostPhotoURL, set it to user.photoURL or null, if the user doesn't have a photo
+      - id of attendees, set to user.uid
+      - displayName of attendees, set to user.displayName
+      - photoURL of attendees, set to user.photoURL or null
+      - Add hostUid property and set it to user.uid
+      - NOTE that we cannot make a query of an array of objects. This means that we cannot query the attendees data of an event. To resolve this issue, we're going to create a separate attendeeIds array which contains simple string elements and we can use this to query attendees data
+      - Add an attendeeIds property and set it to `firebase.firestore.FieldValue.arrayUnion(user.uid)`. This will create an array of user.uids for the attendeeIds property. This list Field we're going to query, so we can find out which events a user with that specific uid is attending. With Firestore arrays, we can query simple string-based arrays. Our user.uids are going to be strings
+    ```javascript
+    export function addEventToFirestore(event) {
+      const user = firebase.auth().currentUser;
+      return db.collection('events').add({
+        ...event,
+        hostUid: user.uid,
+        hostedBy: user.displayName,
+        hostPhotoURL: user.photoURL || null,
+        // attendees is an array of objects
+        // NOTE: we cannot query an array of objects
+        attendees: firebase.firestore.FieldValue.arrayUnion({
+          id: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL || null
+        }),
+        // create an array containing user uids. user.uid is a string
+        // we can query this instead
+        attendeeIds: firebase.firestore.FieldValue.arrayUnion(user.uid)
+      });
+    }
+    ```
+
+
+
 
 
 ## LIBRARIES AND PACKAGES USED IN THIS PROJECT
