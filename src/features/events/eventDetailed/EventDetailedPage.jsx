@@ -16,7 +16,10 @@ function EventDetailedPage({ match }) {
 		state.event.events.find((e) => e.id === match.params.id)
 	);
 	const { loading, error } = useSelector((state) => state.async);
-	const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector(state => state.auth)
+  const isHost = event?.hostUid === currentUser.uid
+  const isGoing = event?.attendees?.some(a => a.id === currentUser.uid )
 
 	useFirestoreDoc({
 		// query an event doc in the events collection in Firestore db
@@ -34,7 +37,7 @@ function EventDetailedPage({ match }) {
 	return (
 		<Grid>
 			<Grid.Column width={10}>
-				<EventDetailedHeader event={event} />
+				<EventDetailedHeader event={event} isHost={isHost} isGoing={isGoing} />
 				<EventDetailedInfo event={event} />
 				<EventDetailedChat />
 			</Grid.Column>

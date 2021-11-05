@@ -66,7 +66,7 @@ function AccountPage() {
 										basic
 										color='green'
 										style={{ marginBottom: 10 }}
-										content='Update password success'
+										content='Successfully updated password'
 									/>
 								)}
 								<Button

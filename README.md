@@ -6349,6 +6349,46 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
+### [2. Setting up the event detailed header]()
+- We want to configure the EventDetailedHeader component so that only certain buttons show depending on the user's status to that event. Are they the host? Are they the attendee or are they not an attendee? If the currentUser is the host of the event, show the 'Manage Event' button in the EventDetailHeader. If the currentUser is an attendee, show the 'Cancel' button. If the user isn't an attendee of the event, show the 'Join this Event' button
+- In EventDetailedPage.jsx file:
+  - First, we want to get the currentUser property from authReducer using useSelector() hook
+    - `const { currentUser } = useSelector((state) => state.auth);`
+  - Create an isHost variable that returns a boolean if the event host is the current user. 
+    - `const isHost = event.hostUid === currentUser.uid;`
+    - Now, we need to be careful when accessing properties where we don't know they exist when isHost is called. We can use the optional chaining operator aka `?` to check and see if the event exists first before accessing the .hostUid property. This way, if event doesn't exist, then it'll be undefined and undefined is going to set to false
+    - `const isHost = event?.hostUid === currentUser.uid;`
+  - Next is we want establish if the user is going to the event. We want to know if the currentUser is in the attendees list
+    - `const isGoing = event?.attendees?.some((a) => a.id === currentUser.uid);`
+  - Then we want to pass down these two items as props to the EventDetailedHeader child component
+    - `<EventDetailedHeader event={event} isGoing={isGoing} isHost={isHost} />`
+- In EventDetailedHeader.jsx file:
+  - Receive the isHost and isGoing props from the EventDetailedPage parent component and destructure them
+  - In JSX, now we can add conditional logic to show or hide buttons
+    - If a user is hosting the event, then they see the 'Manage Event' button
+      ```javascript
+      {isHost && 
+        <Button as={Link} to={`/manage/${event.id}`} color='orange' floated='right'>
+          Manage Event
+        </Button>
+      }
+      ```
+    - If the user is not the host of the event, then they see the 'Join this event' button to join the event. If the user is not the host and is going to the event, then they see the 'Cancel My Place' button to be able to cancel 
+      ```javascript
+      {!isHost && (
+        <>
+          {isGoing ? (
+            <Button>Cancel My Place</Button>
+          ) : (
+            <Button color='teal'>JOIN THIS EVENT</Button>
+          )}
+        </>
+      )}
+      ```
+
+
+
+
 
 
 
