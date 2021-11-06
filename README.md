@@ -6386,6 +6386,66 @@ In the LoginForm, we want to display an error message to the user if they aren't
       )}
       ```
 
+### [3. Adding the join event handler]()
+- In firestoreService.js file:
+  - Write a addUserAttendance function that adds the currentUser to an event attendance
+    - This function takes an event as an argument
+    - First, get a reference to the current user from firebase.auth and assign it to a user variable
+    - Then use the .update() method on `db.collection('events').doc(event.id)` to add the currentUser to the attendees array property and to the attendeeIds array property of the event document
+    ```javascript
+    export function addUserAttendance(event) {
+      const user = firebase.auth().currentUser;
+      return db.collection('events').doc(event.id).update({
+        attendees: firebase.firestore.FieldValue.arrayUnion({
+          id: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL || null
+        }),
+        attendeeIds: firebase.firestore.FieldValue.arrayUnion(user.uid)
+      });
+    }
+    ```
+- In EventDetailedHeader.jsx file:
+  - Import the following:
+    ```javascript
+    import React, { useState } from 'react';
+    import { toast } from 'react-toastify';
+    import { addUserAttendance } from '../../../app/firestore/firestoreService';
+    ```
+  - Create a loading state using useState() hook and initialize its value to false
+    - `const [loading, setLoading] = useState(false);`
+  - Write an async handleUserJoinEvent function that adds a user to an event as an attendee. This function executes the addUserAttendance method which adds the user in Firestore 'events' collection
+    - First, call the setLoading() method to set loading to true. The loading indicator turns on while we perform this async operation
+    - Use a try/catch block to run the code since this is an async function
+    - If there's an error, call the toast.error() method to display the error.message
+    - In the try block, call the addUserAttendance() function and pass in the event as an argument. Since this is an async operation, add the 'await' keyword in front of it
+    - Finally, call the setLoading() method again to set the loading state back to false
+    ```javascript
+    async function handleUserJoinEvent() {
+      setLoading(true);
+      try {
+        await addUserAttendance(event);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    ```
+  - In the 'Join this event' Button element:
+    - Add an onClick event handler and call the handleUserJoinEvent method
+    - Add the loading attribute and set it to the loading state
+    ```javascript
+    <Button
+      onClick={handleUserJoinEvent}
+      loading={loading}
+      color='teal'
+    >
+      JOIN THIS EVENT
+    </Button>
+    ```
+- Now when a currentUser joins an event it'll display their profile picture and displayName in the list of attendees on the EventDetailPage. Also, on the events page, it'll show profile icons of the list of attendees for each event
+
 
 
 
