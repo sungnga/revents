@@ -6446,6 +6446,72 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Now when a currentUser joins an event it'll display their profile picture and displayName in the list of attendees on the EventDetailPage. Also, on the events page, it'll show profile icons of the list of attendees for each event
 
+### [4. Cancelling a user attendance]()
+- When a user cancels their attendance to an event, on the backend, it removes the user object from the `attendees` array property of the event document in Firestore. It also removes the user.uid element from the `attendeeIds` array property. On the frontend, their name will be removed from the attendees list on the EventDetailedPage. On the events page, their profile icon will be removed from the attendees list from that particular event
+- When it comes to removing objects from Firestore arrays it can be a bit of a challenge. We can't use Firestore's arrayRemove() method to remove an object from an array. In our case, it's removing a user from an event's attendees list. The attendees array contains the user objects. To get this done, first, we need to get the events collection and then use a normal JS array filter method to update the array and remove the currentUser from the array
+- In firestoreService.js file:
+  - Write an async cancelUserAttendance function that gets the event doc to remove the currentUser from the attendees array property and from the attendeeIds array property of an event. This is an async function since we need to get the events collection doc
+    - First, get a reference to the currentUser from firebase.auth and assign it to a user variable
+    - Then use a try/catch block to run the code
+    - If there's an error, throw the error back to the component
+    - In the try block:
+      - Use the .get() method to get the event doc from events collection of a given event.id. Add the 'await' keyword in front of it for we need to wait for this operation to complete. Assign it to an eventDoc variable
+      - Then use the .update() method to update the attendeeIds and attendees properties in the event doc
+        - For the attendeeIds property, use the .arrayRemove() method to remove the user.uid from the array
+        - For the attendees property, first, access the data of the eventDoc that we got back `eventDoc.data()`. Then call the .filter() method on the attendees array to update the array and remove the attendee.id that matches with the user.uid
+    ```javascript
+    export async function cancelUserAttendance(event) {
+      const user = firebase.auth().currentUser;
+
+      try {
+        const eventDoc = await db.collection('events').doc(event.id).get();
+        return db
+          .collection('events')
+          .doc(event.id)
+          .update({
+            // attendeeIds is an array of string
+            // we can use firestore's arrayRemove method
+            attendeeIds: firebase.firestore.FieldValue.arrayRemove(user.uid),
+            // attendees is an array of objects. Cannot use arrayRemove method
+            // using a normal JS filter method instead. Filter method returns a new array of attendees
+            attendees: eventDoc
+              .data()
+              .attendees.filter((attendee) => attendee.id !== user.uid)
+          });
+      } catch (error) {
+        throw error;
+      }
+    }
+    ```
+- In EventDetailedHeader.jsx file:
+  - Import the cancelUserAttendance function: `import { cancelUserAttendance } from '../../../app/firestore/firestoreService';`
+  - Write an async handleUserLeaveEvent function that removes a user from an event as an attendee. This function executes the cancelUserAttendance method which removes the user in Firestore events collection document
+    - First, call the setLoading() method to set loading to true
+    - Use a try/catch block to run the code since this is an async function
+    - If there's an error, call the toast.error() method to display the error.message
+    - In the try block, call the cancelUserAttendance() function and pass in the event as an argument. Since this is an async operation, add the 'await' keyword in front of it
+    - Finally, call the setLoading() method again to set the loading state back to false
+    ```javascript
+    async function handleUserLeaveEvent() {
+      setLoading(true);
+      try {
+        await cancelUserAttendance(event);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    ```
+  - In the 'Cancel My Place' Button element:
+    - For onClick event handler, call the handleUserLeaveEvent method and it doesn't take any arguments
+    - Add the loading property and set it to loading state
+    ```javascript
+    <Button onClick={handleUserLeaveEvent} loading={loading}>
+      Cancel My Place
+    </Button>
+    ```
+
 
 
 

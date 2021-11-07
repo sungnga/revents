@@ -190,3 +190,29 @@ export function addUserAttendance(event) {
 			attendeeIds: firebase.firestore.FieldValue.arrayUnion(user.uid)
 		});
 }
+
+// cancel a user attendance
+export async function cancelUserAttendance(event) {
+	const user = firebase.auth().currentUser;
+
+	try {
+		const eventDoc = await db.collection('events').doc(event.id).get();
+		console.log(eventDoc);
+		return db
+			.collection('events')
+			.doc(event.id)
+			.update({
+				// attendeeIds is an array of string
+				// we can use firestore's arrayRemove method
+				attendeeIds: firebase.firestore.FieldValue.arrayRemove(user.uid),
+				// attendees is an array of objects. Cannot use arrayRemove method
+				// using a normal JS filter method instead. Filter method returns a new array of attendees
+				attendees: eventDoc
+					.data()
+					.attendees.filter((attendee) => attendee.id !== user.uid)
+			});
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
