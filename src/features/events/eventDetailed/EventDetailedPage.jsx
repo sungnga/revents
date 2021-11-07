@@ -16,10 +16,10 @@ function EventDetailedPage({ match }) {
 		state.event.events.find((e) => e.id === match.params.id)
 	);
 	const { loading, error } = useSelector((state) => state.async);
-  const dispatch = useDispatch();
-  const { currentUser } = useSelector(state => state.auth)
-  const isHost = event?.hostUid === currentUser.uid
-  const isGoing = event?.attendees?.some(a => a.id === currentUser.uid )
+	const dispatch = useDispatch();
+	const { currentUser } = useSelector((state) => state.auth);
+	const isHost = event?.hostUid === currentUser.uid;
+	const isGoing = event?.attendees?.some((a) => a.id === currentUser.uid);
 
 	useFirestoreDoc({
 		// query an event doc in the events collection in Firestore db
@@ -42,7 +42,10 @@ function EventDetailedPage({ match }) {
 				<EventDetailedChat />
 			</Grid.Column>
 			<Grid.Column width={6}>
-				<EventDetailedSidebar attendees={event.attendees} />
+				<EventDetailedSidebar
+					attendees={event.attendees}
+					hostUid={event.hostUid}
+				/>
 			</Grid.Column>
 		</Grid>
 	);
