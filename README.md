@@ -6637,6 +6637,70 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
+### [7. Getting the filtered data]()
+- Now we're going to hook up the filter functionality to listen to events from the Firestore listenToEventsFromFirestore() method in firestoreService. So we can go out and listen to the new data we're going to get returned from Firestore based on the filter value that we set
+- In firestoreService.js file:
+  - Let's modify the listenToEventsFromFirestore() function that we wrote earlier:
+    - This function accepts the predicate as a parameter
+    - First, get a reference to the currently logged in user from firebase.auth and assign it to a user variable
+    - Add an eventsRef variable and set it equal to `db.collection('events').orderBy('date')`. This will get the events collection in the order by date
+    - Then use a switch statement to handle different filters
+      - The switch we're looking for is the 'filter' keyword. Call the predicate.get() method and pass in the word 'filter' to get it
+      - Then we specify our cases
+      - The 1st case is isGoing:
+        - Return the eventsRef and in here, we can specify our queries using the `.where()` method
+        - The way Firestore queries work is: specify the `.where()` clause and then in it, we can specify the Fields that we want to query on. `.where('Field_name', 'query_type', 'what_we_are_looking_for_in_the_Field')` We can specify as many queries as we want by using the `.where()` clauses
+      - 2nd case is isHost:
+        - Return the eventsRef with the specified queries
+      - The default case:
+        - Return the eventsRef with the date greater or equal to the startDate
+    ```javascript
+    export function listenToEventsFromFirestore(predicate) {
+      const user = firebase.auth().currentUser;
+      const eventsRef = db.collection('events').orderBy('date');
+      // filter events based on the predicate
+      // get the events based on the key/value of the predicate set in EventFilters component
+      // use the firestore's .where() method to query the events
+      switch (predicate.get('filter')) {
+        case 'isGoing':
+          return eventsRef
+            .where('attendeeIds', 'array-contains', user.uid)
+            .where('date', '>=', predicate.get('startDate'));
+        case 'isHost':
+          return eventsRef
+            .where('hostUid', '==', user.uid)
+            .where('date', '>=', predicate.get('startDate'));
+        default:
+          return eventsRef.where('date', '>=', predicate.get('startDate'));
+      }
+    }
+    ```
+- In EventDashboard.jsx file:
+  - Inside the useFirestoreCollection() hook:
+    - Pass in the predicate to the listenToEventsFromFirestore() method as an argument
+    - Also list the predicate state as dependency to the custom hook
+    ```javascript
+    useFirestoreCollection({
+      query: () => listenToEventsFromFirestore(predicate),
+      data: (events) => dispatch(listenToEvents(events)),
+      deps: [dispatch, predicate]
+    });
+    ```
+- At this point, the events filter functionality is not filtering as we expect it. And we would not be able to see the error that's causing this problem from the Redux devTools. We need to console log the error manually from the asyncActionError() action function in the asyncReducer.js file to see what's causing the problem
+  ```javascript
+  export function asyncActionError(error) {
+    console.log(error)
+    return {
+      type: ASYNC_ACTION_ERROR,
+      payload: error
+    };
+  }
+  ```
+  - The problem showing in the console is: `FirebaseError: The query requires an index` and a link to the Firebase console is listed to fix this particular problem
+  - The problem we're running into is when we're filtering more than one Fields in Firestore, we need to create a composite index in Firestore. Every time we're querying multiple Fields we will run into this issue. Firestore will generate the index for us, but we need to go to the Firebase website to create the index
+
+
+
 
 
 

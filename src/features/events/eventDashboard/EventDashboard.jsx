@@ -26,9 +26,9 @@ function EventDashboard() {
 
 	// using a custom useEffect() hook
 	useFirestoreCollection({
-		query: () => listenToEVentsFromFirestore(),
+		query: () => listenToEVentsFromFirestore(predicate),
 		data: (events) => dispatch(listenToEvents(events)),
-		deps: [dispatch]
+		deps: [dispatch, predicate]
 	});
 
 	return (
@@ -43,7 +43,11 @@ function EventDashboard() {
 				<EventList events={events} />
 			</Grid.Column>
 			<Grid.Column width={6}>
-				<EventFilters predicate={predicate} setPredicate={handleSetPredicate} loading={loading} />
+				<EventFilters
+					predicate={predicate}
+					setPredicate={handleSetPredicate}
+					loading={loading}
+				/>
 			</Grid.Column>
 		</Grid>
 	);

@@ -1,4 +1,3 @@
-import cuid from 'cuid';
 import firebase from '../config/firebase';
 
 const db = firebase.firestore();
@@ -25,8 +24,24 @@ export function dataFromSnapshot(snapshot) {
 }
 
 // querying the events collection
-export function listenToEVentsFromFirestore() {
-	return db.collection('events').orderBy('date');
+export function listenToEVentsFromFirestore(predicate) {
+	const user = firebase.auth().currentUser;
+  const eventRef = db.collection('events').orderBy('date');
+  // filter events based on the predicate
+  // get the events based on the key/value of the predicate set in EventFilters component
+  // use the firestore's .where() method to query the events
+	switch (predicate.get('filter')) {
+		case 'isGoing':
+			return eventRef
+				.where('attendeeIds', 'array-contains', user.uid)
+				.where('date', '>', predicate.get('startDate'));
+		case 'isHost':
+			return eventRef
+				.where('hostUid', '==', user.uid)
+				.where('date', '>=', predicate.get('startDate'));
+		default:
+			return eventRef.where('date', '>=', predicate.get('startDate'));
+	}
 }
 
 // querying an event document in events collection
@@ -197,7 +212,6 @@ export async function cancelUserAttendance(event) {
 
 	try {
 		const eventDoc = await db.collection('events').doc(event.id).get();
-		console.log(eventDoc);
 		return db
 			.collection('events')
 			.doc(event.id)
