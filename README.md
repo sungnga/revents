@@ -6561,7 +6561,81 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Item.Description>
     ```
 
-
+### [6. Adding the filter functionality]()
+- In EventDashboard.jsx file:
+  - Create a predicate state using useState() hook
+    - What we're going to use to initialize the state is a Javascript map. This is a Javascript object that allows us to use certain methods and we can get and set different elements in this map easily. This is a sufficient way for users to set a particular filter
+    - To create a map, call `new Map()`. And inside this map is going to be an array and inside this array are going to be keys and values. So each element inside the map is going to have a key and a value and we can set these different keys and values
+    ```javascript
+    const [predicate, setPredicate] = useState(
+      new Map([
+        ['startDate', new Date()],
+        ['filter', 'all']
+      ])
+    );
+    ```
+  - Write a handleSetPredicate function to set the predicate
+    - This function takes a key and value as arguments
+    - Call the setPredicate() method to set the predicate. In order for our component to re-render when we update this state, we need to specify a new map inside this method. Inside the new Map(), call the .set() method on the predicate state and pass in the key and value as arguments. The .set() method comes with the map object. This will set the predicate state with the specified key and value element
+    ```javascript
+    function handleSetPredicate(key, value) {
+      setPredicate(new Map(predicate.set(key, value)));
+    }
+    ```
+  - Then pass down the predicate state and the handleSetPredicate function as props to the EventFilters child component
+    ```javascript
+    <EventFilters
+      predicate={predicate}
+      setPredicate={handleSetPredicate}
+      loading={loading}
+    />
+    ```
+- In EventFilters.jsx file:
+  - Destructure the predicate, setPredicate, and loading props received from the EventDashboard parent component
+  - In JSX:
+    - Inside each of the Menu.Item element:
+      - Add a loading property and set it to loading state. We want to disable the filter button while the app is fetching and loading the data
+      - Add an active property and set it to predicate state. Since the predicate is a map object, we can call the .get() method on predicate and pass in a key to it
+      - For the onClick event handler, call the setPredicate() method inside a callback function and pass in the key and value as arguments
+    - Inside the Calendar component:
+      - For the onChange event handler, the callback function takes the date value as an argument. Then call the setPredicate() method in the callback and pass in startDate as the key and the date value as the value
+      - Add a value property and set it to the predicate state. We can use the .get() method on predicate and pass in 'startDate' or `new Date()` as the key. The `new Date()` is today's date
+      - Add a tileDisabled property and this takes a callback. Set loading in the callback
+    ```javascript
+    export default function EventFilters({ predicate, setPredicate, loading }) {
+      return (
+        <>
+          <Menu vertical size='large' style={{ width: '100%' }}>
+            <Header icon='filter' attached color='teal' content='Filters' />
+            <Menu.Item
+              content='All Events'
+              active={predicate.get('filter') === 'all'}
+              onClick={() => setPredicate('filter', 'all')}
+              disabled={loading}
+            />
+            <Menu.Item
+              content="I'm going"
+              active={predicate.get('filter') === 'isGoing'}
+              onClick={() => setPredicate('filter', 'isGoing')}
+              disabled={loading}
+            />
+            <Menu.Item
+              content="I'm hosting"
+              active={predicate.get('filter') === 'isHost'}
+              onClick={() => setPredicate('filter', 'isHost')}
+              disabled={loading}
+            />
+          </Menu>
+          <Header icon='calendar' attached color='teal' content='Select date' />
+          <Calendar
+            onChange={(date) => setPredicate('startDate', date)}
+            value={predicate.get('startDate' || new Date())}
+            tileDisabled={() => loading}
+          />
+        </>
+      );
+    }
+    ```
 
 
 
