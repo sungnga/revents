@@ -6686,7 +6686,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
       deps: [dispatch, predicate]
     });
     ```
-- At this point, the events filter functionality is not filtering as we expect it. And we would not be able to see the error that's causing this problem from the Redux devTools. We need to console log the error manually from the asyncActionError() action function in the asyncReducer.js file to see what's causing the problem
+- At this point, the events filter functionality is not filtering as we expected. When we click on the 'I'm going' or 'I'm hosting' filter tab all the events still display. And we would not be able to see the error that's causing this problem from the Redux devTools. We need to console log the error manually from the asyncActionError() action function in the asyncReducer.js file to see what's causing the problem
   ```javascript
   export function asyncActionError(error) {
     console.log(error)
@@ -6698,6 +6698,83 @@ In the LoginForm, we want to display an error message to the user if they aren't
   ```
   - The problem showing in the console is: `FirebaseError: The query requires an index` and a link to the Firebase console is listed to fix this particular problem
   - The problem we're running into is when we're filtering more than one Fields in Firestore, we need to create a composite index in Firestore. Every time we're querying multiple Fields we will run into this issue. Firestore will generate the index for us, but we need to go to the Firebase website to create the index
+  - In Firebase Firestore webpage, the composite indexes are enabled and listed in the 'Indexes' menu tab. We should see two indexes listed for our application
+
+### [8. Adding the user event filters: EventsTab component]()
+- The EventsTab component displays in the Events menu tab on the user profile page. This component displays another tab menu of 'Future Events', 'Past Events', and 'Hosting'. A user can click on these tabs to see different events. Each event is in a card form and it'll direct user to that event page
+- In src/features/profiles/profilePage folder, create a component/file called EventsTab.jsx
+- In EventsTab.jsx file:
+  - Use the code from the AboutTab component as a starter, because the page layout is going to be similar
+  - Import the following:
+    ```javascript
+    import React, { useState } from 'react';
+    import { Card, Grid, Header, Image, Tab } from 'semantic-ui-react';
+    import { Link } from 'react-router-dom';
+    ```
+  - Write an EventsTab functional component that displays the user's events in the events tab
+    - We're going to have multiple tabs inside this EventsTab so the user can click on the tab to show that type of events
+    - Create an activeTab state using useState() hook and initialize its value to 0
+      - `const [activeTab, setActiveTab] = useState(0);`
+    - Create a panes array that has 3 menuItems in it
+      ```javascript
+      const panes = [
+        { menuItem: 'Future Events', pane: { key: 'future' } },
+        { menuItem: 'Past Events', pane: { key: 'past' } },
+        { menuItem: 'Hosting', pane: { key: 'hosting' } }
+      ];
+      ```
+    - In JSX:
+      - Use Semantic UI Tab component to create the inner tabs
+        - Call the setActiveTab() method for onTabChange event handler
+        - Set panes property to the panes array
+        - Specify the menu property
+      - The list of events will be displayed underneath each tab in a Card component that the user can click on, and it will take them to the EventDetailedPage
+    ```javascript
+    export default function EventsTab() {
+      const [activeTab, setActiveTab] = useState(0);
+      const panes = [
+        { menuItem: 'Future Events', pane: { key: 'future' } },
+        { menuItem: 'Past Events', pane: { key: 'past' } },
+        { menuItem: 'Hosting', pane: { key: 'hosting' } }
+      ];
+
+      return (
+        <Tab.Pane>
+          <Grid>
+            <Grid.Column width={16}>
+              <Header floated='left' icon='calendar' content='Events' />
+            </Grid.Column>
+            <Grid.Column width={16}>
+              <Tab
+                onTabChange={(e, data) => setActiveTab(data.activeIndex)}
+                panes={panes}
+                menu={{ secondary: true, pointing: true }}
+              />
+              <Card.Group itemsPerRow={5} style={{ marginTop: 10 }}>
+                <Card as={Link} to={`/events`}>
+                  <Image
+                    src='/assets/categoryImages/drinks.jpg'
+                    style={{ minHeight: 100, objectFit: 'cover' }}
+                  />
+                  <Card.Content>
+                    <Card.Header content='Title' textAlign='center' />
+                    <Card.Meta textAlign='center'>
+                      <div>Date</div>
+                      <div>Time</div>
+                    </Card.Meta>
+                  </Card.Content>
+                </Card>
+              </Card.Group>
+            </Grid.Column>
+          </Grid>
+        </Tab.Pane>
+      );
+    }
+    ```
+- In ProfileContent.jsx file:
+  - Import the EventsTab component: `import EventsTab from './EventsTab';`
+  - In the 'Events' menuItem, render the EventsTab component
+    - `{ menuItem: 'Events', render: () => <EventsTab /> },`
 
 
 
