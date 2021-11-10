@@ -6925,6 +6925,57 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - In this particular query we need to 'Create Index' in Firestore console once again because we're requesting more than one field at a time. If we click on the 'Past Events' tab, this error message is displayed in the devTools console along with the Firebase link to resolve this issue
 
 
+## ADDING CHAT WITH FIREBASE
+- We will use Firebase Realtime Database to store the database of the chat functionality of our application
+- Firebase Realtime Database
+  - Stores data in a JSON Tree
+  - Key/value pairs
+  - Auto generated ID is actually a timestamp
+  - Firebase original purpose was for chat apps
+  - Realtime
+- Realtime Database vs. Cloud Firestore
+  - Realtime Database: Store and sync data in realtime across all connected clients
+  - Cloud Firestore: Realtime updates, powerful queries, and automatic scaling
+
+### [1. Setting up Firebase Realtime Database]()
+- Go to Firebase dashboard: https://console.firebase.google.com/
+- Select Realtime Database from the main menu
+- Click on the Rules tab at the top and edit the rules
+  - This will allow the authenticated user to read and write the chat comments
+  ```js
+  {
+    "rules": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+  ```
+- In firebaseService.js file:
+  - Write an addEventChatComment function that adds a currentUser's comment to the firebase database
+    - This function takes eventId and comment as parameters
+    - First, get a reference to the currently logged in user from firebase.auth and assign it to a user variable
+    - Create a newComment object that has the displayName, photoURL, uid, text, and date properties
+    - Then use the .push() method to add the newComment object to Firebase Realtime Database
+    - Use `firebase.database()` to access the firebase database rather than the Firestore database
+    - Use the `.ref(relative_pathname)` and specify the pathname to get a reference of the location where a piece of data is stored or going to store in firebase database
+    - Use the .push() method to add data to a location in firebase database
+    ```javascript
+    // add event chat to firebase database
+    export function addEventChatComment(eventId, comment) {
+      const user = firebase.auth().currentUser;
+      const newComment = {
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        uid: user.uid,
+        text: comment,
+        date: Date.now()
+      };
+      return firebase.database().ref(`chat/${eventId}`).push(newComment);
+    }
+    ```
+
+
+
 
 
 
