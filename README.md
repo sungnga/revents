@@ -6933,9 +6933,9 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Auto generated ID is actually a timestamp
   - Firebase original purpose was for chat apps
   - Realtime
-- Realtime Database vs. Cloud Firestore
+- Realtime Database vs. Firestore Database
   - Realtime Database: Store and sync data in realtime across all connected clients
-  - Cloud Firestore: Realtime updates, powerful queries, and automatic scaling
+  - Firestore Database: Realtime updates, powerful queries, and automatic scaling
 
 ### [1. Setting up Firebase Realtime Database]()
 - Go to Firebase dashboard: https://console.firebase.google.com/
@@ -6951,14 +6951,14 @@ In the LoginForm, we want to display an error message to the user if they aren't
   }
   ```
 - In firebaseService.js file:
-  - Write an addEventChatComment function that adds a currentUser's comment to the firebase database
+  - Write an addEventChatComment function that adds a currentUser's comment to the Firebase Realtime Database
     - This function takes eventId and comment as parameters
     - First, get a reference to the currently logged in user from firebase.auth and assign it to a user variable
     - Create a newComment object that has the displayName, photoURL, uid, text, and date properties
     - Then use the .push() method to add the newComment object to Firebase Realtime Database
     - Use `firebase.database()` to access the firebase database rather than the Firestore database
-    - Use the `.ref(relative_pathname)` and specify the pathname to get a reference of the location where a piece of data is stored or going to store in firebase database
-    - Use the .push() method to add data to a location in firebase database
+    - Use the `.ref(relative_pathname)` and specify the pathname to get a reference of the location where a piece of data is stored or going to store in Realtime Database
+    - Use the .push() method to add data to a location in Realtime Database
     ```javascript
     // add event chat to firebase database
     export function addEventChatComment(eventId, comment) {
@@ -6973,6 +6973,76 @@ In the LoginForm, we want to display an error message to the user if they aren't
       return firebase.database().ref(`chat/${eventId}`).push(newComment);
     }
     ```
+
+### [2. Setting up the chat form: EventDetailedChatForm component]()
+- Let's create an EventDetailedChatForm component that has a comment text input field and a submit button. When submitting the chat form, we can hook it up to the firebaseDatabase's addEventChatComment function to add the chat comment to the Realtime Database
+- In EventDetailedPage.jsx file:
+  - Pass down the eventId as props to the EventDetailedChat child component
+    - `<EventDetailedChat eventId={event.id} />`
+- In EventDetailedChat.jsx file:
+  - Destructure the eventId props received from the EventDetailedPage parent component
+  - Import the EventDetailedChatForm component: `import EventDetailedChatForm from './EventDetailedChatForm';`
+  - In JSX and at the very bottom of Comment.Group element, instantiate the EventDetailedChatForm component
+    - Pass down the eventId props to the EventDetailedChatForm child component
+    - `<EventDetailedChatForm eventId={eventId} />`
+- In src/features/events/eventDetailed folder, create a component/file called EventDetailedChatForm.jsx
+- In EventDetailedChatForm.jsx file:
+  - Import the following
+    ```javascript
+    import React from 'react';
+    import { Form, Formik } from 'formik';
+    import { toast } from 'react-toastify';
+    import { addEventChatComment } from '../../../app/firestore/firebaseService';
+    import MyTextArea from '../../../app/common/form/MyTextArea';
+    import { Button } from 'semantic-ui-react';
+    ```
+  - Write an EventDetailedChatForm functional component that displays the chat form
+    - This component receives the eventId props from the EventDetailedChat parent component
+    - Use the Formik component to create the chat form
+      - Specify the initialValues and onSubmit properties for Formik component
+    - Then inside the Formik component:
+      - Use render props to destructure the isSubmitting props from Formik
+      - Then inside the render props function, render the Formik Form component
+      - Inside the Form component, instantiate the MyTextArea component and add a 'Add reply' Button after that
+    ```javascript
+    export default function EventDetailedChatForm({ eventId }) {
+      return (
+        <Formik
+          initialValues={{ comment: '' }}
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
+            try {
+              await addEventChatComment(eventId, values.comment);
+              resetForm();
+            } catch (error) {
+              toast.error(error.message);
+            } finally {
+              setSubmitting(false);
+            }
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form className='ui form'>
+              <MyTextArea
+                name='comment'
+                placeholder='Please enter your comment here'
+                rows={2}
+              />
+              <Button
+                loading={isSubmitting}
+                content='Add reply'
+                icon='edit'
+                primary
+                type='submit'
+              />
+            </Form>
+          )}
+        </Formik>
+      );
+    }
+    ```
+- Now when a currentUser adds a comment in the event chat form, the chat comment is added to the Realtime Database under: chat -> eventId -> commentId -> comment detailed info
+
+
 
 
 
