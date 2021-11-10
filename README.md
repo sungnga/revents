@@ -6293,10 +6293,13 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - Firestore Database design
   - Adding users to the events
   - Firestore queries - how we're going to query the data
-- Firestore "Relationships"
+    - where
+    - array-contain
 - Adding user sign up to events functionality:
   - Join event
   - Cancel attendance
+- Firestore "Relationships"
+- Compound queries and indexes
 
 ### Firestore Database design
 - Firestore is a no SQL database. That means there's no relationship - no join tables. There is no such a thing as join query
@@ -6813,8 +6816,113 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-
-
+### [10. Adding profile actions for user events]()
+- Next is we're going to create a LISTEN_TO_USER_EVENTS action creator to listen to user events in Firestore and store the events data in profileEvents property in profileReducer
+- What is taking place in the backend when a user clicks on the Events tab on a user profile page is:
+  - the EventsTab component mounts
+  - this triggers the useFirestoreCollection hook to run (inside the EventsTab component)
+  - this hook makes a query to firestore by call the getUserEventsQuery function
+  - once the events data comes back from firestore it calls the listenToUserEvents action creator to store the data in profileEvents property of profileReducer
+  - then the events information is displayed on the EventsTab
+- In profileConstants.js file:
+  - Add another constant for LISTEN_TO_USER_EVENTS. We're creating this action in profile actions because this action is part of the profile page, even though we're listening for events
+    - `export const LISTEN_TO_USER_EVENTS = 'LISTEN_TO_USER_EVENTS';`
+- In profileActions.js file:
+  - Import the constant: `import { LISTEN_TO_USER_EVENTS } from './profileConstants';`
+  - Write a listenToUserEvents action function that listens to user events in Firestore
+    - This function takes events as a parameter
+    - This function returns as an object,
+      - the action type of LISTEN_TO_USER_EVENTS
+      - the payload of events
+    ```javascript
+    export function listenToUserEvents(events) {
+      return {
+        type: LISTEN_TO_USER_EVENTS,
+        payload: events
+      };
+    }
+    ```
+- In profileReducer.js file:
+  - Import the constant: `import { LISTEN_TO_USER_EVENTS } from './profileConstants';`
+  - In the initialState object, add a profileEvents property and initialize it to an empty array
+    ```javascript
+    const initialState = {
+      currentUserProfile: null,
+      selectedUserProfile: null,
+      photos: [],
+      profileEvents: []
+    };
+    ```
+  - In the profileReducer function:
+    - Add a new case in the switch statement for LISTEN_TO_USER_EVENTS action type
+      - This action returns as an object, the existing state and the profileEvents property of payload
+      - When this action is dispatched, profileEvents property in profileReducer redux store will contain an array of filtered events from Firestore events collection
+    ```javascript
+		case LISTEN_TO_USER_EVENTS:
+			return {
+				...state,
+				profileEvents: payload
+			};
+    ```
+- In the ProfileContent.jsx file:
+  - Pass down the profile as props to the EventsTab child component
+    - `{ menuItem: 'Events', render: () => <EventsTab profile={profile} /> },`
+- In EventsTab.jsx file:
+  - Destructure the profile props received from the ProfileContent parent component
+  - Import the following:
+    ```javascript
+    import { useDispatch, useSelector } from 'react-redux';
+    import useFirestoreCollection from '../../../app/hooks/useFirestoreCollection';
+    import { getUserEventsQuery } from '../../../app/firestore/firestoreService';
+    import { listenToUserEvents } from '../profileActions';
+    import { format } from 'date-fns';
+    ```
+  - Extract the profileEvents property from profileReducer using useSelector() hook
+    - `const { profileEvents } = useSelector((state) => state.profile);`
+  - Extract the loading property from asyncReducer using useSelector() hook
+    - `const { loading } = useSelector((state) => state.async);`
+  - Create a dispatch method using useDispatch() hook
+    - `const dispatch = useDispatch();`
+  - Use the custom useFirestoreCollection() hook:
+    - This custom hook takes query, data, and deps parameters as an object
+    - For query param, the arrow function is going to call the query getUserEventsQuery() method and pass in activeTab and profile.id as arguments
+    - For data param, the arrow function takes events that we got back from the query as an argument and then dispatches the listenToUserEvents() action that takes the events as an argument
+    - For deps param, list dispatch, activeTab, and profile.id as three dependencies in the dependencies array. Any changes to these dependencies will cause the component to re-render
+    ```javascript
+    useFirestoreCollection({
+      query: () => getUserEventsQuery(activeTab, profile.id),
+      data: (events) => (listenToUserEvents(events)),
+      deps: [dispatch, activeTab, profile.id]
+    });
+    ```
+  - In JSX:
+    - In the Tab.Pane element, add a loading property and set it to loading state
+      - `<Tab.Pane loading={loading}>`
+    - Now we can map over the profileEvents array and display each event in a Semantic UI Card component. Map the profileEvents array inside the Card.Group element
+      - The Card component will need a key property and set it to event.id. Also set the Link pathname to go to the EventDetailedPage
+      - Set the category Image src to event.category
+      - In the Card.Header element, set the content to event.title
+      - To format the event date and time, use format() method from date-fns to display the date and time the way we want
+    ```javascript
+    <Card.Group itemsPerRow={5} style={{ marginTop: 10 }}>
+      {profileEvents.map((event) => (
+        <Card key={event.id} as={Link} to={`/events/${event.id}`}>
+          <Image
+            src={`/assets/categoryImages/${event.category}.jpg`}
+            style={{ minHeight: 100, objectFit: 'cover' }}
+          />
+          <Card.Content>
+            <Card.Header content={event.title} textAlign='center' />
+            <Card.Meta textAlign='center'>
+              <div>{format(event.date, 'dd MMM yyyy')}</div>
+              <div>{format(event.date, 'hh:mm a')}</div>
+            </Card.Meta>
+          </Card.Content>
+        </Card>
+      ))}
+    </Card.Group>
+    ```
+- In this particular query we need to 'Create Index' in Firestore console once again because we're requesting more than one field at a time. If we click on the 'Past Events' tab, this error message is displayed in the devTools console along with the Firebase link to resolve this issue
 
 
 
