@@ -26,10 +26,10 @@ export function dataFromSnapshot(snapshot) {
 // querying the events collection
 export function listenToEVentsFromFirestore(predicate) {
 	const user = firebase.auth().currentUser;
-  const eventRef = db.collection('events').orderBy('date');
-  // filter events based on the predicate
-  // get the events based on the key/value of the predicate set in EventFilters component
-  // use the firestore's .where() method to query the events
+	const eventRef = db.collection('events').orderBy('date');
+	// filter events based on the predicate
+	// get the events based on the key/value of the predicate set in EventFilters component
+	// use the firestore's .where() method to query the events
 	switch (predicate.get('filter')) {
 		case 'isGoing':
 			return eventRef
@@ -228,5 +228,26 @@ export async function cancelUserAttendance(event) {
 	} catch (error) {
 		console.log(error);
 		throw error;
+	}
+}
+
+// get user events query
+export function getUserEventsQuery(activeTab, userUid) {
+	let eventsRef = db.collection('events');
+	const today = new Date();
+	switch (activeTab) {
+		case 1: // past events
+			return eventsRef
+				.where('attendeeIds', 'array-contains', userUid)
+				.where('date', '<=', today)
+				.orderBy('date', 'desc');
+		case 2: // hosting
+			return eventsRef.where('hostUid', '==', userUid).orderBy('date');
+		default:
+			// future events
+			return eventsRef
+				.where('attendeeIds', 'array-contains', userUid)
+				.where('date', '>=', today)
+				.orderBy('date');
 	}
 }
