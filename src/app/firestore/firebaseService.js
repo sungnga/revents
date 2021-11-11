@@ -2,6 +2,16 @@ import { toast } from 'react-toastify';
 import firebase from '../config/firebase';
 import { setUserProfileData } from './firestoreService';
 
+// convert a firebase object data to an array
+// firebase data returns as a snapshot object
+export function firebaseObjectToArray(snapshot) {
+	if (snapshot) {
+		return Object.entries(snapshot).map((e) =>
+			Object.assign({}, e[1], { id: e[0] })
+		);
+	}
+}
+
 // The creds is user's email and password coming from LoginForm
 // The result returned from firebase is an auth user object
 // The user object contains data about this user
@@ -76,13 +86,18 @@ export function deleteFromFirebaseStorage(filename) {
 
 // add event chat to firebase database
 export function addEventChatComment(eventId, comment) {
-  const user = firebase.auth().currentUser
-  const newComment = {
-    displayName: user.displayName,
-    photoURL: user.photoURL,
-    uid: user.uid,
-    text: comment,
-    date: Date.now()
-  }
-  return firebase.database().ref(`chat/${eventId}`).push(newComment)
+	const user = firebase.auth().currentUser;
+	const newComment = {
+		displayName: user.displayName,
+		photoURL: user.photoURL,
+		uid: user.uid,
+		text: comment,
+		date: Date.now()
+	};
+	return firebase.database().ref(`chat/${eventId}`).push(newComment);
+}
+
+// get an event chat reference from Realtime Database
+export function getEventChatRef(eventId) {
+	return firebase.database().ref(`chat/${eventId}`).orderByKey();
 }
