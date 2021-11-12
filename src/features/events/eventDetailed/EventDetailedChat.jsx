@@ -22,7 +22,9 @@ function EventDetailedChat({ eventId }) {
 			// console.log(firebaseObjectToArray(snapshot.val()));
 			// first, convert firebase object to an array
 			// store the array in comments property in eventReducer
-			dispatch(listenToEventChat(firebaseObjectToArray(snapshot.val())));
+			dispatch(
+				listenToEventChat(firebaseObjectToArray(snapshot.val()).reverse())
+			);
 		});
 	}, [eventId, dispatch]);
 
@@ -39,6 +41,7 @@ function EventDetailedChat({ eventId }) {
 			</Segment>
 
 			<Segment attached>
+				<EventDetailedChatForm eventId={eventId} />
 				<Comment.Group>
 					{comments.map((comment) => (
 						<Comment key={comment.id}>
@@ -50,7 +53,14 @@ function EventDetailedChat({ eventId }) {
 								<Comment.Metadata>
 									<div>{formatDistance(comment.date, new Date())}</div>
 								</Comment.Metadata>
-								<Comment.Text>{comment.text}</Comment.Text>
+								<Comment.Text>
+									{comment.text.split('\n').map((text, i) => (
+										<span key={i}>
+											{text}
+											<br />
+										</span>
+									))}
+								</Comment.Text>
 								<Comment.Actions>
 									<Comment.Action>Reply</Comment.Action>
 								</Comment.Actions>
@@ -58,7 +68,6 @@ function EventDetailedChat({ eventId }) {
 						</Comment>
 					))}
 				</Comment.Group>
-				<EventDetailedChatForm eventId={eventId} />
 			</Segment>
 		</>
 	);
