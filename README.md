@@ -7169,6 +7169,43 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }, [eventId, dispatch]);
     ```
 
+### [4. Displaying the chat comments]()
+- Now that we have the comments array in eventReducer we can display them on the event page
+- In EventDetailedChat.jsx file:
+  - Import the Link component: `import { Link } from 'react-router-dom';`
+  - Import formatDistance: `import { formatDistance } from 'date-fns';`
+  - In JSX:
+    - We can map over the comments array and display each comment in a Semantic UI Comment component. Map the comments array inside the Comment.Group element
+      - The Comment component will need a key property and set it to comment.id
+      - For the Comment.Avatar element, set the src to comment.photoURL or the static user image
+      - Make the Comment.Author element into a Link and set the link path to comment.uid, which is this user's profile page and set the author's display name to comment.displayName
+      - To format the time, use formatDistance() method from date-fns. The 1st arg we specify is comment.date and 2nd arg is today's date `new Date()`. This will display the time since this comment was created from today's time
+      - Set Comment.Text element to comment.text
+    ```javascript
+    const { comments } = useSelector((state) => state.event);
+    
+    <Comment.Group>
+      {comments.map((comment) => (
+        <Comment key={comment.id}>
+          <Comment.Avatar src={comment.photoURL || '/assets/user.png'} />
+          <Comment.Content>
+            <Comment.Author as={Link} to={`/profile/${comment.uid}`}>
+              {comment.displayName}
+            </Comment.Author>
+            <Comment.Metadata>
+              <div>{formatDistance(comment.date, new Date())}</div>
+            </Comment.Metadata>
+            <Comment.Text>{comment.text}</Comment.Text>
+            <Comment.Actions>
+              <Comment.Action>Reply</Comment.Action>
+            </Comment.Actions>
+          </Comment.Content>
+        </Comment>
+      ))}
+    </Comment.Group>
+    ```
+
+
 
 
 
