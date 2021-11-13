@@ -9,6 +9,7 @@ import {
 import { listenToEventChat } from '../eventActions';
 import { Link } from 'react-router-dom';
 import { formatDistance } from 'date-fns';
+import { CLEAR_COMMENTS } from '../eventConstants';
 
 function EventDetailedChat({ eventId }) {
 	const dispatch = useDispatch();
@@ -26,6 +27,13 @@ function EventDetailedChat({ eventId }) {
 				listenToEventChat(firebaseObjectToArray(snapshot.val()).reverse())
 			);
 		});
+		// use the return function when the component unmounts
+		// clear the comments in eventReducer
+		// turn off the listener for the event chat in firebase realtime db
+		return () => {
+			dispatch({ type: CLEAR_COMMENTS });
+			getEventChatRef().off();
+		};
 	}, [eventId, dispatch]);
 
 	return (

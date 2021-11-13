@@ -2,13 +2,16 @@ import { Field, Form, Formik } from 'formik';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { addEventChatComment } from '../../../app/firestore/firebaseService';
-import MyTextArea from '../../../app/common/form/MyTextArea';
-import { Button, Loader } from 'semantic-ui-react';
+import { Loader } from 'semantic-ui-react';
+import * as Yup from 'yup';
 
 function EventDetailedChatForm({ eventId }) {
 	return (
 		<Formik
 			initialValues={{ comment: '' }}
+			validationSchema={Yup.object({
+				comment: Yup.string().required()
+			})}
 			onSubmit={async (values, { setSubmitting, resetForm }) => {
 				try {
 					await addEventChatComment(eventId, values.comment);
@@ -20,7 +23,7 @@ function EventDetailedChatForm({ eventId }) {
 				}
 			}}
 		>
-			{({ isSubmitting, handleSubmit }) => (
+			{({ isSubmitting, handleSubmit, isValid }) => (
 				<Form className='ui form'>
 					<Field name='comment'>
 						{({ field }) => (
@@ -35,7 +38,8 @@ function EventDetailedChatForm({ eventId }) {
 											return;
 										}
 										if (e.key === 'Enter' && !e.shiftKey) {
-											handleSubmit();
+											e.preventDefault();
+											isValid && handleSubmit();
 										}
 									}}
 								></textarea>
