@@ -7526,6 +7526,105 @@ In the LoginForm, we want to display an error message to the user if they aren't
       ```
 
 
+## ADDING A FOLLOWING/FOLLOWERS FEATURE
+- Follower/following feature
+- Intro to security rules
+- Intro to cloud functions
+
+### [1. Adding the Firestore functions: follow a user functionality]()
+- A few things take place when a currently logged in user follows another user profile. We're going to create a 'following' collection at the root of our Firestore db. Then in the 'users' collection, when a user has a follower and/or following, we're going to add the followingCount and followerCount properties to the user document as well
+- In firestoreService.js file:
+  - Write an async followUser function for following a user
+  - This function takes a profile as an argument. The profile object is the user profile that the currentUser is about to follow
+  - First, get the currentUser from firebase.auth
+  - This function performs four async operations:
+    - First, it creates a 'following' collection at the root of Firestore database -> a user.uid (currentUser id) document -> a 'userFollowing' collection (a collection of profiles that the currentUser is following) -> a document of profile.id (the profile user that the currentUser is following). Use the .set() method to create a new profile.id document object
+    - Second, inside the 'following' collection -> creates a profile.id document -> a 'userFollowers' collection -> a user.uid document
+    - Third, in the 'users' collection -> adds a followingCount field to the user.uid document. Use the .update() method to add a new field to the document
+    - Fourth, in the 'users' collection -> adds a followerCount field to the profile.id document
+    ```js
+    // follow a user functionality
+    // add a following collection at the root of firestore db
+    // add followingCount and followerCount properties to user doc
+    export async function followUser(profile) {
+      const user = firebase.auth().currentUser;
+      try {
+        await db
+          .collection('following')
+          .doc(user.uid)
+          .collection('userFollowing')
+          .doc('profile.id')
+          .set({
+            displayName: profile.displayName,
+            photoURL: profile.photoURL,
+            uid: profile.id
+          });
+        await db
+          .collection('following')
+          .doc(profile.id)
+          .collection('userFollowers')
+          .doc('user.uid')
+          .set({
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            uid: user.uid
+          });
+        await db
+          .collection('users')
+          .doc(user.uid)
+          .update({
+            followingCount: firebase.firestore.FieldValue.increment(1)
+          });
+        return await db
+          .collection('users')
+          .doc(profile.id)
+          .update({
+            followerCount: firebase.firestore.FieldValue.increment(1)
+          });
+      } catch (error) {
+        throw error;
+      }
+    }
+    ```
+- In ProfileHeader.jsx file:
+  - Import the following:
+    ```js
+    import React, { useState } from 'react';
+    import { toast } from 'react-toastify';
+    import { followUser } from '../../../app/firestore/firestoreService';
+    ```
+  - Add a loading state using the useState hook and initialize it to false
+    - `const [loading, setLoading] = useState(false);`
+  - Write an async handleFollowUser function that handles when a user click on the 'Follow' button
+    - Set the loading state to true to turn on the loading indicator while this function is executed
+    - In the try/catch block, execute the followUser() method and pass in the profile as an argument
+    ```js
+    async function handleFollowUser() {
+      setLoading(true);
+      try {
+        await followUser(profile);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    ```
+  - In JSX and in the 'Follow' Button element:
+    - Add an onClick event handler and set it to the handleFollowUser function
+    - Add a loading attribute and set it to the loading state
+    ```js
+    <Button
+      onClick={handleFollowUser}
+      loading={loading}
+      basic
+      fluid
+      color='green'
+      content='Follow'
+    />
+    ```
+
+
 
 
 

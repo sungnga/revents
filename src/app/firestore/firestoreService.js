@@ -251,3 +251,46 @@ export function getUserEventsQuery(activeTab, userUid) {
 				.orderBy('date');
 	}
 }
+
+// follow a user functionality
+// add a following collection at the root of firestore db
+// add followingCount and followerCount properties to user doc
+export async function followUser(profile) {
+	const user = firebase.auth().currentUser;
+	try {
+		await db
+			.collection('following')
+			.doc(user.uid)
+			.collection('userFollowing')
+			.doc('profile.id')
+			.set({
+				displayName: profile.displayName,
+				photoURL: profile.photoURL,
+				uid: profile.id
+			});
+		await db
+			.collection('following')
+			.doc(profile.id)
+			.collection('userFollowers')
+			.doc('user.uid')
+			.set({
+				displayName: user.displayName,
+				photoURL: user.photoURL,
+				uid: user.uid
+			});
+		await db
+			.collection('users')
+			.doc(user.uid)
+			.update({
+				followingCount: firebase.firestore.FieldValue.increment(1)
+			});
+		return await db
+			.collection('users')
+			.doc(profile.id)
+			.update({
+				followerCount: firebase.firestore.FieldValue.increment(1)
+			});
+	} catch (error) {
+		throw error;
+	}
+}
