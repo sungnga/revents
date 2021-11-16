@@ -7532,7 +7532,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - Intro to cloud functions
 
 ### [1. Adding the Firestore functions: follow a user functionality]()
-- A few things take place when a currently logged in user follows another user profile. We're going to create a 'following' collection at the root of our Firestore db. Then in the 'users' collection, when a user has a follower and/or following, we're going to add the followingCount and followerCount properties to the user document as well
+- A few things take place in the backend when a currently login user follows another user profile. We're going to create a 'following' collection at the root of our Firestore db. Then in the 'users' collection, when a user has a follower and/or following, we're going to add the followingCount and followerCount properties to the user document as well
 - In firestoreService.js file:
   - Write an async followUser function for following a user
   - This function takes a profile as an argument. The profile object is the user profile that the currentUser is about to follow
@@ -7595,7 +7595,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
   - Add a loading state using the useState hook and initialize it to false
     - `const [loading, setLoading] = useState(false);`
-  - Write an async handleFollowUser function that handles when a user click on the 'Follow' button
+  - Write an async handleFollowUser function that handles when a user clicks on the 'Follow' button
     - Set the loading state to true to turn on the loading indicator while this function is executed
     - In the try/catch block, execute the followUser() method and pass in the profile as an argument
     ```js
@@ -7623,6 +7623,79 @@ In the LoginForm, we want to display an error message to the user if they aren't
       content='Follow'
     />
     ```
+
+### [2. Unfollow a user functionality]()
+- The functionality of unfollowing a user is very similar to the functionality of following a user. We delete the profile.id document in the 'userFollowing' collection of user.uid doc and delete the user.uid document in the 'userFollowers' collection of profile.id doc. And we decrement the followingCount and followerCount fields in the 'users' collection
+- In firestoreService.js file:
+  - Write an async unfollowUser function for unfollowing a user
+  - This function takes a profile as an argument. The profile object is the profile user that the currentUser wants to unfollow
+  - Use the firebase .delete() method to delete a document
+  - To decrement the followingCount and followerCount, use the .increment() method and pass in a `-1` value instead
+  ```js
+  export async function unfollowUser(profile) {
+    const user = firebase.auth().currentUser;
+    try {
+      await db
+        .collection('following')
+        .doc(user.uid)
+        .collection('userFollowing')
+        .doc(profile.id)
+        .delete();
+      await db
+        .collection('following')
+        .doc(profile.id)
+        .collection('userFollowers')
+        .doc(user.uid)
+        .delete();
+      await db
+        .collection('users')
+        .doc(user.uid)
+        .update({
+          followingCount: firebase.firestore.FieldValue.increment(-1)
+        });
+      return await db
+        .collection('users')
+        .doc(profile.id)
+        .update({
+          followerCount: firebase.firestore.FieldValue.increment(-1)
+        });
+    } catch (error) {
+      throw error;
+    }
+  }
+  ```
+- In ProfileHeader.jsx file:
+  - Import the unfollowUser function: `import { unfollowUser } from '../../../app/firestore/firestoreService';`
+  - Write an async handleUnfollowUser function that handles when a user clicks on the 'Unfollow' button
+    - This is an async operation so we want to turn on the loading indicator while this function is being executed
+    - Use the try/catch block and call the unfollowUser() method and pass in the profile as an argument
+    ```js
+    async function handleUnfollowUser() {
+      setLoading(true);
+      try {
+        await unfollowUser(profile);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    ```
+  - In JSX:
+    - For the time being just to make sure that the functionality of unfollowing a user is working (the firestore database is updated), create an 'Unfollow' Button element
+    - Then add an onClick event handler and assign it to the handleUnfollowUser function
+    ```js
+    <Button
+      onClick={handleUnfollowUser}
+      loading={loading}
+      basic
+      fluid
+      color='red'
+      content='Unfollow'
+    />
+    ```
+
+
 
 
 
