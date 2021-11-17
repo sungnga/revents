@@ -7695,9 +7695,61 @@ In the LoginForm, we want to display an error message to the user if they aren't
     />
     ```
 
+### [3. Listening to the following data]()
+- To retrieve data of following and followers from the Redux store and display them onto the page, we're going to write action creators for the profileReducer
+- In profileConstants.js file:
+  - Create and export the LISTEN_TO_FOLLOWERS and the LISTEN_TO_FOLLOWINGS constants
+  - `export const LISTEN_TO_FOLLOWERS = 'LISTEN_TO_FOLLOWERS';`
+  - `export const LISTEN_TO_FOLLOWINGS = 'LISTEN_TO_FOLLOWINGS';`
+- In profileActions.js file:
+  - Import the LISTEN_TO_FOLLOWERS and the LISTEN_TO_FOLLOWINGS constants
+  - Create and export the listenToFollowers and listenToFollowings action creators
+    ```js
+    import { LISTEN_TO_FOLLOWERS, LISTEN_TO_FOLLOWINGS } from './profileConstants';
 
+    export function listenToFollowers(followers) {
+      return {
+        type: LISTEN_TO_FOLLOWERS,
+        payload: followers
+      };
+    }
 
+    export function listenToFollowings(followings) {
+      return {
+        type: LISTEN_TO_FOLLOWINGS,
+        payload: followings
+      };
+    }
+    ```
+- In profileReducer.js file:
+  - Import the LISTEN_TO_FOLLOWERS and the LISTEN_TO_FOLLOWINGS constants
+    - `import { LISTEN_TO_FOLLOWERS, LISTEN_TO_FOLLOWINGS } from './profileConstants';`
+  - In the `initialState` object, add two more properties of `followers` and `followings` and initialize both to empty arrays
+    ```js
+    const initialState = {
+      currentUserProfile: null,
+      selectedUserProfile: null,
+      photos: [],
+      profileEvents: [],
+      followers: [],
+      followings: []
+    };
+    ```
+  - In the profileReducer function, add two more cases for LISTEN_TO_FOLLOWERS and LISTEN_TO_FOLLOWINGS
+    ```js
+		case LISTEN_TO_FOLLOWERS:
+			return {
+				...state,
+				followers: payload
+			};
+		case LISTEN_TO_FOLLOWINGS:
+			return {
+				...state,
+				followings: payload
+			};
+    ```
 
+    
 
 
 
