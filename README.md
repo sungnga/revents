@@ -7749,7 +7749,74 @@ In the LoginForm, we want to display an error message to the user if they aren't
 			};
     ```
 
-    
+### [4. Adding the following components: ProfileCard and FollowingTab components]()
+- In src/features/profiles/profilePage folder, create a component called ProfileCard.jsx
+- In ProfileCard.jsx file:
+  - Import the following:
+    ```js
+    import React from 'react';
+    import { Link } from 'react-router-dom';
+    import { Card, Image } from 'semantic-ui-react';
+    ```
+  - Write a functional ProfileCard component that displays the user profile info in a Card format
+    - This component takes profile as an argument
+    - Use Semantic UI Card element to display the profile info
+    - The Card element is a link that directs user to this particular user profile page. The Card displays the profile photo and the displayName
+    ```js
+    function ProfileCard({ profile }) {
+      return (
+        <Card as={Link} to={`/profile/${profile.id}`}>
+          <Image src={profile.photoURL || '/assets/user.png'} />
+          <Card.Content>
+            <Card.Header content={profile.displayName} />
+          </Card.Content>
+        </Card>
+      );
+    }
+
+    export default ProfileCard;
+    ```
+- In src/features/profiles/profilePage folder, create a component called FollowingTab.jsx
+- In FollowingTab.jsx file:
+  - Import the ProfileCard component
+  - Write a functional FollowingTab component that displays the ProfileCard component in a grid layout
+    - This component takes profile as an argument
+    - Instantiate the ProfileCard component and pass down the profile as props
+    ```js
+    import React from 'react';
+    import { Card, Grid, Header, Tab } from 'semantic-ui-react';
+    import ProfileCard from './ProfileCard';
+
+    function FollowingTab({ profile }) {
+      return (
+        <Tab.Pane>
+          <Grid>
+            <Grid.Column width={16}>
+              <Header floated='left' icon='user' content={`Followers`} />
+            </Grid.Column>
+            <Grid.Column width={16}>
+              <Card.Group itemsPerRow={5}>
+                <ProfileCard profile={profile} />
+                <ProfileCard profile={profile} />
+                <ProfileCard profile={profile} />
+              </Card.Group>
+            </Grid.Column>
+          </Grid>
+        </Tab.Pane>
+      );
+    }
+
+    export default FollowingTab;
+    ```
+- Inside the user profile page and under the 'Followers' and 'Following' tab menu we're going to display the list of followers and following in the FollowingTab component
+- In ProfileContent.jsx file:
+  - Import the FollowingTab component: `import FollowingTab from './FollowingTab';`
+  - For the 'Followers' and 'Following' tab pane menu items, render the FollowingTab component and pass down the profile as props
+  ```js
+  { menuItem: 'Followers', render: () => <FollowingTab profile={profile} /> },
+  { menuItem: 'Following', render: () => <FollowingTab profile={profile} /> }
+  ```
+
 
 
 
