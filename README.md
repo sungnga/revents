@@ -7817,6 +7817,98 @@ In the LoginForm, we want to display an error message to the user if they aren't
   { menuItem: 'Following', render: () => <FollowingTab profile={profile} /> }
   ```
 
+### [5. Listening to the followers data]()
+- In firestoreService.js file:
+  - Write and export a getFollowersCollection function to get userFollowers collection from profileId doc in firestore db
+  - Write and export a getFollowingCollection function to get userFollowering collection from profileId doc
+  ```js
+  // get userFollowers collection from profileId doc
+  export function getFollowersCollection(profileId) {
+    return db.collection('following').doc(profileId).collection('userFollowers');
+  }
+
+  // get userFollowering collection from profileId doc
+  export function getFollowingCollection(profileId) {
+    return db.collection('following').doc(profileId).collection('userFollowing');
+  }
+  ```
+- In ProfileContent.jsx file:
+  - In the user profile page we want to know and keep track of which tab the user clicks on. If the user clicks on the 'Followers' tab, we want to listen to the userFollowers data collection from firestore and display it. If the user clicks on the 'Following' tab, then we get the userFollowing data collect from firestore
+  - Create an activeTab state using useState hook and initialize it to 0. This state keeps track of which tab is being clicked on
+    - `const [activeTab, setActiveTab] = useState(0);` 
+  - In JSX and in the Tab element, add the onTabChange attribute and set it to a callback function that executes the setActiveTab() method to set the activeTab state to active tab (data.activeIndex)
+    - `onTabChange={(e, data) => setActiveTab(data.activeIndex)}`
+  - Lastly, pass down the activeTab state as props to the FollowingTab component. Do this for both the 'Follower' and 'Followings' menuItems
+    ```js
+		menuItem: 'Followers',
+			render: () => <FollowingTab profile={profile} activeTab={activeTab} />
+		},
+		{
+			menuItem: 'Following',
+			render: () => <FollowingTab profile={profile} activeTab={activeTab} />
+		}
+    ```
+- In FollowingTab.jsx file:
+  - Import the following:
+    ```js
+    import { useSelector, useDispatch } from 'react-redux';
+    import {
+      getFollowersCollection,
+      getFollowingCollection
+    } from '../../../app/firestore/firestoreService';
+    import useFirestoreCollection from '../../../app/hooks/useFirestoreCollection';
+    import { listenToFollowers, listenToFollowings } from '../profileActions';
+    ```
+  - Receive the activeTab props from the ProfileContent parent component
+  - Get the dispatch method by executing the useDispatch hook
+    - `const dispatch = useDispatch();`
+  - Destructure the `followings` and `followers` properties from the profileReducer store
+    - `const { followings, followers } = useSelector((state) => state.profile);`
+  - Use the `useFirestoreCollection` custom hook to get the data collection from firestore
+    - In our menu tab pane, the 'Followers' tab is at index 3 and the 'Following' tab is at index 4. We make the query with the `getFollowersCollection()` or the `getFollowingCollection()` method depending on the activeTab index value stored in the activeTab state.
+    - To store the data that we got back from firestore db in Redux store, we dispatch one of the two methods depending on the activeTab index value. Dispatch either the `listenToFollowers()` method or the `listenToFollowings()` method and pass in the data as an argument
+    - List `activeTab` and `dispatch` as the dependencies array
+    ```js
+    useFirestoreCollection({
+      // Followers tab is at activeTab index 3
+		  // Following tab is at activeTab index 4
+      query:
+        activeTab === 3
+          ? () => getFollowersCollection(profile.id)
+          : () => getFollowingCollection(profile.id),
+      data: (data) =>
+        activeTab === 3
+          ? dispatch(listenToFollowers(data))
+          : dispatch(listenToFollowings(data)),
+      deps: [activeTab, dispatch]
+    });
+    ```
+  - Now that we have the list of followers and followings data stored in Redux store (profileReducer), we want to display the appropriate list of following or follower users depending on the tab that's being clicked on
+  - In JSX and inside of the Card.Group element:
+    - Write a condition that if the activeTab state is equal to tab index of 3, then map over the `followers` array and display each follower profile in a ProfileCard component. Pass down the profile and key as props to the ProfileCard component. We need to provide a key because we're mapping over an array
+    - Write another condition that if the activeTab state is equal to tab index of 4, then map over the `followings` array and display each following profile in a ProfileCard component. Pass down the profile and key as props to the ProfileCard component
+      ```js
+      {activeTab === 3 &&
+        followers.map((profile) => (
+          <ProfileCard profile={profile} key={profile.id} />
+        ))}
+      {activeTab === 4 &&
+        followers.map((profile) => (
+          <ProfileCard profile={profile} key={profile.id} />
+        ))}
+      ```
+    - For the tab Grid Header, we want to display the header text as either 'Followers' or 'Following' depending on the activeTab being clicked on. Write a conditional to display one or the other
+      ```js
+      <Grid.Column width={16}>
+        <Header
+          floated='left'
+          icon='user'
+          content={activeTab === 3 ? 'Followers' : 'Following'}
+        />
+      </Grid.Column>
+      ```
+
+
 
 
 

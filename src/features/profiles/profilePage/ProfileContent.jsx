@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tab } from 'semantic-ui-react';
 import AboutTab from './AboutTab';
 import EventsTab from './EventsTab';
@@ -6,6 +6,8 @@ import FollowingTab from './FollowingTab';
 import PhotosTab from './PhotosTab';
 
 function ProfileContent({ profile, isCurrentUser }) {
+	// Keep track of which tab is being clicked
+	const [activeTab, setActiveTab] = useState(0);
 	const panes = [
 		{
 			menuItem: 'About',
@@ -18,8 +20,14 @@ function ProfileContent({ profile, isCurrentUser }) {
 			)
 		},
 		{ menuItem: 'Events', render: () => <EventsTab profile={profile} /> },
-		{ menuItem: 'Followers', render: () => <FollowingTab profile={profile} /> },
-		{ menuItem: 'Following', render: () => <FollowingTab profile={profile} /> }
+		{
+			menuItem: 'Followers',
+			render: () => <FollowingTab profile={profile} activeTab={activeTab} />
+		},
+		{
+			menuItem: 'Following',
+			render: () => <FollowingTab profile={profile} activeTab={activeTab} />
+		}
 	];
 	return (
 		<Tab
@@ -27,6 +35,8 @@ function ProfileContent({ profile, isCurrentUser }) {
 			menuPosition='right'
 			panes={panes}
 			// activeIndex={1}
+			// track which tab is being clicked
+			onTabChange={(e, data) => setActiveTab(data.activeIndex)}
 		/>
 	);
 }

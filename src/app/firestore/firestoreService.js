@@ -262,7 +262,7 @@ export async function followUser(profile) {
 			.collection('following')
 			.doc(user.uid)
 			.collection('userFollowing')
-			.doc('profile.id')
+			.doc(profile.id)
 			.set({
 				displayName: profile.displayName,
 				photoURL: profile.photoURL,
@@ -272,7 +272,7 @@ export async function followUser(profile) {
 			.collection('following')
 			.doc(profile.id)
 			.collection('userFollowers')
-			.doc('user.uid')
+			.doc(user.uid)
 			.set({
 				displayName: user.displayName,
 				photoURL: user.photoURL,
@@ -326,4 +326,14 @@ export async function unfollowUser(profile) {
 	} catch (error) {
 		throw error;
 	}
+}
+
+// get userFollowers collection from profileId doc
+export function getFollowersCollection(profileId) {
+	return db.collection('following').doc(profileId).collection('userFollowers');
+}
+
+// get userFollowering collection from profileId doc
+export function getFollowingCollection(profileId) {
+	return db.collection('following').doc(profileId).collection('userFollowing');
 }
