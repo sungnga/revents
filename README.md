@@ -7908,6 +7908,90 @@ In the LoginForm, we want to display an error message to the user if they aren't
       </Grid.Column>
       ```
 
+### [6. Updating the following count]()
+- The next step we want to do is when a currently login user (currentUser) visits another user profile page, we want to see if the currentUser has already followed this user profile. If they have, display the 'Following' button on the user profile page. If not, display the 'Follow' button. When a user profile page loads/mounts, we want to listen in firestore for the currentUser's 'userFollowing' collection and see if the user profileId  doc is in this collection. If there is, that means the currentUser is following the user profile. We'r going to write a function to get the user following doc from firestore
+- The second thing we want to do is create a `followingUser` state in profileReducer store to keep track of whether the currentUser is following the user profile. We will create actions to toggle the `followingUser` state. We show the 'Following' or the 'Follow' button based on this state
+- In ProfileHeader.jsx file:
+  - Display the followerCount and followingCount in the ProfileHeader section of the user profile page
+    ```js
+    <Statistic.Group>
+      <Statistic label='Followers' value={profile.followerCount || 0} />
+      <Statistic label='Following' value={profile.followingCount || 0} />
+    </Statistic.Group>
+    ```
+- In firestoreService.js file:
+  - Write and export a getFollowingDoc function that gets a following doc from firestore based on the given profileId
+  ```js
+  // get following doc
+  export function getFollowingDoc(profileId) {
+    const userUid = firebase.auth().currentUser.uid;
+    return db
+      .collection('following')
+      .doc(userUid)
+      .collection('userFollowing')
+      .doc(profileId)
+      .get();
+  }
+  ```
+- In profileConstants.js file:
+  - Create and export SET_FOLLOW_USER and SET_UNFOLLOW_USER constants
+    ```js
+    export const SET_FOLLOW_USER = 'SET_FOLLOW_USER';
+    export const SET_UNFOLLOW_USER = 'SET_UNFOLLOW_USER';
+    ```
+- In profileActions.js file:
+  - Import the SET_FOLLOW_USER and the SET_UNFOLLOW_USER constants
+  - Write a setFollowUser function that returns the action type of SET_FOLLOW_USER
+  - Write a setUnfollowUser function that returns the action type of SET_UNFOLLOW_USER
+    ```js
+    import { SET_FOLLOW_USER, SET_UNFOLLOW_USER } from './profileConstants';
+
+    export function setFollowUser() {
+      return {
+        type: SET_FOLLOW_USER
+      };
+    }
+
+    export function setUnfollowUser() {
+      return {
+        type: SET_UNFOLLOW_USER
+      };
+    }
+    ```
+- In profileReducer.js file:
+  - Import the SET_FOLLOW_USER and the SET_UNFOLLOW_USER constants
+    - `import { SET_FOLLOW_USER, SET_UNFOLLOW_USER } from './profileConstants';`
+  - In the initialState object, add a followingUser property and initialize it to false
+    ```js
+    const initialState = {
+      currentUserProfile: null,
+      selectedUserProfile: null,
+      photos: [],
+      profileEvents: [],
+      followers: [],
+      followings: [],
+      followingUser: false
+    };
+    ```
+  - Add a case for the SET_FOLLOW_USER action creator. When this action creator is invoked the followingUser property is set to true
+  - Add a case for the SET_UNFOLLOW_USER action creator. When this action creator is invoked the followingUser property is set to false
+    ```js
+		case SET_FOLLOW_USER:
+			return {
+				...state,
+				followingUser: true
+			};
+		case SET_UNFOLLOW_USER:
+			return {
+				...state,
+				followingUser: false
+			};
+    ```
+
+
+
+
+
 
 
 

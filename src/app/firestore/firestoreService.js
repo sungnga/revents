@@ -328,12 +328,23 @@ export async function unfollowUser(profile) {
 	}
 }
 
-// get userFollowers collection from profileId doc
+// get userFollowers collection
 export function getFollowersCollection(profileId) {
 	return db.collection('following').doc(profileId).collection('userFollowers');
 }
 
-// get userFollowering collection from profileId doc
+// get userFollowering collection
 export function getFollowingCollection(profileId) {
 	return db.collection('following').doc(profileId).collection('userFollowing');
+}
+
+// get following doc
+export function getFollowingDoc(profileId) {
+	const userUid = firebase.auth().currentUser.uid;
+	return db
+		.collection('following')
+		.doc(userUid)
+		.collection('userFollowing')
+		.doc(profileId)
+		.get();
 }
