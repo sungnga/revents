@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Button,
 	Divider,
@@ -12,18 +12,48 @@ import {
 import { toast } from 'react-toastify';
 import {
 	followUser,
+	getFollowingDoc,
 	unfollowUser
 } from '../../../app/firestore/firestoreService';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	setFollowUser,
+	setUnfollowUser
+} from '../../../features/profiles/profileActions';
 
 function ProfileHeader({ profile, isCurrentUser }) {
+	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
+	const { followingUser } = useSelector((state) => state.profile);
+
+	// get following doc from firestore (async operation)
+	// cannot use async function directly in useEffect hook
+	// but can create an async function inside the useEffect function
+	useEffect(() => {
+		if (isCurrentUser) return;
+		setLoading(true);
+		async function fetchFollowingDoc() {
+			try {
+				const followingDoc = getFollowingDoc(profile.id);
+				if (followingDoc && followingDoc.exists) {
+					dispatch(setFollowUser());
+				}
+			} catch (error) {
+				toast.error(error.message);
+			}
+		}
+		fetchFollowingDoc().then(() => setLoading(false));
+	}, [dispatch, profile.id, isCurrentUser]);
 
 	async function handleFollowUser() {
 		setLoading(true);
-		try {
+    try {
+			// updating firestore db
 			await followUser(profile);
+			// updating followingUser state in Redux
+			dispatch(setFollowUser());
 		} catch (error) {
-			console.log(error);
+			// console.log(error);
 			toast.error(error.message);
 		} finally {
 			setLoading(false);
@@ -33,9 +63,12 @@ function ProfileHeader({ profile, isCurrentUser }) {
 	async function handleUnfollowUser() {
 		setLoading(true);
 		try {
+			// updating firestore db
 			await unfollowUser(profile);
+			// updating followingUser state in Redux
+			dispatch(setUnfollowUser());
 		} catch (error) {
-			console.log(error);
+			// console.log(error);
 			toast.error(error.message);
 		} finally {
 			setLoading(false);
@@ -73,27 +106,27 @@ function ProfileHeader({ profile, isCurrentUser }) {
 							<Divider />
 							<Reveal animated='move'>
 								<Reveal.Content visible style={{ width: '100%' }}>
-									<Button fluid color='teal' content='Following' />
+									<Button
+										fluid
+										color='teal'
+										content={followingUser ? 'Following' : 'Not following'}
+									/>
 								</Reveal.Content>
 								<Reveal.Content hidden style={{ width: '100%' }}>
 									<Button
-										onClick={handleFollowUser}
+										onClick={
+											followingUser
+												? () => handleUnfollowUser()
+												: () => handleFollowUser()
+										}
 										loading={loading}
 										basic
 										fluid
-										color='green'
-										content='Follow'
+										color={followingUser ? 'red' : 'green'}
+										content={followingUser ? 'Unfollow' : 'Follow'}
 									/>
 								</Reveal.Content>
 							</Reveal>
-							<Button
-								onClick={handleUnfollowUser}
-								loading={loading}
-								basic
-								fluid
-								color='red'
-								content='Unfollow'
-							/>
 						</>
 					)}
 				</Grid.Column>

@@ -7909,8 +7909,8 @@ In the LoginForm, we want to display an error message to the user if they aren't
       ```
 
 ### [6. Updating the following count]()
-- The next step we want to do is when a currently login user (currentUser) visits another user profile page, we want to see if the currentUser has already followed this user profile. If they have, display the 'Following' button on the user profile page. If not, display the 'Follow' button. When a user profile page loads/mounts, we want to listen in firestore for the currentUser's 'userFollowing' collection and see if the user profileId  doc is in this collection. If there is, that means the currentUser is following the user profile. We'r going to write a function to get the user following doc from firestore
-- The second thing we want to do is create a `followingUser` state in profileReducer store to keep track of whether the currentUser is following the user profile. We will create actions to toggle the `followingUser` state. We show the 'Following' or the 'Follow' button based on this state
+- The next step we want to do is when a currently login user (currentUser) visits another user profile page, we want to see if the currentUser has already followed this user profile. If they have, display the 'Following' button on the user profile page. If not, display the 'Not following' button. When a user profile page loads/mounts, we want to listen in firestore for the currentUser's 'userFollowing' collection and see if the user profileId  doc is in this collection. If there is, that means the currentUser is following the user profile. We'r going to write a function to get the user following doc from firestore
+- The second thing we want to do is create a `followingUser` state in profileReducer store to keep track of whether the currentUser is following the user profile. We will create actions to toggle the `followingUser` state. We show the 'Following' or the 'Not following' button based on this state
 - In ProfileHeader.jsx file:
   - Display the followerCount and followingCount in the ProfileHeader section of the user profile page
     ```js
@@ -7988,11 +7988,114 @@ In the LoginForm, we want to display an error message to the user if they aren't
 			};
     ```
 
+### [7. Updating the following user status functionality]()
+- In ProfileHeader.jsx file:
+  - Import the following:
+    ```js
+    import React, { useEffect, useState } from 'react';
+    import { useDispatch, useSelector } from 'react-redux';
+    import { toast } from 'react-toastify';
+    import { getFollowingDoc } from '../../../app/firestore/firestoreService';
+    import { setFollowUser, setUnfollowUser } from '../../../features/profiles/profileActions';
+    ```
+  - Get the dispatch method by calling the useDispatch() hook
+  - Destructure the followingUser property from profileReducer store using the useSelector hook
+  - Use the useEffect() hook to get the following doc in firestore. The useEffect() hook function will run when the ProfileHeader component loads/mounts. Now, getting the following doc from firestore is an async operation and we cannot write an asynchronous function directly in a useEffect() hook. However, we can create an async function INSIDE of the useEffect function
+  - In the useEffect() hook:
+    - First check if isCurrentUser is true. If it is, return early. This means that this profile page belongs to the currentUser
+    - Turn on the loading indicator by calling the setLoading() method and pass in true
+    - Write an async fetchFollowingDoc function to:
+      - call the getFollowingDoc() method to get the following doc from firestore. Pass in the profile.id as an argument
+      - if we successfully get back a followingDoc and if there exists a followingDoc, then dispatch the setFollowingUser() method. This will set the followingUser property to true in profileReducer store
+      - if an error occurs, use toast to display the error message to the user
+    - Lastly, use the .then() method on the fetchFollowingDoc() method and call the setLoading() method as a callback and pass in false to turn off the loading indicator when this async operation is finished
+    ```js
+    function ProfileHeader({ profile, isCurrentUser }) {
+      const dispatch = useDispatch();
+      const [loading, setLoading] = useState(false);
+      const { followingUser } = useSelector((state) => state.profile);
 
+      // get following doc from firestore (async operation)
+      // cannot use async function directly in useEffect hook
+      // but can create an async function inside the useEffect function
+      useEffect(() => {
+        if (isCurrentUser) return;
+        setLoading(true);
+        async function fetchFollowingDoc() {
+          try {
+            const followingDoc = getFollowingDoc(profile.id);
+            if (followingDoc && followingDoc.exists) {
+              dispatch(setFollowUser());
+            }
+          } catch (error) {
+            toast.error(error.message);
+          }
+        }
+        fetchFollowingDoc().then(() => setLoading(false));
+      }, [dispatch, profile.id, isCurrentUser]);
+    }
+    ```
+  - In JSX:
+    - Now we'r going to display information and action buttons on the user profile page that depend on the `followingUser` state in Redux store
+    - If `followingUser` state is true, display the 'Following' button. Else display 'Not following' button
+    - The next Button element we want to do is toggle between 'Follow' and 'Unfollow'. If `followingUser` state is true, display the 'Unfollow' button that allows the currentUser to unfollow. Else display 'Follow'. The 'Unfollow' button color is red and the 'Follow' button is green. Add an onClick event handle to this button as well. To unfollow, call the handleUnfollowUser() method. To follow, call the handleFollowUser() method
+    ```js
+    <Reveal animated='move'>
+      <Reveal.Content visible style={{ width: '100%' }}>
+        <Button
+          fluid
+          color='teal'
+          content={followingUser ? 'Following' : 'Not following'}
+        />
+      </Reveal.Content>
+      <Reveal.Content hidden style={{ width: '100%' }}>
+        <Button
+          onClick={
+            followingUser
+              ? () => handleUnfollowUser()
+              : () => handleFollowUser()
+          }
+          loading={loading}
+          basic
+          fluid
+          color={followingUser ? 'red' : 'green'}
+          content={followingUser ? 'Unfollow' : 'Follow'}
+        />
+      </Reveal.Content>
+    </Reveal>
+    ```
+  - Lastly, when we handle follow and unfollow user (with handleFollowUser() and handleUnfollowUser() methods), we need to update the `followingUser` state in Redux store as well. Dispatch the setFollowUser() method to update the store in both event handler methods. While these two handle methods do update the firestore database (with followUser and unfollowUser methods) when the 'Follow' or 'Unfollow' button is clicked, they don't automatically update the `followingUser` state in Redux. We only listen to the data once when the component mounts
+    ```js
+    async function handleFollowUser() {
+      setLoading(true);
+      try {
+        // updating firestore db
+        await followUser(profile);
+        // updating followingUser state in Redux
+        dispatch(setFollowUser());
+      } catch (error) {
+        // console.log(error);
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-
-
-
+    async function handleUnfollowUser() {
+      setLoading(true);
+      try {
+        // updating firestore db
+        await unfollowUser(profile);
+        // updating followingUser state in Redux
+        dispatch(setUnfollowUser());
+      } catch (error) {
+        // console.log(error);
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    ```
 
 
 
