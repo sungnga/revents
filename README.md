@@ -8097,6 +8097,59 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
+### [8. Clearing the followings]()
+- When we go from one user profile page to another user profile page, let's say we're looking at the 'Followers' tab, we will see the same data going from one profile page to the next profile page. This is because we haven't done any data cleanup (clear the data) in the useEffect() hook after the ProfileHeader component has unmounted
+- In profileConstants.js file:
+  - Create and export a CLEAR_FOLLOWINGS constant
+  - `export const CLEAR_FOLLOWINGS = 'CLEAR_FOLLOWINGS';`
+- In profileReducer.js file:
+  - We don't need to create an action creator function for this
+  - Import the CLEAR_FOLLOWINGS constant: `import { CLEAR_FOLLOWINGS } from './profileConstants';`
+  - Add a case for the CLEAR_FOLLOWINGS action. This action sets the `followers` and `followings` properties back to empty arrays in profileReducer
+    ```js
+		case CLEAR_FOLLOWINGS:
+			return {
+				...state,
+				followers: [],
+				followings: []
+			};
+    ```
+-  In ProfileHeader.jsx file:
+  - Import the CLEAR_FOLLOWINGS constant: `import { CLEAR_FOLLOWINGS } from '../../../features/profiles/profileReducer';`
+  - Whenever we want to cleanup after ourselves in useEffect() hook we `return` a function
+  - In useEffect() hook, add a return function and in it, call the dispatch() method to dispatch the action type of CLEAR_FOLLOWINGS
+- Our problem is still not resolved. Even though we're switching between components but we haven't forced the useEffect() hook in ProfileHeader to re-render. To do this, we need to give the 'Followers' tab component and the 'Following' tab component a `key` property
+- In ProfileContent.jsx file:
+  - In the FollowingTab components for both the 'Followers' and 'Following' menuItems, add a key property and set it to profile.id
+  ```js
+  {
+    menuItem: 'Followers',
+    render: () => (
+      <FollowingTab
+        key={profile.id}
+        profile={profile}
+        activeTab={activeTab}
+      />
+    )
+  },
+  {
+    menuItem: 'Following',
+    render: () => (
+      <FollowingTab
+        key={profile.id}
+        profile={profile}
+        activeTab={activeTab}
+      />
+    )
+  }
+  ```
+
+
+
+
+
+
+
 
 
 

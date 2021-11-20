@@ -20,6 +20,7 @@ import {
 	setFollowUser,
 	setUnfollowUser
 } from '../../../features/profiles/profileActions';
+import { CLEAR_FOLLOWINGS } from '../../../features/profiles/profileConstants';
 
 function ProfileHeader({ profile, isCurrentUser }) {
 	const dispatch = useDispatch();
@@ -42,12 +43,17 @@ function ProfileHeader({ profile, isCurrentUser }) {
 				toast.error(error.message);
 			}
 		}
+
 		fetchFollowingDoc().then(() => setLoading(false));
+
+		return () => {
+			dispatch({ type: CLEAR_FOLLOWINGS });
+		};
 	}, [dispatch, profile.id, isCurrentUser]);
 
 	async function handleFollowUser() {
 		setLoading(true);
-    try {
+		try {
 			// updating firestore db
 			await followUser(profile);
 			// updating followingUser state in Redux
