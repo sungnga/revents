@@ -8144,10 +8144,123 @@ In the LoginForm, we want to display an error message to the user if they aren't
   }
   ```
 
+### [9. Firestore batches and setting security rules]()
+- Up until this point we've only looked at the the happy path of following and unfollowing a user. When we follow or unfollow a user we perform several async operations to update the 'following' collection as well as updating the 'users' collection of following count in Firestore db. Each of the async operation is somewhat related to the other. So if one of the operations fails we're going to have inconsistency in our database. Firestore has security rules section that we can make use of to set some rules on how to read and write to our database. We're going to set a few simple rules for Firestore security
+- In Firestore dashboard page, click on the 'Rules' tab at the top of the page. Here is where we can specify Firestore security rules telling what a user is allowed to do based on a condition. Some rules we're going to set are:
+  - Only authenticated user can read other users' documents
+  - Only authenticated user that matches with a particular userId is allowed to update and create a document
+  - All users are allowed to read photos in all documents
+  - Authenticated user is allowed to write (update, create, read, delete) their own photos
+  - All users can read all documents in the 'following' collection
+  - Only authenticated user can write their own documents in 'following' collection
+  - All users can read all documents in the 'events' collection
+  - All authenticated users can write documents in 'events' collection
+  ```js
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      match /users/{userId} {
+        allow read: if request.auth.uid != null;
+        allow update, create: if request.auth.uid == userId;
+        match /photos/{document=**} {
+          allow read: if request.auth.uid != null;
+          allow write: if request.auth.uid == userId;
+        }
+      }
+      match /following/{userId}/{document=**} {
+        allow read: if request.auth.uid != null;
+        allow write: if request.auth.uid == userId;
+      }
+      match /events/{document=**} {
+        allow read, list;
+        allow write: if request.auth.uid != null;
+      }
+    }
+  }
+  ```
+- The next thing we can do to help prevent inconsistency in our database is to make use of the firestore `.batch()` method. Firestore has a `.batch()` method that can batch our functions together in one operation. Right now the way our `followUser` and `unfollowUser` functions work is they perform several async operations and if one of them fails we have no way of preventing the previous operation from writing to our database and we will have inconsistency in our database. By using the firestore .batch() method, if one of the operations fails, everything inside of the .batch() method will not go through
+- The way the `.batch()` function works is it can contain up to 500 different writes transactions to the database. Anything that we can write to db we can put inside a batch. Functions such as `.set()`, `.update()`, and `.delete()` we can use inside of a batch
+- In firestoreService.js file:
+  - Inside the `followUser` function:
+    - First create a batch: `const batch = db.batch();`
+    - Then inside the try block, call either `batch.set()` or `batch.update()` method depending on what we want to do. The first arg we pass in is the reference to the database and the second arg is what we want to write to it. Batch each write transaction and remove the `await` keyword because we're going to `await` just once at the end
+    - Lastly, return: `return await batch.commit();`
+    ```js
+    export async function followUser(profile) {
+      const user = firebase.auth().currentUser;
+      const batch = db.batch();
 
+      try {
+        batch.set(
+          db
+            .collection('following')
+            .doc(user.uid)
+            .collection('userFollowing')
+            .doc(profile.id),
+          {
+            displayName: profile.displayName,
+            photoURL: profile.photoURL,
+            uid: profile.id
+          }
+        );
+        batch.set(
+          db
+            .collection('following')
+            .doc(profile.id)
+            .collection('userFollowers')
+            .doc(user.uid),
+          {
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            uid: user.uid
+          }
+        );
+        batch.update(db.collection('users').doc(user.uid), {
+          followingCount: firebase.firestore.FieldValue.increment(1)
+        });
+        batch.update(db.collection('users').doc(profile.id), {
+          followerCount: firebase.firestore.FieldValue.increment(1)
+        });
+        return await batch.commit();
+      } catch (error) {
+        throw error;
+      }
+    }
+    ```
+  - Inside the `unfollowUser` function:
+    - Follow the same process as the above function and batch this function
+    ```js
+    export async function unfollowUser(profile) {
+      const user = firebase.auth().currentUser;
+      const batch = db.batch();
 
-
-
+      try {
+        batch.delete(
+          db
+            .collection('following')
+            .doc(user.uid)
+            .collection('userFollowing')
+            .doc(profile.id)
+        );
+        batch.delete(
+          db
+            .collection('following')
+            .doc(profile.id)
+            .collection('userFollowers')
+            .doc(user.uid)
+        );
+        batch.update(db.collection('users').doc(user.uid), {
+          followingCount: firebase.firestore.FieldValue.increment(-1)
+        });
+        batch.update(db.collection('users').doc(profile.id), {
+          followerCount: firebase.firestore.FieldValue.increment(-1)
+        });
+        return await batch.commit();
+      } catch (error) {
+        throw error;
+      }
+    }
+    ```
 
 
 
