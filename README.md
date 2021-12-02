@@ -8262,6 +8262,57 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
+### Cloud Functions
+- What are they
+  - Run code in the cloud
+  - Auto scale, highly available and fault tolerant
+  - No servers to provision, manage, patch or update
+  - First 2 million invocations free ($.40 per million after)
+- Security
+  - Cloud Functions can write to any part of the app with full permissions
+- Performance
+  - Cloud Functions take the burden away from the client
+  - Possible use cases:
+    - User setting the main photo, this might need to be updated in many places
+- On a schedule
+  - Cron jobs can be used to schedule when cloud functions happen
+- Firestore triggers
+  - onCreate
+  - onUpdate
+  - onDelete
+  - onWrite
+- Usage
+  - Install Firebase CLI
+  - Login to Firebase via the CLI
+  - Initialize the app
+- Setup
+  - `npm install -g firebase-tools`
+  - `firebase login`
+  - `firebase init`
+
+### [10. Setting up Cloud Functions]()
+- **Firebase initialization from CLI**
+  - In the command line, run: `npm install -g firebase-tools`
+  - Then run: `firebase login`. Login with an email account
+  - To logout, run: `firebase logout`
+  - Run `firebase -h` to see all the available commands we can use in CLI
+  - Run the firebase init function: `firebase init`
+  - Use the arrow key to select this option: `Functions: Configure and deploy Cloud Functions`
+  - Next use the arrow key to select the `Use an existing project` option
+  - Select the existing project name: `re-vents`
+  - Select `Javascript`
+  - Select Yes to `use ESLint to catch probable bugs and enforce style`
+  - Select Yes to `install dependencies with npm now`
+- Once the Firebase initialization is completed, we should see a new folder called "functions" created in the project directory. This folder contains:
+  - a separate node_modules folder
+  - a package.json file
+  - the index.js file is where we write our own Cloud Functions
+- **Deploy a Cloud Function to Firebase**
+  - To test that we're able to deploy Cloud Functions to Firebase and the Cloud Functions are working, deploy the example `helloWorld` cloud function in index.js file
+  - In CLI, run: `firebase deploy --only functions`
+  - If successful, a Function URL link is provided. Paste this link into the browser and you should see a "hello from firebase" message
+
+
 
 
 
