@@ -8403,9 +8403,43 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Lastly, deploy both of these two cloud functions to Firebase via CLI: `firebase deploy --only functions`
 
+### [12. Creating a personalized news feed: EventsFeed component]()
+- We're going to create a news feed in the events dashboard page. This feed only shows up if the user is currently logged in (authenticated user)
+- In /src/features/events/eventDashboard folder, create a component called EventsFeed.jsx
+- In EventsFeed.jsx file:
+  - Write a functional EventsFeed component that displays a news feed of the activities of the users that the currentUser is following. Use Semantic UI to build the structure and layout. For now we're just displaying static data
+  ```js
+  import { Header, Segment, Feed } from 'semantic-ui-react';
 
+  function EventsFeed() {
+    const image = '/assets/user.png';
+    const date = '3 days ago';
+    const summary = 'Diana joined an event';
 
+    return (
+      <>
+        <Header attached color='teal' icon='newspaper' content='News feed' />
+        <Segment attached='bottom'>
+          <Feed>
+            <Feed.Event image={image} date={date} summary={summary} />
+            <Feed.Event image={image} date={date} summary={summary} />
+            <Feed.Event image={image} date={date} summary={summary} />
+            <Feed.Event image={image} date={date} summary={summary} />
+          </Feed>
+        </Segment>
+      </>
+    );
+  }
 
+  export default EventsFeed;
+  ```
+- In EventDashboard.jsx file:
+  - Import the EventsFeed component: `import EventsFeed from './EventsFeed';`
+  - Destructure the `authenticated` property from the authReducer using useSelector() hook
+    - `const { authenticated } = useSelector((state) => state.auth);`
+  - In JSX, write a condition that if authenticated state is true, then display the EventsFeed component
+    - Display the EventsFeed component at the top of the second column of the EventDashboard page
+    - `{authenticated && <EventsFeed />}`
 
 
 

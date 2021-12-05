@@ -7,12 +7,14 @@ import EventFilters from './EventFilters';
 import EventList from './EventList';
 import EventListItemPlaceholder from './EventListItemPlaceholder';
 import useFirestoreCollection from '../../../app/hooks/useFirestoreCollection';
+import EventsFeed from './EventsFeed';
 
 // Semantic UI uses a 16-col grid system
 function EventDashboard() {
 	const dispatch = useDispatch();
 	const { events } = useSelector((state) => state.event);
 	const { loading } = useSelector((state) => state.async);
+	const { authenticated } = useSelector((state) => state.auth);
 	const [predicate, setPredicate] = useState(
 		new Map([
 			['startDate', new Date()],
@@ -43,6 +45,7 @@ function EventDashboard() {
 				<EventList events={events} />
 			</Grid.Column>
 			<Grid.Column width={6}>
+				{authenticated && <EventsFeed />}
 				<EventFilters
 					predicate={predicate}
 					setPredicate={handleSetPredicate}
