@@ -8291,7 +8291,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - `firebase init`
 
 ### [10. Setting up Cloud Functions]()
-- **Firebase initialization from CLI**
+- **Firebase initialization via the CLI**
   - In the command line, run: `npm install -g firebase-tools`
   - Then run: `firebase login`. Login with an email account
   - To logout, run: `firebase logout`
@@ -8309,8 +8309,103 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - the index.js file is where we write our own Cloud Functions
 - **Deploy a Cloud Function to Firebase**
   - To test that we're able to deploy Cloud Functions to Firebase and the Cloud Functions are working, deploy the example `helloWorld` cloud function in index.js file
-  - In CLI, run: `firebase deploy --only functions`
+  - To deploy the cloud function via CLI, run: `firebase deploy --only functions`
   - If successful, a Function URL link is provided. Paste this link into the browser and you should see a "hello from firebase" message
+  - NOTE: Whenever we make changes to the cloud functions we need to redeploy to Firebase
+
+### [11. Creating our own cloud functions]()
+- The issue we're trying to resolve at the moment is if a user decides to follow or unfollow another user, based on the firestore security rules we've setup, this user does not have permission to update another user's following collection and we will get an error
+- We're going to use Cloud Functions to give us full permission in Firebase admin to our database regardless of what security rules are in place
+- In /functions/index.js file:
+  - Write an addFollowing cloud function that adds a following user to the profile user's 'userFollowers' collection and also increments the followerCount for the profile user
+    - Use the `.onCreate()` method to add documents to Firestore
+    - Use a try/catch block as these are async operations
+    - We can use the batch method to batch our transactions in cloud functions just as we do on client side
+    - In the firestoreService.js file and in the followUser function, cut out the 2nd and 4th batch operations and paste them inside the try/catch block
+    - Note that to access a field in db, use `admin.firestore` instead of `firebase.firestore`
+    - Lastly, return with the `await` keyword and call `batch.commit()`
+  - Write a removeFollowing cloud function that removes a following user from the profile user's 'userFollowers' collection and also decrements the followerCount for the profile user
+    - Use the `.onDelete()` method to remove documents to Firestore
+    - In the firestoreService.js file and in the unfollowUser function, cut out the 2nd and 4th batch operations and paste them inside the try/catch block
+    - Lastly, return with the `await` keyword and call `batch.commit()`
+    ```js
+    const functions = require('firebase-functions');
+    // gives full permission to db
+    const admin = require('firebase-admin');
+    // use admin to initialize the app for the purpose of cloud functions
+    admin.initializeApp(functions.config().firebase);
+
+    // reference to the firestore db
+    const db = admin.firestore();
+
+    // addFollowing cloud function
+    exports.addFollowing = functions.firestore
+      // listening to a document
+      .document('following/{userUid}/userFollowing/{profileId}')
+      // to reference a collection or document, use context.params
+      .onCreate(async (snapshot, context) => {
+        const following = snapshot.data();
+        console.log({ following });
+        try {
+          // get the currentUser doc
+          const userDoc = await db
+            .collection('users')
+            .doc(context.params.userUid)
+            .get();
+          const batch = db.batch();
+          batch.set(
+            db
+              .collection('following')
+              .doc(context.params.profileId)
+              .collection('userFollowers')
+              .doc(context.params.userUid),
+            {
+              displayName: userDoc.data().displayName,
+              photoURL: userDoc.data().photoURL,
+              uid: userDoc.id
+            }
+          );
+          batch.update(db.collection('users').doc(context.params.profileId), {
+            // must use admin.firestore instead of firebase.firestore
+            followerCount: admin.firestore.FieldValue.increment(1)
+          });
+          return await batch.commit();
+        } catch (error) {
+          // because cloud functions are on server side,
+          // if an error occurs, it will not get to the client side
+          return console.log(error);
+        }
+      });
+
+    // removeFollowing cloud function
+    exports.removeFollowing = functions.firestore
+      // listening to a document
+      .document('following/{userUid}/userFollowing/{profileId}')
+      .onDelete(async (snapshot, context) => {
+        const batch = db.batch();
+        batch.delete(
+          db
+            .collection('following')
+            .doc(context.params.profileId)
+            .collection('userFollowers')
+            .doc(context.params.userUid)
+        );
+        batch.update(db.collection('users').doc(context.params.profileId), {
+          // must use admin.firestore instead of firebase.firestore
+          followerCount: admin.firestore.FieldValue.increment(-1)
+        });
+        try {
+          return await batch.commit();
+        } catch (error) {
+          return console.log(error);
+        }
+      });
+    ```
+- Lastly, deploy both of these two cloud functions to Firebase via CLI: `firebase deploy --only functions`
+
+
+
+
 
 
 
