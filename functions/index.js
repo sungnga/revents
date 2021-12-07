@@ -34,7 +34,7 @@ exports.addFollowing = functions.firestore
 					uid: userDoc.id
 				}
 			);
-      batch.update(db.collection('users').doc(context.params.profileId), {
+			batch.update(db.collection('users').doc(context.params.profileId), {
 				// must use admin.firestore instead of firebase.firestore
 				followerCount: admin.firestore.FieldValue.increment(1)
 			});
@@ -59,8 +59,8 @@ exports.removeFollowing = functions.firestore
 				.collection('userFollowers')
 				.doc(context.params.userUid)
 		);
-    batch.update(db.collection('users').doc(context.params.profileId), {
-      // must use admin.firestore instead of firebase.firestore
+		batch.update(db.collection('users').doc(context.params.profileId), {
+			// must use admin.firestore instead of firebase.firestore
 			followerCount: admin.firestore.FieldValue.increment(-1)
 		});
 		try {
@@ -69,3 +69,74 @@ exports.removeFollowing = functions.firestore
 			return console.log(error);
 		}
 	});
+
+// event updated: when a user(attendee) joined or left an event
+exports.eventUpdated = functions.firestore
+	.document('events/{eventId}')
+	// this cloud function is triggered when an event is updated
+	.onUpdate(async (snapshot, context) => {
+		const before = snapshot.before.data();
+		const after = snapshot.after.data();
+
+		// we are only interested of the change in attendees array
+		// attendee joined an event
+		if (before.attendees.length < after.attendees.length) {
+			let attendeeJoined = after.attendees.filter(
+				(item1) => !before.attendees.some((item2) => item2.id === item1.id)
+			)[0];
+			console.log({ attendeeJoined });
+			try {
+				const followerDocs = await db
+					.collection('following')
+					.doc(attendeeJoined.id)
+					.collection('userFollowers')
+					.get();
+				followerDocs.forEach((doc) => {
+					admin
+						.database()
+						.ref(`/posts/${doc.id}`)
+						.push(
+							newPost(attendeeJoined, 'joined-event', context.params.eventId)
+						);
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		}
+
+		// attendee left an event
+		if (before.attendees.length > after.attendees.length) {
+			let attendeeLeft = before.attendees.filter(
+				(item1) => !after.attendees.some((item2) => item2.id === item1.id)
+			)[0];
+			console.log({ attendeeLeft });
+			try {
+				const followerDocs = await db
+					.collection('following')
+					.doc(attendeeLeft.id)
+					.collection('userFollowers')
+					.get();
+				followerDocs.forEach((doc) => {
+					admin
+						.database()
+						.ref(`/posts/${doc.id}`)
+						.push(newPost(attendeeLeft, 'left-event', context.params.eventId));
+				});
+			} catch (error) {
+				console.log(error);
+			}
+		}
+
+		return console.log('finished');
+	});
+
+function newPost(user, code, eventId) {
+	return {
+		photoURL: user.photoURL,
+		date: admin.database.ServerValue.TIMESTAMP,
+		code,
+		displayName: user.displayName,
+		eventId,
+		userUid: user.id
+	};
+}

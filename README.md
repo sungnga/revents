@@ -8441,7 +8441,92 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Display the EventsFeed component at the top of the second column of the EventDashboard page
     - `{authenticated && <EventsFeed />}`
 
+### [13. Adding functions for the feed]()
+- The way the news feed functionality works is we're going to check for updates in an event doc in Firestore db, specifically the length of the attendees array of the event. If the after attendees array has increased, that means a user has joined the event. If that is the case, we're going to create a new post with the code 'joined-event' in Firebase Realtime Database. Similarly, if the after attendees array is less than the before attendees array, that means a user has left the event. In this case, we're going to create a new post with the code 'left-event' in Realtime Database
+- On the client side, we then create action creators to listen for these posts in Firebase Realtime and display them in a currentUser's news feed. So the currentUser will be able to see the events of the users they are following when they joined or left an event
+- In /functions/index.js file:
+  - Write a eventUpdated cloud function that checks if an event in Firestore db has been updated (specifically the attendees array) it will create a new post in Firebase Realtime Database
+    - Use the `.onUpdate()` method on an event doc, so that this cloud function triggers when there's an update to the event doc
+    - We have access to the before and after of the snapshot and we can use this to compare the before and after lengths of the attendees array
+    - If the before array length is less than the after array length, that means a user has joined the event. And the case is true for the opposite
+    - When there is a change, create a `newPost()` function to create a new post in Firebase Realtime Database
+    - Use a try/catch block since creating a new post in Firebase is an async operation
+    - To access Firebase Realtime DB, use `admin.database().ref(PATHNAME)`
+  - Write a newPost function that returns an object containing information about the new post. The information includes the user's (who joined or left the event) displayName, the date/timestamp the post was created, the code either 'joined-event' or 'left-event', photoURL, the event id and user id
+    - This info will be displayed in the news feed on the client side
+    - This function takes 3 args: user, code, and eventId
+    ```js
+    // event updated: when a user(attendee) joined or left an event
+    exports.eventUpdated = functions.firestore
+      .document('events/{eventId}')
+      // this cloud function is triggered when an event is updated
+      .onUpdate(async (snapshot, context) => {
+        const before = snapshot.before.data();
+        const after = snapshot.after.data();
 
+        // we are only interested of the change in attendees array
+        // attendee joined an event
+        if (before.attendees.length < after.attendees.length) {
+          let attendeeJoined = after.attendees.filter(
+            (item1) => !before.attendees.some((item2) => item2.id === item1.id)
+          )[0];
+          console.log({ attendeeJoined });
+          try {
+            const followerDocs = await db
+              .collection('following')
+              .doc(attendeeJoined.id)
+              .collection('userFollowers')
+              .get();
+            followerDocs.forEach((doc) => {
+              admin
+                .database()
+                .ref(`/posts/${doc.id}`)
+                .push(
+                  newPost(attendeeJoined, 'joined-event', context.params.eventId)
+                );
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+
+        // attendee left an event
+        if (before.attendees.length > after.attendees.length) {
+          let attendeeLeft = before.attendees.filter(
+            (item1) => !after.attendees.some((item2) => item2.id === item1.id)
+          )[0];
+          console.log({ attendeeLeft });
+          try {
+            const followerDocs = await db
+              .collection('following')
+              .doc(attendeeLeft.id)
+              .collection('userFollowers')
+              .get();
+            followerDocs.forEach((doc) => {
+              admin
+                .database()
+                .ref(`/posts/${doc.id}`)
+                .push(newPost(attendeeLeft, 'left-event', context.params.eventId));
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+
+        return console.log('finished');
+      });
+
+    function newPost(user, code, eventId) {
+      return {
+        photoURL: user.photoURL,
+        date: admin.database.ServerValue.TIMESTAMP,
+        code,
+        displayName: user.displayName,
+        eventId,
+        userUid: user.id
+      };
+    }
+    ```
 
 
 
