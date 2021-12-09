@@ -8528,6 +8528,97 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
+### [14. Listening to the news feed]()
+- Let's setup the functionality to listen for news feed in Firebase Realtime DB on the client side
+- In firebaseService.js file
+  - Write a getUserFeedRef function that gets the currentUser's latest 5 feed posts from Firebase Realtime database
+    ```js
+    export function getUserFeedRef() {
+      const user = firebase.auth().currentUser;
+      return firebase
+        .database()
+        .ref(`posts/${user.uid}`)
+        .orderByKey()
+        .limitToLast(5);
+    }
+    ```
+- In profileConstants.js file:
+  - Create and export a LISTEN_TO_FEED constant
+  - `export const LISTEN_TO_FEED = 'LISTEN_TO_FEED';`
+- In profileActions.js file:
+  - Import the LISTEN_TO_FEED constant: ` import { LISTEN_TO_FEED } from './profileConstants';`
+  - Create and export a listenToFeed action creator that takes a feed as an argument and returns, as an object, the action type of LISTEN_TO_FEED and payload of feed
+    ```js
+    export function listenToFeed(feed) {
+      return {
+        type: LISTEN_TO_FEED,
+        payload: feed
+      };
+    }
+    ```
+- In profileReducer.js file:
+  - Import the LISTEN_TO_FEED constant: ` import { LISTEN_TO_FEED } from './profileConstants';`
+  - In the `initialState` object, add a `feed` property and set it to an empty array
+    ```js
+    const initialState = {
+      currentUserProfile: null,
+      selectedUserProfile: null,
+      photos: [],
+      profileEvents: [],
+      followers: [],
+      followings: [],
+      followingUser: false,
+      feed: []
+    };
+    ```
+  - Then in the `profileReducer` function, add a switch case for the LISTEN_TO_FEED action. It returns all the existing states and the `feed` property is set to payload
+    ```js
+		case LISTEN_TO_FEED:
+			return {
+				...state,
+				feed: payload
+			};
+    ```
+- In EventsFeed.jsx file:
+  - Import the following:
+    ```js
+    import { useEffect } from 'react';
+    import { useDispatch, useSelector } from 'react-redux';
+    import { firebaseObjectToArray, getUserFeedRef } from '../../../app/firestore/firebaseService';
+    import { listenToFeed } from '../../profiles/profileActions';
+    ```
+  - Get the dispatch function by calling the useDispatch() hook
+  - Destructure the `feed` property from the profileReducer using the useSelector() hook
+  - Use the useEffect() hook to listen to the feed posts data in Firebase when the EventsFeed component mounts
+    - Call the getUserFeedRef() function followed by the .on() method to subscribe to the Realtime DB
+    - The .on() method takes 2 args: the first is the string `value`, and the second is a callback function
+    - In this callback, what we get back is a snapshot
+      - First, check to see if the snapshot exists. If it doesn't, return early
+      - Call the firebaseObjectToArray() function and pass in the snapshot as an argument. This converts the snapshot object into an array. Assign the result to a `feed` variable
+      - Lastly, dispatch the `listenToFeed` action and pass in the `feed` as an argument. This stores the `feed` array in the `feed` state in profileReducer
+    - To unsubscribe from the Firebase data when this component unmounts, add a `return` statement and a callback function in the useEffect() hook. Inside the callback, call `getUserFeedRef().off()`
+    - Lastly, add `dispatch` to the dependencies array
+    ```js
+    const dispatch = useDispatch;
+    const { feed } = useSelector((state) => state.profile);
+
+    useEffect(() => {
+      getUserFeedRef().on('value', (snapshot) => {
+        if (!snapshot.exists()) {
+          return;
+        }
+        const feed = firebaseObjectToArray(snapshot.val()).reverse();
+        dispatch(listenToFeed(feed));
+      });
+
+      return () => {
+        getUserFeedRef().off();
+      };
+    }, [dispatch]);
+    ```
+
+
+
 
 
 

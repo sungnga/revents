@@ -54,7 +54,7 @@ export async function socialLogin(selectedProvider) {
 	}
 	try {
 		const result = await firebase.auth().signInWithPopup(provider);
-		console.log(result);
+		// console.log(result);
 		if (result.additionalUserInfo.isNewUser) {
 			await setUserProfileData(result.user);
 		}
@@ -101,4 +101,14 @@ export function addEventChatComment(eventId, values) {
 // get an event chat reference from Realtime Database
 export function getEventChatRef(eventId) {
 	return firebase.database().ref(`chat/${eventId}`).orderByKey();
+}
+
+// get currentUser's latest 5 feed posts from Realtime Database
+export function getUserFeedRef() {
+	const user = firebase.auth().currentUser;
+	return firebase
+		.database()
+		.ref(`posts/${user.uid}`)
+		.orderByKey()
+		.limitToLast(5);
 }
