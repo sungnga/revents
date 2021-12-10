@@ -8596,10 +8596,10 @@ In the LoginForm, we want to display an error message to the user if they aren't
       - First, check to see if the snapshot exists. If it doesn't, return early
       - Call the firebaseObjectToArray() function and pass in the snapshot as an argument. This converts the snapshot object into an array. Assign the result to a `feed` variable
       - Lastly, dispatch the `listenToFeed` action and pass in the `feed` as an argument. This stores the `feed` array in the `feed` state in profileReducer
-    - To unsubscribe from the Firebase data when this component unmounts, add a `return` statement and a callback function in the useEffect() hook. Inside the callback, call `getUserFeedRef().off()`
+    - To unsubscribe from the Firebase feed data when this component unmounts, add a `return` statement and a callback function in the useEffect() hook. Inside the callback, call `getUserFeedRef().off()`
     - Lastly, add `dispatch` to the dependencies array
     ```js
-    const dispatch = useDispatch;
+    const dispatch = useDispatch();
     const { feed } = useSelector((state) => state.profile);
 
     useEffect(() => {
@@ -8617,6 +8617,91 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }, [dispatch]);
     ```
 
+### [15. Displaying the news feed events]()
+- First, we need to add one additional property to the feed post object when creating a feed post
+- In functions/index.js file:
+  - We need to add the event title to the post object. We can get this event title from the `before` snapshot data in the eventUpdated function
+  - In the eventUpdated function and in the .push() method, when calling the newPost() function, add `before` as the fourth argument
+    - `.push(newPost(attendeeLeft, 'left-event', context.params.eventId, before));`
+  - In the newPost function, add `event` as the fourth parameter. In the return object, add `title` property and set it to `event.title`
+    ```js
+    function newPost(user, code, eventId, event) {
+      return {
+        photoURL: user.photoURL,
+        date: admin.database.ServerValue.TIMESTAMP,
+        code,
+        displayName: user.displayName,
+        eventId,
+        userUid: user.id,
+        title: event.title
+      };
+    }
+    ```
+- In /features/events/eventDashboard folder, create a component called EventFeedItem.jsx
+- In EventFeedItem.jsx file:
+  - Import the following:
+    ```js
+    import React from 'react';
+    import { Link } from 'react-router-dom';
+    import { Feed } from 'semantic-ui-react';
+    import { formatDistance } from 'date-fns';
+    ```
+  - Write a EventFeedItem component that displays a list of feed posts in the 'News feed' section in a currentUser's EventDashboard page
+    - This component is rendered in the EventsFeed parent component
+    - This component receives the `post` props from the parent component
+    - Use a switch statement to display the post summary depending on what the post.code is. Each summary contains a link to that user's profile page and a link to that event page
+    - Also use the `formatDistance()` method from date-fns library to how long ago has the user joined or left the event
+    ```js
+    function EventFeedItem({ post }) {
+      let summary;
+
+      switch (post.code) {
+        case 'joined-event':
+          summary = (
+            <>
+              <Link to={`/profile/${post.userUid}`}>{post.displayName}</Link> has
+              signed up to <Link to={`/events/${post.eventId}`}>{post.title}</Link>
+            </>
+          );
+          break;
+        case 'left-event':
+          summary = (
+            <>
+              <Link to={`/profile/${post.userUid}`}>{post.displayName}</Link> has
+              cancelled their place on <Link to={`/events/${post.eventId}`}>{post.title}</Link>
+            </>
+          );
+          break;
+        default:
+          summary = 'Something happened';
+          break;
+      }
+
+      return (
+        <Feed.Event>
+          <Feed.Label image={post.photoURL} />
+          <Feed.Content>
+            <Feed.Date>
+              {formatDistance(new Date(post.date), new Date())} ago
+            </Feed.Date>
+            <Feed.Summary>{summary}</Feed.Summary>
+          </Feed.Content>
+        </Feed.Event>
+      );
+    }
+
+    export default EventFeedItem;
+    ```
+- In EventsFeed.jsx file:
+  - Import the EventFeedItem component: `import EventFeedItem from './EventFeedItem';`
+  - In JSX, map over the `feed` posts array and display each post in the EventFeedItem component. Pass down the `post` object to the child EventFeedItem component and give it a `key` attribute
+    ```js
+    <Feed>
+      {feed.map((post) => (
+        <EventFeedItem post={post} key={post.id} />
+      ))}
+    </Feed>
+    ```
 
 
 

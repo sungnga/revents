@@ -6,10 +6,12 @@ import {
 	getUserFeedRef
 } from '../../../app/firestore/firebaseService';
 import { listenToFeed } from '../../profiles/profileActions';
+import EventFeedItem from './EventFeedItem';
 
 function EventsFeed() {
-	const dispatch = useDispatch;
+	const dispatch = useDispatch();
 	const { feed } = useSelector((state) => state.profile);
+	console.log(feed);
 
 	useEffect(() => {
 		getUserFeedRef().on('value', (snapshot) => {
@@ -20,22 +22,19 @@ function EventsFeed() {
 			dispatch(listenToFeed(feed));
 		});
 
-		return getUserFeedRef().off();
+		return () => {
+			getUserFeedRef().off();
+		};
 	}, [dispatch]);
-
-	const image = '/assets/user.png';
-	const date = '3 days ago';
-	const summary = 'Diana joined an event';
 
 	return (
 		<>
 			<Header attached color='teal' icon='newspaper' content='News feed' />
 			<Segment attached='bottom'>
 				<Feed>
-					<Feed.Event image={image} date={date} summary={summary} />
-					<Feed.Event image={image} date={date} summary={summary} />
-					<Feed.Event image={image} date={date} summary={summary} />
-					<Feed.Event image={image} date={date} summary={summary} />
+					{feed.map((post) => (
+						<EventFeedItem post={post} key={post.id} />
+					))}
 				</Feed>
 			</Segment>
 		</>

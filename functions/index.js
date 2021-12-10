@@ -96,7 +96,7 @@ exports.eventUpdated = functions.firestore
 						.database()
 						.ref(`/posts/${doc.id}`)
 						.push(
-							newPost(attendeeJoined, 'joined-event', context.params.eventId)
+							newPost(attendeeJoined, 'joined-event', context.params.eventId, before)
 						);
 				});
 			} catch (error) {
@@ -120,7 +120,7 @@ exports.eventUpdated = functions.firestore
 					admin
 						.database()
 						.ref(`/posts/${doc.id}`)
-						.push(newPost(attendeeLeft, 'left-event', context.params.eventId));
+						.push(newPost(attendeeLeft, 'left-event', context.params.eventId, before));
 				});
 			} catch (error) {
 				console.log(error);
@@ -130,13 +130,14 @@ exports.eventUpdated = functions.firestore
 		return console.log('finished');
 	});
 
-function newPost(user, code, eventId) {
+function newPost(user, code, eventId, event) {
 	return {
 		photoURL: user.photoURL,
 		date: admin.database.ServerValue.TIMESTAMP,
 		code,
 		displayName: user.displayName,
 		eventId,
-		userUid: user.id
+    userUid: user.id,
+    title: event.title
 	};
 }

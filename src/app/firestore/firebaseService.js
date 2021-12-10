@@ -105,7 +105,7 @@ export function getEventChatRef(eventId) {
 
 // get currentUser's latest 5 feed posts from Realtime Database
 export function getUserFeedRef() {
-	const user = firebase.auth().currentUser;
+  const user = firebase.auth().currentUser;
 	return firebase
 		.database()
 		.ref(`posts/${user.uid}`)
