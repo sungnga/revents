@@ -8704,6 +8704,136 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 
 
+## PAGINATION AND DATA CONSISTENCY
+
+### [1. Implementing pagination]()
+- To implement the page pagination functionality for our events on the EventDashboard page, we need to make a change to we way we are getting the events from Firestore db. Right now we are listening to live events data in Firestore and this essentially means that we are reading the entire the documents in the 'events' collection. This is not a good idea if we have millions of docs in a collection and we only want a few. An alternative solution to listening to live data is by making a normal query request just like we would with a normal API request
+- In firestoreService.js file:
+  - In the listenToEventsFromFirestore function:
+    - Change the name of the `listenToEventsFromFirestore` function to `fetchEventsFromFirestore` just to clarify that we are fetching events rather than listening to events
+    - Add `limit` and `lastDocSnapshot` as the 2nd and 3rd parameters. Set the `lastDocSnapshot` parameter to null initially
+    - Then when we are getting events in db from the 'events' collection, we want to get the number of events based on the number we set in `limit` param and also get the events after the last doc snapshot. For example, when the EventDashboard page loads, we may want to limit the number of events to two on the first request. And then when we want to get the next set of events when the user scrolls down the page, we want to start on the third event in the collection by calling the `.startAfter(lastDocSnapshot)` method and pass in the `lastDocSnapshot` as an argument
+      ```js
+      // querying the events collection
+      export function fetchEventsFromFirestore(
+        predicate,
+        limit,
+        lastDocSnapshot = null
+      ) {
+        const user = firebase.auth().currentUser;
+        const eventRef = db
+          .collection('events')
+          .orderBy('date')
+          .startAfter(lastDocSnapshot)
+          .limit(limit);
+        // the rest of the code
+      }
+      ```
+- In eventAction.js file:
+  - Import the following:
+    ```js
+    import { FETCH_EVENTS } from './eventConstants';
+    import { asyncActionFinish } from '../../app/async/asyncReducer';
+    import { fetchEventsFromFirestore, dataFromSnapshot } from '../../app/firestore/firestoreService';
+    ```
+  - First, change the name of the `loadEvents` function to `fetchEvents` instead. Then pass in these three parameters to the function: predicate, limit, lastDocSnapshot
+  - In the try block:
+    - Get the events snapshot by calling the .get() method on the fetchEventsFromFirestore() method. This is an async operation, so add the `await` keyword in front of it. Pass these three params to the fetchEventsFromFirestore() method: predicate, limit, lastDocSnapshot. Assign the snapshot result that we get back to a `snapshot` variable
+    - Get the last visible document that's been retrieved and store it in a `lastVisible` variable. We do this by getting the length of the document in `snapshot.docs`
+    - Then we want to check to see if there are more events than the number of events we set in `limit`. If `snapshot.docs.length` is greater than the `limit`, then we have more events. Assign the result to a `moreEvents` variable
+    - We need to shape events data from snapshot by mapping over the `snapshot.docs` and pass each event doc to the dataFromSnapshot() function. Assign the results to an `events` variable
+    - Once we have the events data from Firestore, dispatch the FETCH_EVENTS action and pass the `events` and `moreEvents` data to payload
+    - Also dispatch the asyncActionFinish() method
+    - Lastly, return the `lastVisible` result. This way the EventDashboard component can use this result in the next request to get the next batch of events
+    ```js
+    export function fetchEvents(predicate, limit, lastDocSnapshot) {
+      return async function (dispatch) {
+        dispatch(asyncActionStart());
+        try {
+          const snapshot = await fetchEventsFromFirestore(
+            predicate,
+            limit,
+            lastDocSnapshot
+          ).get();
+          const lastVisible = snapshot.docs[snapshot.docs.length - 1];
+          const moreEvents = snapshot.docs.length >= limit;
+          const events = snapshot.docs.map((doc) => dataFromSnapshot(doc));
+          dispatch({ type: FETCH_EVENTS, payload: { events, moreEvents } });
+          dispatch(asyncActionFinish());
+          return lastVisible;
+        } catch (error) {
+          dispatch(asyncActionError(error));
+        }
+      };
+    }
+    ```
+- In eventReducer.js file:
+  - Since we've added another data `moreEvents` to the FETCH_EVENTS action payload, we need to update this in the eventReducer as well
+  - In the `initialState` object, add a moreEvents property and initialize it to false
+    ```js
+    const initialState = {
+      events: [],
+      comments: [],
+      moreEvents: false
+    };
+    ```
+  - Then in the FETCH_EVENTS action, set the `events` property to payload.events and add the `moreEvents` property and set it to payload.moreEvents
+    ```js
+		case FETCH_EVENTS:
+			return {
+				...state,
+				events: payload.events,
+				moreEvents: payload.moreEvents
+			};
+    ```
+- In EventDashboard.jsx file:
+  - Import the fetchEvents function: `import { fetchEvents } from '../eventActions';`
+  - Create a `limit` constant and set it to 2. This is the number of events we want per request
+    - `const limit = 2;`
+  - Create a local state called `lastDocSnapshot` and initialize it to null
+    - `const [lastDocSnapshot, setLastDocSnapshot] = useState(null);`
+  - Remove the `useFirestoreCollection` custom useEffect hook. We're going to use a normal useEffect() hook instead to make our query
+  - In the useEffect() hook:
+    - Dispatch the fetchEvents() method and pass in the predicate and limit as the 2 args. What we get back from this async method is a promise, which is the `lastVisible`. In the promise callback function, call the setLastDocSnapshot() method and pass in lastVisible as an argument. This sets the local `lastDocSnapshot` state to lastVisible
+    - List dispatch and predicate as the two dependencies in the dependency array
+      ```js
+      useEffect(() => {
+        // fetchEvents is an async function, so it returns a promise
+        // what's returned in the promise is lastVisible
+        // set this lastVisible in the lastDocSnapshot local state
+        dispatch(fetchEvents(predicate, limit)).then((lastVisible) => {
+          setLastDocSnapshot(lastVisible);
+        });
+      }, [dispatch, predicate]);
+      ```
+  - Write a handleFetchNextEvents function that fetches the next batch of events from Firestore
+    ```js
+    function handleFetchNextEvents() {
+      dispatch(fetchEvents(predicate, limit, lastDocSnapshot)).then(
+        (lastVisible) => {
+          setLastDocSnapshot(lastVisible);
+        }
+      );
+    }
+    ```
+  - In JSX:
+    - For now, create a More button just so that we can see what happens when we click on it
+    - Add an onClick event handler and set it to the handleFetchNextEvents function
+      ```js
+      <Button
+        onClick={handleFetchNextEvents}
+        color='green'
+        content='More...'
+        floated='right'
+      />
+      ```
+    - When we click on the More button, we should be able to see the next batch of events listed on the page
+
+
+
+
+
+
 
 
 

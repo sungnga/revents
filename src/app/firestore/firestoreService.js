@@ -24,9 +24,17 @@ export function dataFromSnapshot(snapshot) {
 }
 
 // querying the events collection
-export function listenToEVentsFromFirestore(predicate) {
+export function fetchEventsFromFirestore(
+	predicate,
+	limit,
+	lastDocSnapshot = null
+) {
 	const user = firebase.auth().currentUser;
-	const eventRef = db.collection('events').orderBy('date');
+	const eventRef = db
+		.collection('events')
+		.orderBy('date')
+		.startAfter(lastDocSnapshot)
+		.limit(limit);
 	// filter events based on the predicate
 	// get the events based on the key/value of the predicate set in EventFilters component
 	// use the firestore's .where() method to query the events
