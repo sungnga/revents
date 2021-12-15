@@ -11,10 +11,11 @@ import EventsFeed from './EventsFeed';
 function EventDashboard() {
 	const limit = 2;
 	const dispatch = useDispatch();
-	const { events } = useSelector((state) => state.event);
+	const { events, moreEvents } = useSelector((state) => state.event);
 	const { loading } = useSelector((state) => state.async);
 	const { authenticated } = useSelector((state) => state.auth);
 	const [lastDocSnapshot, setLastDocSnapshot] = useState(null);
+	const [loadingInitial, setLoadingInitial] = useState(false);
 	const [predicate, setPredicate] = useState(
 		new Map([
 			['startDate', new Date()],
@@ -27,15 +28,16 @@ function EventDashboard() {
 	}
 
 	useEffect(() => {
+		setLoadingInitial(true);
 		// fetchEvents is an async function, so it returns a promise
 		// what's returned in the promise is lastVisible
 		// set this lastVisible in the lastDocSnapshot local state
 		dispatch(fetchEvents(predicate, limit)).then((lastVisible) => {
 			setLastDocSnapshot(lastVisible);
+			setLoadingInitial(false);
 		});
 	}, [dispatch, predicate]);
 
-  //
 	function handleFetchNextEvents() {
 		dispatch(fetchEvents(predicate, limit, lastDocSnapshot)).then(
 			(lastVisible) => {
@@ -47,7 +49,7 @@ function EventDashboard() {
 	return (
 		<Grid>
 			<Grid.Column width={10}>
-				{loading && (
+				{loadingInitial && (
 					<>
 						<EventListItemPlaceholder />
 						<EventListItemPlaceholder />
@@ -55,6 +57,8 @@ function EventDashboard() {
 				)}
 				<EventList events={events} />
 				<Button
+					loading={loading}
+					disabled={!moreEvents}
 					onClick={handleFetchNextEvents}
 					color='green'
 					content='More...'

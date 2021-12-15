@@ -8829,6 +8829,61 @@ In the LoginForm, we want to display an error message to the user if they aren't
       ```
     - When we click on the More button, we should be able to see the next batch of events listed on the page
 
+### [2. Improving the paging UI]()
+- The first improvement we want to make is when we fetch more events, we don't want to do a full page refresh. Meaning that we don't need to load the events placeholder when we load more events
+- In EventDashboard.jsx file:
+  - Create a local state called `loadingInitial` and initialize it to false
+    - `const [loadingInitial, setLoadingInitial] = useState(false);`
+  - Destructure the `moreEvents` property as well from the eventReducer
+    - `const { events, moreEvents } = useSelector((state) => state.event);`
+  - In the useEffect() hook:
+    - First thing we want to do is call the setLoadingInitial() function to set the loadingInitial state to true
+    - Then once we got the events back from Firestore, call the setLoadingInitial() function again to set the loadingInitial state back to false
+      ```js
+      useEffect(() => {
+        setLoadingInitial(true);
+        // fetchEvents is an async function, so it returns a promise
+        // what's returned in the promise is lastVisible
+        // set this lastVisible in the lastDocSnapshot local state
+        dispatch(fetchEvents(predicate, limit)).then((lastVisible) => {
+          setLastDocSnapshot(lastVisible);
+          setLoadingInitial(false);
+        });
+      }, [dispatch, predicate]);
+      ```
+  - In JSX:
+    - Swap the `loading` condition to `loadingInitial` when we attempt to display the `EventListItemPlaceholder` component
+      ```js
+      {loadingInitial && (
+        <>
+          <EventListItemPlaceholder />
+          <EventListItemPlaceholder />
+        </>
+      )}
+      ```
+    - For the 'More' button, first add a `loading` attribute and set it to `loading` state. We want to show the button loading indicator when we are loading more events. Then add a `disabled` attribute and set it to `!moreEvents`. We want to disable this button when we don't have anymore events
+      ```js
+      <Button
+        loading={loading}
+        disabled={!moreEvents}
+        onClick={handleFetchNextEvents}
+        color='green'
+        content='More...'
+        floated='right'
+      />
+      ```
+- The second improvement we want to make is when we fetch more events, we want to keep the existing list of events in place and display more events underneath it. Right now our functionality removes the existing events when we display more events
+- In eventReducer.js file:
+  - In the case for FETCH_EVENTS action, we want to retain the existing state.events and payload.events in the events property and accumulate new events by using the spread operator
+  ```js
+  case FETCH_EVENTS:
+    return {
+      ...state,
+      events: [...state.events, ...payload.events],
+      moreEvents: payload.moreEvents
+    };
+  ```
+
 
 
 
