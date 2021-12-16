@@ -8884,6 +8884,61 @@ In the LoginForm, we want to display an error message to the user if they aren't
     };
   ```
 
+### [3. Implementing infinite scroll]()
+- Install the react-infinite-scroller library
+  - `npm i --legacy-peer-deps --save react-infinite-scroller`
+- The next improvement we're going to make is instead of having the user clicking on the More button to load more events, we're going to implement infinite scrolling to load more events when the user reaches the bottom of the events list. We're also going to show a loading spinner at the bottom while we're loading more events
+- In EventDashboard.jsx file:
+  - Import the Loader component from semantic-ui-react: `import { Grid, Loader } from 'semantic-ui-react';`
+  - In JSX:
+    - Delete the existing More button element. We won't be using this button. We are going to add the infinite scrolling to the EventList component
+    - In the EventList component, also pass down the getNextEvents, loading, and moreEvent props
+      ```js
+      <EventList
+        events={events}
+        getNextEvents={handleFetchNextEvents}
+        loading={loading}
+        moreEvents={moreEvents}
+      />
+      ```
+    - Add another Grid.Column at the bottom of EventList that will display the `Loader` component (display a loading spinner) if `loading` state is true
+      ```js
+			<Grid.Column width={10}>
+				<Loader active={loading} />
+			</Grid.Column>
+      ```
+- In EventList.jsx file:
+  - Import the InfiniteScroll component from the react-infinite-scroller library
+  - Receive and destructure the events, getNextEvents, loading, and moreEvent props from the EventDashboard parent component
+  - In JSX:
+    - Write a condition to check that events.length is not equal to 0. If it isn't, then instantiate the InfiniteScroll component. This component takes a child. So cut and past the events.map() and the EventListItem component into this InfiniteScroll component
+    - Also add the necessary attributes to the InfiniteScroll component for the infinite scroll functionality to work
+    ```js
+    import EventListItem from './EventListItem';
+    import InfiniteScroll from 'react-infinite-scroller';
+
+    function EventList({ events, getNextEvents, loading, moreEvents }) {
+      return (
+        <>
+          {events.length !== 0 && (
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={getNextEvents}
+              hasMore={!loading && moreEvents}
+              initialLoad={false}
+            >
+              {events.map((event) => (
+                <EventListItem key={event.id} event={event} />
+              ))}
+            </InfiniteScroll>
+          )}
+        </>
+      );
+    }
+
+    export default EventList;
+    ```
+- Now when we are scrolling to the bottom of the events page, the InfiniteScroll component will fetch and display more events if moreEvents is true
 
 
 
@@ -8941,8 +8996,10 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Docs: https://www.npmjs.com/package/react-dropzone
   - Install: `npm i react-dropzone`
 - React-cropper - resize an image
-- Docs: https://github.com/react-cropper/react-cropper
-- Install: `npm i react-cropper`
+  - Docs: https://github.com/react-cropper/react-cropper
+  - Install: `npm i react-cropper`
+- React infinite scroller
+  - Install: `npm i --legacy-peer-deps --save react-infinite-scroller`
 
 
 ## VSCode extensions used:
