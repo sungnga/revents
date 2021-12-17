@@ -11,7 +11,7 @@ import EventFeedItem from './EventFeedItem';
 function EventsFeed() {
 	const dispatch = useDispatch();
 	const { feed } = useSelector((state) => state.profile);
-	console.log(feed);
+	// console.log(feed);
 
 	useEffect(() => {
 		getUserFeedRef().on('value', (snapshot) => {

@@ -8940,6 +8940,85 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Now when we are scrolling to the bottom of the events page, the InfiniteScroll component will fetch and display more events if moreEvents is true
 
+### [4. Fixing the EventDetailedPage]()
+- Now that we are fetching events data for the EventDashboard page from Firestore via a normal query rather than listening to live data, we broke the functionality to view an event detailed page. We still want to listen to live data for the EventDetailedPage, so when someone decides to join the event we can see the update in real time. This means we need to modify the way we get and store the selected event in Redux store
+- In eventConstants.js file:
+  - Create and export a LISTEN_TO_SELECTED_EVENT constant
+  - `export const LISTEN_TO_SELECTED_EVENT = 'LISTEN_TO_SELECTED_EVENT';`
+- In eventActions.js file:
+  - Import the LISTEN_TO_SELECTED_EVENT constant: `import { LISTEN_TO_SELECTED_EVENT } from './eventConstants';`
+  - First, delete the listenToEvents action function because we are no longer using it
+  - Create a listenToSelectedEvent action function. It takes a single event as an argument and set the payload to this event
+    ```js
+    export function listenToSelectedEvent(event) {
+      return {
+        type: LISTEN_TO_SELECTED_EVENT,
+        payload: event
+      };
+    }
+    ```
+- In eventReducer.js file:
+  - Import the LISTEN_TO_SELECTED_EVENT constant: `import { LISTEN_TO_SELECTED_EVENT } from './eventConstants';`
+  - In the `initialState` object, add a selectedEvent property and set it to null
+    ```js
+    const initialState = {
+      events: [],
+      comments: [],
+      moreEvents: false,
+      selectedEvent: null
+    };
+    ```
+  - Add a case for the LISTEN_TO_SELECTED_EVENT action. It returns, as an object, all the existing states and set the selectedEvent property to payload
+    ```js
+		case LISTEN_TO_SELECTED_EVENT:
+			return {
+				...state,
+				selectedEvent: payload
+			};
+    ```
+- In EventDetailedPage.jsx file:
+  - When this component loads, we want to listen to the event doc in Firestore and dispatch the listenToSelectedEvent() action to store the event in the selectedEvent property in the eventReducer
+  - Import the listenToSelectedEvent action: `import { listenToSelectedEvent } from '../eventActions';`
+  - Get the selected event from eventReducer using the useSelector() hook. Assign the result to an `event` constant
+    - `const event = useSelector((state) => state.event.selectedEvent);`
+  - In the useFirestoreDoc() hook:
+    - Instead of dispatching the listenToEvents() action, dispatch the listenToSelectedEvent() action. Then pass the `event` object that we get back from Firestore to this action as an argument
+    - Everything else in this hook stays the same
+    ```js
+    useFirestoreDoc({
+      // query an event doc in the events collection in Firestore db
+      query: () => listenToEventFromFirestore(match.params.id),
+      // store the event in Redux store
+      data: (event) => dispatch(listenToSelectedEvent(event)),
+      deps: [match.params.id, dispatch]
+    });
+    ```
+- In EventForm.jsx file:
+  - We need to make the same changes in the EventForm component
+  - Import the listenToSelectedEvent action: `import { listenToSelectedEvent } from '../eventActions';`
+  - Destructure the `selectedEvent` property from the eventReducer
+    - `const { selectedEvent } = useSelector((state) => state.event);`
+  - In the useFirestoreDoc() hook:
+    - Instead of dispatching the listenToEvents() action, dispatch the listenToSelectedEvent() action. Then pass the `event` object that we get back from Firestore to this action as an argument
+    - Everything else in this hook stays the same
+    ```js
+    useFirestoreDoc({
+      // cast the match.params.id into a boolean
+      // by default, shouldExecute is set to true
+      // if no event id (shouldExecute is false), return early
+      // this stops from listening to firestore
+      shouldExecute: !!match.params.id,
+      // query an event doc in the events collection in Firestore db
+      query: () => listenToEventFromFirestore(match.params.id),
+      // store the event in Redux store
+      data: (event) => dispatch(listenToSelectedEvent(event)),
+      deps: [match.params.id, dispatch]
+    });
+    ```
+
+
+
+
 
 
 

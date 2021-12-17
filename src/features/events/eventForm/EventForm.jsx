@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, Header, Segment, Confirm } from 'semantic-ui-react';
-import { listenToEvents } from '../eventActions';
+import { listenToSelectedEvent } from '../eventActions';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import MyTextInput from '../../../app/common/form/MyTextInput';
@@ -27,14 +27,7 @@ function EventForm({ match, history }) {
 	const dispatch = useDispatch();
 	const [loadingCancel, setLoadingCancel] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
-
-	// Use useSelector hook to get the event state from the store
-	// Use find() method to find the event based on event id from the URL params
-	// Hence the selectedEvent holds the event data
-	// Use this data to populate the event form fields
-	const selectedEvent = useSelector((state) =>
-		state.event.events.find((e) => e.id === match.params.id)
-	);
+	const { selectedEvent } = useSelector((state) => state.event);
 	const { loading, error } = useSelector((state) => state.async);
 
 	// ?? is the null conditional operator
@@ -89,7 +82,7 @@ function EventForm({ match, history }) {
 		// query an event doc in the events collection in Firestore db
 		query: () => listenToEventFromFirestore(match.params.id),
 		// store the event in Redux store
-		data: (event) => dispatch(listenToEvents([event])),
+		data: (event) => dispatch(listenToSelectedEvent(event)),
 		deps: [match.params.id, dispatch]
 	});
 

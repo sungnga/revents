@@ -3,7 +3,8 @@ import {
 	DELETE_EVENT,
 	FETCH_EVENTS,
 	UPDATE_EVENT,
-	LISTEN_TO_EVENT_CHAT
+	LISTEN_TO_EVENT_CHAT,
+	LISTEN_TO_SELECTED_EVENT
 } from './eventConstants';
 import {
 	asyncActionError,
@@ -37,10 +38,10 @@ export function fetchEvents(predicate, limit, lastDocSnapshot) {
 	};
 }
 
-export function listenToEvents(events) {
+export function listenToSelectedEvent(event) {
 	return {
-		type: FETCH_EVENTS,
-		payload: events
+		type: LISTEN_TO_SELECTED_EVENT,
+		payload: event
 	};
 }
 
