@@ -9016,12 +9016,71 @@ In the LoginForm, we want to display an error message to the user if they aren't
     });
     ```
 
+### [5. Fixing the event filters]()
+- What we have going on right now is when we click on the 'I'm going' or 'I'm hosting' filter on the EventDashboard page, it displays the existing events and the filtered events after it. This is because we have not cleared out any events currently in Redux store. So we need to create an action creator to clear the events in the store and go get the events that match the specified filter. We also need to clear the events and reset it to its initial state when we unmount the EventDashboard component
+- In eventConstants.js file:
+  - Create and export a CLEAR_EVENTS constant
+  - `export const CLEAR_EVENTS = 'CLEAR_EVENTS';`
+- In eventActions.js file:
+  - Import the CLEAR_EVENTS constant: `import { CLEAR_EVENTS } from './eventConstants';`
+  - Create and export a clearEvents action creator
+    ```js
+    export function clearEvents() {
+      return {
+        type: CLEAR_EVENTS
+      };
+    }
+    ```
+- In eventReducer.js file:
+  - Import the CLEAR_EVENTS constant: `import { CLEAR_EVENTS } from './eventConstants';`
+  - In the `initialState` object, set the `moreEvents` property to true
+    ```js
+    const initialState = {
+      events: [],
+      comments: [],
+      moreEvents: true,
+      selectedEvent: null
+    };
+    ```
+  - Add a case for the CLEAR_EVENTS action. It returns, as an object, all the existing states, set the events state to an empty array, and set the moreEvents state to true just to be explicit
+    ```js
+		case CLEAR_EVENTS:
+			return {
+				...state,
+				events: [],
+				moreEvents: true
+			};
+    ```
+- In EventDashboard.jsx file:
+  - Import the clearEvents action: `import { clearEvents } from '../eventActions';`
+  - In the handleSetPredicate() function, before we set the predicate, dispatch the clearEvents() action and set the lastDocSnapshot local state to null. This ensures that we clear all the current events in the store
+    ```js
+    function handleSetPredicate(key, value) {
+      dispatch(clearEvents());
+      setLastDocSnapshot(null);
+      setPredicate(new Map(predicate.set(key, value)));
+    }
+    ```
+  - We also need to clear out the events when we unmount the EventDashboard component. This way when the component is unmounted, we reset the events to its initial state. For example, if we're on the EventDashboard page and decide to visit some other page and come back to the EventDashboard page, we would get an error in the console
+  - In the useEffect() hook, add a return statement and a callback function and in it, dispatch the clearEvents() action
+    ```js
+    useEffect(() => {
+      setLoadingInitial(true);
 
+      // fetchEvents is an async function, so it returns a promise
+      // what's returned in the promise is lastVisible
+      // set this lastVisible in the lastDocSnapshot local state
+      dispatch(fetchEvents(predicate, limit)).then((lastVisible) => {
+        setLastDocSnapshot(lastVisible);
+        setLoadingInitial(false);
+      });
 
-
-
-
-
+      // reset the events to its initial state when the component unmounts
+      return () => {
+        dispatch(clearEvents());
+      };
+    }, [dispatch, predicate]);
+    ```
 
 
 

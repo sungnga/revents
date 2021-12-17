@@ -4,7 +4,8 @@ import {
 	FETCH_EVENTS,
 	UPDATE_EVENT,
 	LISTEN_TO_EVENT_CHAT,
-	LISTEN_TO_SELECTED_EVENT
+	LISTEN_TO_SELECTED_EVENT,
+	CLEAR_EVENTS
 } from './eventConstants';
 import {
 	asyncActionError,
@@ -70,5 +71,11 @@ export function listenToEventChat(comments) {
 	return {
 		type: LISTEN_TO_EVENT_CHAT,
 		payload: comments
+	};
+}
+
+export function clearEvents() {
+	return {
+		type: CLEAR_EVENTS
 	};
 }

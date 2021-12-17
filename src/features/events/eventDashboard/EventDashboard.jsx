@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid, Loader } from 'semantic-ui-react';
-import { fetchEvents } from '../eventActions';
+import { clearEvents, fetchEvents } from '../eventActions';
 import EventFilters from './EventFilters';
 import EventList from './EventList';
 import EventListItemPlaceholder from './EventListItemPlaceholder';
@@ -24,11 +24,14 @@ function EventDashboard() {
 	);
 
 	function handleSetPredicate(key, value) {
+		dispatch(clearEvents());
+		setLastDocSnapshot(null);
 		setPredicate(new Map(predicate.set(key, value)));
 	}
 
 	useEffect(() => {
 		setLoadingInitial(true);
+
 		// fetchEvents is an async function, so it returns a promise
 		// what's returned in the promise is lastVisible
 		// set this lastVisible in the lastDocSnapshot local state
@@ -36,6 +39,11 @@ function EventDashboard() {
 			setLastDocSnapshot(lastVisible);
 			setLoadingInitial(false);
 		});
+
+		// reset the events to its initial state when the component unmounts
+		return () => {
+			dispatch(clearEvents());
+		};
 	}, [dispatch, predicate]);
 
 	function handleFetchNextEvents() {
