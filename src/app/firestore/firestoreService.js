@@ -171,14 +171,78 @@ export function getUserPhotos(userUid) {
 }
 
 // set user main photo
-// 1. update the firestore photos collection
-// 2. update user photoURL in firebase.auth
+// 1. update the firestore user photoURL in 'users' collection
+// 2. update the hostPhotoURL of an event in 'events' collection
+// 3. update the photoURL of an attendee in the attendees array of an event
+// 4. update the currentUser photoURL in the 'userFollowers' collection inside the 'following' collection
+// 5. update the user photoURL in firebase.auth
 export async function setMainPhoto(photo) {
 	const user = firebase.auth().currentUser;
+	// get today's date
+	const today = new Date();
+	// get a ref to all events
+	// where currentUser is attending and greater than today's date
+	const eventDocQuery = db
+		.collection('events')
+		.where('attendeeIds', 'array-contains', user.uid)
+		.where('date', '>=', today);
+	// get a ref to the userFollowing collection
+	// all the users the currentUser is following
+	const userFollowingRef = db
+		.collection('following')
+		.doc(user.uid)
+		.collection('userFollowing');
+
+	// use batch so that we don't get data inconsistency if it fails
+	const batch = db.batch();
+
+	// updating the currentUser photoURL in Firestore
+	batch.update(db.collection('users').doc(user.uid), { photoURL: photo.url });
+
 	try {
-		await db.collection('users').doc(user.uid).update({
-			photoURL: photo.url
+		// get the events from Firestore based on eventDocQuery ref
+		const eventsQuerySnap = await eventDocQuery.get();
+		// for each event in eventsQuerySnap.docs array,
+		// update the hostPhotoURL, if the hostUid matches the user.uid
+		// update the attendee.photoURL in attendees array, if attendee.id matches the user.uid
+		for (let i = 0; i < eventsQuerySnap.docs.length; i++) {
+			let eventDoc = eventsQuerySnap.docs[i];
+			if (eventDoc.data().hostUid === user.uid) {
+				batch.update(eventsQuerySnap.docs[i].ref, {
+					hostPhotoURL: photo.url
+				});
+			}
+			// attendees is an array, so we need to use the filter method to update an element
+			batch.update(eventsQuerySnap.docs[i].ref, {
+				attendees: eventDoc.data().attendees.filter((attendee) => {
+					if (attendee.id === user.uid) {
+						attendee.photoURL = photo.url;
+					}
+					return attendee;
+				})
+			});
+		}
+
+		// get the userFollowing docs data from Firestore
+		const userFollowingSnap = await userFollowingRef.get();
+		// for each doc in userFollowingSnap.docs array,
+		// get a ref to currentUser doc in userFollowers collection
+		// update the photoURL of this ref using the batch method
+		userFollowingSnap.docs.forEach((docRef) => {
+			let followingDocRef = db
+				.collection('following')
+				.doc(docRef.id)
+				.collection('userFollowers')
+				.doc(user.uid);
+			batch.update(followingDocRef, {
+				photoURL: photo.url
+			});
 		});
+
+		await batch.commit();
+
+		// updating photoURL in Firebase.auth
+		// this operation is separate from the batch made to Firestore
 		return await user.updateProfile({
 			photoURL: photo.url
 		});

@@ -9082,6 +9082,117 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }, [dispatch, predicate]);
     ```
 
+### [6. Implementing data consistency: updating photoURL]()
+- One area in our app where we experience data inconsistency is when a user updates their main profile photo, their profile photo isn't updated in the event's hostPhotoURL or in an event's attendees array or in a userFollowers collection. This is because we don't have relational database between the 'users' collection, the 'events' collection, and the 'following' collection
+- The setMainPhoto function (firestoreService.js) updates a user photoURL in five different areas:
+  - The currentUser doc in 'users' collection
+  - The hostPhotoURL of an event in 'events' collection
+  - The photoURL of an attendee in the attendees array of an event
+  - The currentUser photoURL in the 'userFollowers' collection that's inside the 'following' collection
+  - The authenticated user profile photo in firebase.auth
+- In firestoreService.js file and in the setMainPhoto function:
+  - We're going to modify this function a little bit to update the user photoURL in other areas in the Firestore DB. We're going to use the batch method for this to maintain data consistency. If one of the operations inside the batch fails, all the other operations will roll back and will not update our database
+  - We're going to update the user photoURL of today's and future events only. We're not going to update things that are in the past
+  - First, get today's date by calling `new Date()`. Assign it to a `today` constant
+    - `const today = new Date();`
+  - Get a ref to all of the events where the currentUser is attending and are greater than today's date
+    ```js
+    const eventDocQuery = db
+      .collection('events')
+      .where('attendeeIds', 'array-contains', user.uid)
+      .where('date', '>=', today);
+    ```
+  - Get a ref to the userFollowing collection
+    ```js
+    const userFollowingRef = db
+      .collection('following')
+      .doc(user.uid)
+      .collection('userFollowing');
+    ```
+  - Then we're going to update the user photoURL in the 'users' collection in Firestore using the `batch.update()` method. Using the batch method allows us to have data consistency. Now, we're not going to be able to batch the photoURL update in firebase.auth. We do this in the try/catch block instead
+    ```js
+    const batch = db.batch();
+
+    batch.update(db.collection('users').doc(user.uid), { photoURL: photo.url });
+    ```
+  - Inside the try/catch block:
+    - In the try block, we will attempt to update the user photoURL in four different places
+      - The hostPhotoURL of an event
+      - The photoURL of an attendee in the attendees array of an event
+      - The currentUser photoURL in the 'userFollowers' collection that's inside the 'following' collection
+      - The authenticated user profile photo in firebase.auth
+    - Get the event docs query by calling the `.get()` method on the eventDocQuery ref. This is an async operation, so add the `await` keyword in front of it. Assign the result to `eventsQuerySnap` variable. This is an array of event docs based on the eventDocQuery ref
+    - Loop over this eventsQuerySnap.docs array and for each event doc, 
+      - check to see if the eventDoc hostUid is equal to the user.uid. If it is, update the hostPhotoURL using the `batch.update()` method
+      - then go to the attendees array in each event doc, check to see if an attendee.id is equal to the user.uid using the .filter() method. If it is, update the attendee.photoURL using the `batch.update()` method
+    - Next, we want to update the currentUser photo in the 'userFollowers' collection that is inside the 'following' collection
+    - First, get the userFollowing docs data by calling the `.get()` method on the userFollowingRef. This is an async operation, so add an `await` keyword in front of it. Assign the result to a `userFollowingSnap` variable
+    - Loop over the userFollowingSnap.docs array using the `.forEach()` method. For each docRef,
+      - first, get a ref to the currentUser doc in 'userFollowers' collection
+      - then update the photoURL of this ref using the `batch.update()` method
+    - We need to commit the batch by calling `batch.commit()`. This is an async operation, so add the `await` keyword in front of it
+    - Lastly, we want to update the authenticated user profile photo in firebase.auth. This operation is separate from the batch we use to update in Firestore
+      - In the return statement of the try block, call the `user.updateProfile()` to update the photoURL property in Firebase
+      - This is an async operation, so add the `await` keyword in front of it
+    - If the `batch.commit()` operation fails or if updating the user profile photo in firebase.auth fails, it'll go to the catch block and throw an error
+      ```js
+      try {
+        // get the events from Firestore based on eventDocQuery ref
+        const eventsQuerySnap = await eventDocQuery.get();
+        // for each event in eventsQuerySnap.docs array,
+        // update the hostPhotoURL, if the hostUid matches the user.uid
+        // update the attendee.photoURL in attendees array, if attendee.id matches the user.uid
+        for (let i = 0; i < eventsQuerySnap.docs.length; i++) {
+          let eventDoc = eventsQuerySnap.docs[i];
+          if (eventDoc.data().hostUid === user.uid) {
+            batch.update(eventsQuerySnap.docs[i].ref, {
+              hostPhotoURL: photo.url
+            });
+          }
+          // attendees is an array, so we need to use the filter method to update an element
+          batch.update(eventsQuerySnap.docs[i].ref, {
+            attendees: eventDoc.data().attendees.filter((attendee) => {
+              if (attendee.id === user.uid) {
+                attendee.photoURL = photo.url;
+              }
+              return attendee;
+            })
+          });
+        }
+
+        // get the userFollowing docs data from Firestore
+        const userFollowingSnap = await userFollowingRef.get();
+        // for each doc in userFollowingSnap.docs array,
+        // get a ref to currentUser doc in userFollowers collection
+        // update the photoURL of this ref using the batch method
+        userFollowingSnap.docs.forEach((docRef) => {
+          let followingDocRef = db
+            .collection('following')
+            .doc(docRef.id)
+            .collection('userFollowers')
+            .doc(user.uid);
+          batch.update(followingDocRef, {
+            photoURL: photo.url
+          });
+        });
+
+        await batch.commit();
+
+        // updating photoURL in Firebase.auth
+        // this operation is separate from the batch
+        return await user.updateProfile({
+          photoURL: photo.url
+        });
+      } catch (error) {
+        throw error;
+      }
+      ```
+
+
+
+
+
+
 
 
 
