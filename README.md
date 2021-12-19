@@ -9229,8 +9229,60 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Then use the `&&` to show the chat functionality only if `authenticated` is true
       - `{authenticated && (<chat segment>)}`
 
+### [2. Creating a modal to prompt login: UnauthModal component]()
+- If an anonymous user wants to join an event or view another user profile, for example, we want to display a modal to prompt them to login or register
+- In /features/auth folder, create a component called UnauthModal.jsx
+- In UnauthModal.jsx file:
+  - Write a functional UnauthModal component that displays a modal for a user either login or register in order to interact with certain parts of the application
+    - When a user clicks on the Login button, dispatch the openModal() action with the modalType of 'LoginForm'
+    - The Register button dispatches the openModal() action with the modalType of 'RegisterForm'
+    - The Cancel button closes the modal
+    ```js
+    import React from 'react';
+    import { useDispatch } from 'react-redux';
+    import { Button, Divider, Modal } from 'semantic-ui-react';
+    import { openModal } from '../../app/common/modals/modalReducer';
 
+    function UnauthModal() {
+      const [open, setOpen] = React.useState(true);
+      const dispatch = useDispatch();
 
+      function handleClose() {
+        setOpen(false);
+      }
+
+      return (
+        <Modal open={open} size='mini' onClose={handleClose}>
+          <Modal.Header content='You need to be signed in to do that' />
+          <Modal.Content>
+            <p>Please either login or register to see this content</p>
+            <Button.Group>
+              <Button
+                fluid
+                color='teal'
+                content='Login'
+                onClick={() => dispatch(openModal({ modalType: 'LoginForm' }))}
+              />
+              <Button.Or />
+              <Button
+                fluid
+                color='green'
+                content='Register'
+                onClick={() => dispatch(openModal({ modalType: 'RegisterForm' }))}
+              />
+            </Button.Group>
+            <Divider />
+            <div style={{ textAlign: 'center' }}>
+              <p>Or click cancel to continue as a guest</p>
+              <Button content='Cancel' onClick={handleClose} />
+            </div>
+          </Modal.Content>
+        </Modal>
+      );
+    }
+
+    export default UnauthModal;
+    ```
 
 
 
