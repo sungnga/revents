@@ -9188,7 +9188,18 @@ In the LoginForm, we want to display an error message to the user if they aren't
       }
       ```
 
-
+### [7. Updating security rules in Firestore]()
+- We need to update our security rules in Firestore DB to allow a user to update a document that matches their own id even if it is inside someone else's collection. They won't have permission to create or delete a document in another person's collection
+- Go to the Cloud Firestore Database dashboard page and click in the Rules tab at the top of the screen
+- Add another rule that allows a user to update a document that's inside another user's 'following' collection if the document id matches that user uid
+  ```js
+  match /following/{userId}/{document=**} {
+    allow read: if request.auth.uid != null;
+    allow write: if request.auth.uid == userId;
+    allow update: if resource.id == request.auth.uid;
+  }
+  ```
+- Click on the Publish button to update the rules
 
 
 
