@@ -16,8 +16,8 @@ function EventDetailedPage({ match }) {
 	const { loading, error } = useSelector((state) => state.async);
 	const dispatch = useDispatch();
 	const { currentUser } = useSelector((state) => state.auth);
-	const isHost = event?.hostUid === currentUser.uid;
-	const isGoing = event?.attendees?.some((a) => a.id === currentUser.uid);
+	const isHost = event?.hostUid === currentUser?.uid;
+	const isGoing = event?.attendees?.some((a) => a.id === currentUser?.uid);
 
 	useFirestoreDoc({
 		// query an event doc in the events collection in Firestore db

@@ -9188,18 +9188,53 @@ In the LoginForm, we want to display an error message to the user if they aren't
       }
       ```
 
-### [7. Updating security rules in Firestore]()
+### [7. Updating Firestore security rules]()
 - We need to update our security rules in Firestore DB to allow a user to update a document that matches their own id even if it is inside someone else's collection. They won't have permission to create or delete a document in another person's collection
 - Go to the Cloud Firestore Database dashboard page and click in the Rules tab at the top of the screen
-- Add another rule that allows a user to update a document that's inside another user's 'following' collection if the document id matches that user uid
-  ```js
-  match /following/{userId}/{document=**} {
-    allow read: if request.auth.uid != null;
-    allow write: if request.auth.uid == userId;
-    allow update: if resource.id == request.auth.uid;
-  }
-  ```
-- Click on the Publish button to update the rules
+  - Add another rule that allows a user to update a document that's inside another user's 'following' collection if the document id matches that user uid
+    ```js
+    match /following/{userId}/{document=**} {
+      allow read: if request.auth.uid != null;
+      allow write: if request.auth.uid == userId;
+      allow update: if resource.id == request.auth.uid;
+    }
+    ```
+  - Click on the Publish button to update the rules
+
+
+## SECURING THE APPLICATION
+
+### [1. Checking anonymous access]()
+- Let's take a look at what happens when an anonymous user (unauthenticated user) interacts our application
+- In EventDetailedPage.jsx file:
+  - We should allow an anonymous user to see the EventDetailedPage
+  - Add an optional chaining operator `?` next to the currentUser to indicate that currentUser is optional for `isHosting` and `isGoing`
+    ```js
+    const isHost = event?.hostUid === currentUser?.uid;
+    const isGoing = event?.attendees?.some((a) => a.id === currentUser?.uid);
+    ```
+- In EventDetailedChat.jsx file:
+  - We don't want to show the chat functionality in the EventDetailedPage to anonymous users
+  - Destructure the `authenticated` property from the authReducer using useSelector() hook
+    - `const { authenticated } = useSelector((state) => state.auth);`
+  - In JSX:
+    - For the Header element, write a condition that checks if `authenticated` is true. If it is, show the "Chat about this event" text, else show the "Sign in to view and comment" text
+      ```js
+      <Header>
+        {authenticated
+          ? 'Chat about this event'
+          : 'Sign in to view and comment'}
+      </Header>
+      ```
+    - Then use the `&&` to show the chat functionality only if `authenticated` is true
+      - `{authenticated && (<chat segment>)}`
+
+
+
+
+
+
+
 
 
 
