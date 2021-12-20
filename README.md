@@ -9338,6 +9338,75 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Container>
     ```
 
+### [4. Connecting the router to the store]()
+- At the moment, if a user decides not to sign in by hitting the Cancel button in the UnauthModal prompt, we have no way of redirecting them back to the page where they came from. And react-router-dom does not have a previous location in the `history` prop for us to go back
+- To make this work, we're going to use a library called connected-react-router
+  - Install: `npm i connected-react-router`
+- In rootReducer.js file:
+  - Import connectRouter: `import { connectRouter } from 'connected-react-router';`
+  - We need to pass down the `history` object as an argument to the combineReducer() function so that we can use it in the connectRouter
+  - In the combineReducer() function, add another `router` property and set it to `connectRouter(history)`
+    ```js
+    import { connectRouter } from 'connected-react-router';
+
+    const rootReducer = (history) =>
+      combineReducers({
+        router: connectRouter(history),
+        test: testReducer,
+        event: eventReducer,
+        modals: modalReducer,
+        auth: authReducer,
+        async: asyncReducer,
+        profile: profileReducer
+      });
+    ```
+- In configureStore.js file:
+  - Import the createBrowserHistory from history package: `import { createBrowserHistory } from 'history';` 
+  - NOTE that the history package comes with react-router-dom, but it isn't directly installed inside our packages (package.json). So to make sure that we have access to the history package, we're going to directly install it and we need to install the same history version that react-router-dom uses
+    - In the terminal, run `npm ls history` to see what version of history is being used by react-router-dom
+    - Then install history of that version: `npm install history@4.10.1`
+  - Outside of the configureStore function, create a history object by invoking the createBrowserHistory() function. Assign the result to a `history` variable and export it
+    - `export const history = createBrowserHistory();`
+  - Then inside the configureStore function, pass down this `history` object to the rootReducer() function
+  - Final code:
+    ```js
+    import { createBrowserHistory } from 'history';
+
+    export const history = createBrowserHistory();
+
+    export function configureStore() {
+      // 1st arg is a reducer
+      // 2nd arg is an enhancer
+      // We have 2 enhancers: redux thunk and redux devTool
+      const store = createStore(
+        rootReducer(history),
+        composeWithDevTools(applyMiddleware(thunk))
+      );
+
+      // The store continuously listening to user auth state change
+      store.dispatch(verifyAuth());
+
+      return store;
+    }
+    ```
+- In index.js file:
+  - Import the history object from configureStore: `import { configureStore, history } from './app/store/configureStore';`
+  - Import the ConnectedRouter component: `import { ConnectedRouter } from 'connected-react-router';`
+  - Instead of using the `<BrowserRouter />`, we're going to use the `<ConnectedRouter />` component. Then pass down the `history` as props to the ConnectedRouter component
+    ```js
+		<Provider store={store}>
+			<ConnectedRouter history={history}>
+				<ScrollToTop />
+				<App />
+			</ConnectedRouter>
+		</Provider>
+    ```
+- Now what happens is whenever we change route/page, we get a LOCATION_CHANGE action in Redux store and we have a `location` property that has the pathname in payload. We can make use of this information to store it in Redux store
+
+
+
+
+
 
 
 
@@ -9395,7 +9464,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Install: `npm i react-cropper`
 - React infinite scroller
   - Install: `npm i --legacy-peer-deps --save react-infinite-scroller`
-
+- connected-react-router - to go back to previous page
+  - Install: `npm i connected-react-router`
+- History
+  - First run `npm ls history` to see what version of history is being used by react-router-dom
+  - Then install history of that version: `npm i history@4.10.1`
 
 ## VSCode extensions used:
 - Auto Import - steoates
