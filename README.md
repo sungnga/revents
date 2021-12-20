@@ -8713,22 +8713,22 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Change the name of the `listenToEventsFromFirestore` function to `fetchEventsFromFirestore` just to clarify that we are fetching events rather than listening to events
     - Add `limit` and `lastDocSnapshot` as the 2nd and 3rd parameters. Set the `lastDocSnapshot` parameter to null initially
     - Then when we are getting events in db from the 'events' collection, we want to get the number of events based on the number we set in `limit` param and also get the events after the last doc snapshot. For example, when the EventDashboard page loads, we may want to limit the number of events to two on the first request. And then when we want to get the next set of events when the user scrolls down the page, we want to start on the third event in the collection by calling the `.startAfter(lastDocSnapshot)` method and pass in the `lastDocSnapshot` as an argument
-      ```js
-      // querying the events collection
-      export function fetchEventsFromFirestore(
-        predicate,
-        limit,
-        lastDocSnapshot = null
-      ) {
-        const user = firebase.auth().currentUser;
-        const eventRef = db
-          .collection('events')
-          .orderBy('date')
-          .startAfter(lastDocSnapshot)
-          .limit(limit);
-        // the rest of the code
-      }
-      ```
+    ```js
+    // querying the events collection
+    export function fetchEventsFromFirestore(
+      predicate,
+      limit,
+      lastDocSnapshot = null
+    ) {
+      const user = firebase.auth().currentUser;
+      const eventRef = db
+        .collection('events')
+        .orderBy('date')
+        .startAfter(lastDocSnapshot)
+        .limit(limit);
+      // the rest of the code
+    }
+    ```
 - In eventAction.js file:
   - Import the following:
     ```js
@@ -9135,58 +9135,58 @@ In the LoginForm, we want to display an error message to the user if they aren't
       - In the return statement of the try block, call the `user.updateProfile()` to update the photoURL property in Firebase
       - This is an async operation, so add the `await` keyword in front of it
     - If the `batch.commit()` operation fails or if updating the user profile photo in firebase.auth fails, it'll go to the catch block and throw an error
-      ```js
-      try {
-        // get the events from Firestore based on eventDocQuery ref
-        const eventsQuerySnap = await eventDocQuery.get();
-        // for each event in eventsQuerySnap.docs array,
-        // update the hostPhotoURL, if the hostUid matches the user.uid
-        // update the attendee.photoURL in attendees array, if attendee.id matches the user.uid
-        for (let i = 0; i < eventsQuerySnap.docs.length; i++) {
-          let eventDoc = eventsQuerySnap.docs[i];
-          if (eventDoc.data().hostUid === user.uid) {
-            batch.update(eventsQuerySnap.docs[i].ref, {
-              hostPhotoURL: photo.url
-            });
-          }
-          // attendees is an array, so we need to use the filter method to update an element
+    ```js
+    try {
+      // get the events from Firestore based on eventDocQuery ref
+      const eventsQuerySnap = await eventDocQuery.get();
+      // for each event in eventsQuerySnap.docs array,
+      // update the hostPhotoURL, if the hostUid matches the user.uid
+      // update the attendee.photoURL in attendees array, if attendee.id matches the user.uid
+      for (let i = 0; i < eventsQuerySnap.docs.length; i++) {
+        let eventDoc = eventsQuerySnap.docs[i];
+        if (eventDoc.data().hostUid === user.uid) {
           batch.update(eventsQuerySnap.docs[i].ref, {
-            attendees: eventDoc.data().attendees.filter((attendee) => {
-              if (attendee.id === user.uid) {
-                attendee.photoURL = photo.url;
-              }
-              return attendee;
-            })
+            hostPhotoURL: photo.url
           });
         }
-
-        // get the userFollowing docs data from Firestore
-        const userFollowingSnap = await userFollowingRef.get();
-        // for each doc in userFollowingSnap.docs array,
-        // get a ref to currentUser doc in userFollowers collection
-        // update the photoURL of this ref using the batch method
-        userFollowingSnap.docs.forEach((docRef) => {
-          let followingDocRef = db
-            .collection('following')
-            .doc(docRef.id)
-            .collection('userFollowers')
-            .doc(user.uid);
-          batch.update(followingDocRef, {
-            photoURL: photo.url
-          });
+        // attendees is an array, so we need to use the filter method to update an element
+        batch.update(eventsQuerySnap.docs[i].ref, {
+          attendees: eventDoc.data().attendees.filter((attendee) => {
+            if (attendee.id === user.uid) {
+              attendee.photoURL = photo.url;
+            }
+            return attendee;
+          })
         });
+      }
 
-        await batch.commit();
-
-        // updating photoURL in Firebase.auth
-        // this operation is separate from the batch
-        return await user.updateProfile({
+      // get the userFollowing docs data from Firestore
+      const userFollowingSnap = await userFollowingRef.get();
+      // for each doc in userFollowingSnap.docs array,
+      // get a ref to currentUser doc in userFollowers collection
+      // update the photoURL of this ref using the batch method
+      userFollowingSnap.docs.forEach((docRef) => {
+        let followingDocRef = db
+          .collection('following')
+          .doc(docRef.id)
+          .collection('userFollowers')
+          .doc(user.uid);
+        batch.update(followingDocRef, {
           photoURL: photo.url
         });
-      } catch (error) {
-        throw error;
-      }
-      ```
+      });
+
+      await batch.commit();
+
+      // updating photoURL in Firebase.auth
+      // this operation is separate from the batch
+      return await user.updateProfile({
+        photoURL: photo.url
+      });
+    } catch (error) {
+      throw error;
+    }
+    ```
 
 ### [7. Updating Firestore security rules]()
 - We need to update our security rules in Firestore DB to allow a user to update a document that matches their own id even if it is inside someone else's collection. They won't have permission to create or delete a document in another person's collection
@@ -9256,7 +9256,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
           <Modal.Header content='You need to be signed in to do that' />
           <Modal.Content>
             <p>Please either login or register to see this content</p>
-            <Button.Group>
+            <Button.Group widths={4}>
               <Button
                 fluid
                 color='teal'
@@ -9284,11 +9284,59 @@ In the LoginForm, we want to display an error message to the user if they aren't
     export default UnauthModal;
     ```
 
+### [3. Creating a private route: PrivateRoute component]()
+- Some of the pages we want to limit access and set them to private routes. If an anonymous user visits one of these pages we want to prompt the user to either login or register or continue as a guest
+- In /src/app/layout folder, create a component called PrivateRoute.jsx
+- In PrivateRoute.jsx file:
+  - This component takes three args: Component, prevLocation, and ...rest
+  - Destructure the `authenticated` state from the authReducer using the useSelector() hook
+  - In JSX:
+    - Instantiate the Route component provided by react-router-dom
+    - In it, spread in the rest of the properties that's coming from the parent component
+    - In the render attribute, check to see if `authenticated` state is true. If it is, render the `Component` component, else render the `UnauthModal` component. Spread in the props to each one of these components
+    ```js
+    import React from 'react';
+    import { useSelector } from 'react-redux';
+    import { Route } from 'react-router-dom';
+    import UnauthModal from '../../features/auth/UnauthModal';
 
+    // ...rest takes in the rest of the properties using the spread operator
+    // properties such as history or location objects that we get from react-router-dom
+    function PrivateRoute({ component: Component, prevLocation, ...rest }) {
+      const { authenticated } = useSelector((state) => state.auth);
 
+      // if not authenticated, the route will activate the UnauthModal
+      return (
+        <Route
+          {...rest}
+          render={(props) =>
+            authenticated ? <Component {...props} /> : <UnauthModal {...props} />
+          }
+        />
+      );
+    }
 
-
-
+    export default PrivateRoute;
+    ```
+- In App.jsx file:
+  - Import the PrivateRoute component: `import PrivateRoute from './PrivateRoute';`
+  - How it works is we're going to use the PrivateRoute component instead of Route component on pages that we want to set the route to private. The PrivateRoute component will first check the `authenticated` state in authReducer whether the user is authenticated or not. It will either display the Component or the UnauthModal component for user to sign in
+  - Use the PrivateRoute component on the create event page, the account page, and the user profile page. Just replace the `Route` component with the `PrivateRoute` component
+    ```js
+    <Container className='main'>
+      <Route exact path='/events' component={EventDashboard} />
+      <Route exact path='/sandbox' component={Sandbox} />
+      <Route path='/events/:id' component={EventDetailedPage} />
+      <PrivateRoute
+        path={['/createEvent', '/manage/:id']}
+        component={EventForm}
+        key={key}
+      />
+      <PrivateRoute path='/account' component={AccountPage} />
+      <PrivateRoute path='/profile/:id' component={ProfilePage} />
+      <Route path='/error' component={ErrorComponent} />
+    </Container>
+    ```
 
 
 
