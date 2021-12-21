@@ -9401,7 +9401,49 @@ In the LoginForm, we want to display an error message to the user if they aren't
 			</ConnectedRouter>
 		</Provider>
     ```
-- Now what happens is whenever we change route/page, we get a LOCATION_CHANGE action in Redux store and we have a `location` property that has the pathname in payload. We can make use of this information to store it in Redux store
+- Now what happens is whenever we change route/page, we're given a LOCATION_CHANGE action in Redux store and we have a `location` property that has the pathname in payload. We can make use of this information to store it in Redux store
+
+### [5. Redirecting the user with connected router]()
+- We want to store the previous location that a user has visited and the current location that the user is on in the authReducer in Redux store. This way when an unauthenticated user visits a PrivateRoute page and chooses not to sign in, we can redirect them back to the previous page where they came from
+- In authReducer.js file:
+  - Import the LOCATION_CHANGE action: `import { LOCATION_CHANGE } from 'connected-react-router';`
+  - In the `initialState` object, add a prevLocation and a currentLocation properties and initialize both to null
+    ```js
+    const initialState = {
+      authenticated: false,
+      currentUser: null,
+      prevLocation: null,
+      currentLocation: null
+    };
+    ```
+  - Add a case for the LOCATION_CHANGE action where it returns 
+    - all of the existing states
+    - the prevLocation property is set to `state.currentLocation`
+    - the currentLocation property is set to `payload.location`
+    ```js
+    case LOCATION_CHANGE:
+      return {
+        ...state,
+        prevLocation: state.currentLocation,
+        currentLocation: payload.location
+      };
+    ```
+- In UnauthModal.jsx file:
+  - In the UnauthModal component, receive and destructure the `history` object from the PrivateRoute parent component
+  - Destructure the prevLocation property from authReducer using the useSelector() hook
+    - `const { prevLocation } = useSelector((state) => state.auth);`
+  - In the handleClose() function, write an if statement to check if both the history object AND the prevLocation state exist. If both do, call the history.push() method to redirect to prevLocation.pathname page. If not, call the history.push() method to redirect to '/events' EventDashboard page
+    ```js
+    function handleClose() {
+      if (history && prevLocation) {
+        history.push(prevLocation.pathname);
+      } else {
+        history.push('/events');
+      }
+      setOpen(false);
+    }
+    ```
+- So when an unauthenticated user visits a PrivateRoute page, the UnauthModal prompt window pops up and ask them to sign in. If they choose not to sign in, we redirect them to the previous page where they came from. If they happen to visit a PrivateRoute page from somewhere else and decide not to sign in, we redirect them to the EventDashboard page upon the UnauthModal window closes
 
 
 
@@ -9469,6 +9511,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - History
   - First run `npm ls history` to see what version of history is being used by react-router-dom
   - Then install history of that version: `npm i history@4.10.1`
+
 
 ## VSCode extensions used:
 - Auto Import - steoates
