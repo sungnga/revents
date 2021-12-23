@@ -9445,6 +9445,81 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - So when an unauthenticated user visits a PrivateRoute page, the UnauthModal prompt window pops up and ask them to sign in. If they choose not to sign in, we redirect them to the previous page where they came from. If they happen to visit a PrivateRoute page from somewhere else and decide not to sign in, we redirect them to the EventDashboard page upon the UnauthModal window closes
 
+### [6. Showing the modal on click]()
+- If an anonymous user visits the event detailed page and wants to join the event by clicking on the 'Join this event' button, we would get an error. What we want is to show the sign in modal to ask the user to log in
+- In EventDetailedHeader.jsx file:
+  - The 'Join this event' button lives in this component. What we want to do here is display the UnauthModal component if this button is clicked by an unauthenticated user
+  - Import the following:
+    ```js
+    import React, { useState } from 'react';
+    import { useSelector } from 'react-redux';
+    import UnauthModal from '../../auth/UnauthModal';
+    ```
+  - Destructure the `authenticated` property from authReducer using useSelector() hook
+    - `const { authenticated } = useSelector((state) => state.auth);`
+  - Create a `modalOpen` local state and initialize it to false
+    - `const [modalOpen, setModalOpen] = useState(false);`
+  - In JSX:
+    - At the very top of JSX, write a condition that if the local state `modalOpen` is true, render the `<UnauthModal />` component. Pass down the setModalOpen function as props to this component. This way we can close the modal when we're done
+      - `{modalOpen && <UnauthModal setModalOpen={setModalOpen} />}`
+    - In the onClick event handler for the 'JOIN THIS EVENT' button element, write a condition that checks if the `authenticated` state is true. If it is, we call the handleUserJoinEvent function. If not, we call the setModalOpen() function in a callback and set it to true. This means that if authenticated state is false, the modalOpen local state will be set to true which triggers the UnauthModal component to open
+      ```js
+      <Button
+        onClick={authenticated ? handleUserJoinEvent : () => setModalOpen(true)}
+        loading={loading}
+        color='teal'
+      >
+        JOIN THIS EVENT
+      </Button>
+      ```
+- Now, when we close the modal for this particular scenario, we don't want to redirect the user to the previous page. We want to keep the user on the same page (on event detailed page)
+- In UnauthModal.jsx file:
+  - Receive and destructure the `setModalOpen` function from the EventDetailedHeader parent component
+  - First, we want to check if the UnauthModal component has the `history` object. If we are accessing this component via a route, then we will have the history object. If we are accessing this component by clicking a button, then it won't have the history inside this object. If it's the button, we simply close the modal and don't redirect the user
+  - In the handleClose function:
+    - Write an if statement that if the history object doesn't exist, call the setOpen() method and set it to false and call the setModalOpen() method and set it to false. And lastly, add a `return` statement so that we won't do anything else when we close the modal
+    ```js
+    // if no history object, simply close the modal and the user stays on the same page
+    if (!history) {
+      setOpen(false);
+      setModalOpen(false);
+      return; //don't do anything else after the modal is closed
+    }
+    ```
+  - The next thing we need to handle is once the unauthenticated user successfully logged in or registered in our application via the UnauthModal prompt, we need to close this modal and the user stays on the same page. More specifially, once the user clicked on the 'Login' or 'Register' button, we need to close the UnauthModal. At the moment we haven't handled that yet
+  - Write a handleOpenLoginModal function that dispatches the openModal() action to either open the LoginForm modal or the RegisterForm modal and then closes the UnauthModal
+    ```js
+    // close the UnauthModal once the user clicked on either Login or Register button
+    function handleOpenLoginModal(modalType) {
+      // NOTE: The modalType is pass an an object
+      dispatch(openModal({ modalType }));
+      setOpen(false);
+      setModalOpen(false);
+    }
+    ```
+  - In JSX, in the onClick event handlers for the Login and Register buttons, call the handleOpenLoginModal() function and pass in `'LoginForm'` as an argument for the Login button and pass in `'RegisterForm'` for the Register button
+    ```js
+    <Button.Group widths={4}>
+      <Button
+        fluid
+        color='teal'
+        content='Login'
+        onClick={() => handleOpenLoginModal('LoginForm')}
+      />
+      <Button.Or />
+      <Button
+        fluid
+        color='green'
+        content='Register'
+        onClick={() => handleOpenLoginModal('RegisterForm')}
+      />
+    </Button.Group>
+    ```
+
+
+
+
+
 
 
 

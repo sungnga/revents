@@ -3,18 +3,34 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Divider, Modal } from 'semantic-ui-react';
 import { openModal } from '../../app/common/modals/modalReducer';
 
-function UnauthModal({ history }) {
+function UnauthModal({ history, setModalOpen }) {
 	const [open, setOpen] = React.useState(true);
 	const { prevLocation } = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
 
 	function handleClose() {
+		// if no history object, simply close the modal and the user stays on the same page
+		if (!history) {
+			setOpen(false);
+			setModalOpen(false);
+			return; //don't do anything else after the modal is closed
+		}
+		// if there is history object and prevLocation, redirect user
 		if (history && prevLocation) {
 			history.push(prevLocation.pathname);
 		} else {
 			history.push('/events');
 		}
+		// close the modal
 		setOpen(false);
+	}
+
+	// close the UnauthModal once the user clicked on either the Login or Register button
+  function handleOpenLoginModal(modalType) {
+		// NOTE: The modalType is pass an an object
+		dispatch(openModal({ modalType }));
+		setOpen(false);
+		setModalOpen(false);
 	}
 
 	return (
@@ -27,14 +43,14 @@ function UnauthModal({ history }) {
 						fluid
 						color='teal'
 						content='Login'
-						onClick={() => dispatch(openModal({ modalType: 'LoginForm' }))}
+						onClick={() => handleOpenLoginModal('LoginForm')}
 					/>
 					<Button.Or />
 					<Button
 						fluid
 						color='green'
 						content='Register'
-						onClick={() => dispatch(openModal({ modalType: 'RegisterForm' }))}
+						onClick={() => handleOpenLoginModal('RegisterForm')}
 					/>
 				</Button.Group>
 				<Divider />
