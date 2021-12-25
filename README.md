@@ -9516,8 +9516,68 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Button.Group>
     ```
 
+### [7. More on Firestore security rules]()
+- Up until this point we've only been writing simple security rules in Firestore and hiding specific features from users when we don't wnat them to have access to on the client side. We're going to further lock down our application on the server side by creating and refining more rules in Firestore security rules
+- In the Firestore Database dashboard, click on the Rules tab at the top to see our existing rules
+  - Instead of writing the same logic and using them line by line inside the security rules, we can make it easier to read and use the logic by writing custom functions
+  - Write an isSignedIn custom function that checks whether the requested user has signed in
+  - Write an isHost custom function that allows only the host of the event to update the event
+  - If we want to update only a certain field inside of a document, we need to compare the incoming data with the existing data. In our case, we only want to update the attendeeIds and the attendees fields in a document
+  - Write an updateAttendeeFieldsOnly custom function that only updates the attendeeIds and the attendees fields in a document
+  - Update the Firestore security rules by clicking on the 'Publish' button
+    ```js
+    service cloud.firestore {
+      match /databases/{database}/documents {
+        match /users/{userId} {
+          allow read: if isSignedIn();
+          allow update, create: if request.auth.uid == userId;
+          match /photos/{document=**} {
+            allow read: if isSignedIn();
+            allow write: if request.auth.uid == userId;
+          }
+        }
+        match /following/{userId}/{document=**} {
+          allow read: if isSignedIn();
+          allow write: if request.auth.uid == userId;
+          allow update: if resource.id == request.auth.uid;
+        }
+        match /events/{document=**} {
+          allow read, list;
+          allow update: if isHost();
+          allow update: if isSignedIn() && updateAttendeeFieldsOnly();
+        }
+      }
+    }
 
+    // CUSTOM FUNCTIONS
+    // check whether the requested user has signed in
+    function isSignedIn() {
+      return request.auth.uid != null;
+    }
 
+    // only the host of the event can update the event
+    // resource.data is the existing data
+    // request is the incoming data
+    function isHost() {
+      return isSignedIn() && resource.data.hostUid == request.auth.uid;
+    }
+
+    // update only a certain field by comparing incoming data with existing data
+    // update the attendeeIds and attendees fields only in a document
+    function updateAttendeeFieldsOnly() {
+      return incomingData().diff(existingData()).changedKeys().hasOnly(['attendeeIds', 'attendees']);
+    }
+
+    // resource.data is the existing data
+    function existingData() {
+      return resource.data;
+    }
+
+    // request.resource.data is the incoming data
+    function incomingData() {
+      return request.resource.data;
+    }
+    ```
 
 
 
