@@ -9579,10 +9579,63 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-
-
-
-
+### [8. Restricting API key usage]()
+- When we created our 'revents' project in Google Firebase, it automatically created an `authDomain` URL for us. We use this URL when we publish our application. We also use this URL to restrict our API key usage so that only authenticated users of our application can read/write to our database
+- **Restrict API Key:**
+  - Go to google developers console https://console.cloud.google.com/ and select 'revents' project
+  - Then select 'Credentials' from the menu on the left
+    - Currently our API key is unrestricted. We're going to restrict our API key now
+    - Click on the link of the API Keys name
+    - On this page, 
+      - click on the 'REGENERATE KEY' button to regenerate a new API key. The old API key will be disabled within 24 hours
+      - Give this API key a name: ProductionKey
+      - in the 'Application restrictions' section, select the HTTP referers (web sites) option
+      - in the 'Website restrictions' section, click on the ADD AN ITEM button. Go back to Firebase dashboard page and select the 'Project settings' from the menu, go to the firebaseConfig section and find the `authDomain` property, copy this URL. Paste this URL AND followed by `/*` into the ADD AN ITEM input field and click Done
+      - in the 'API restrictions' section, select Don't restrict key option
+      - Click on SAVE button
+  - Do the exact same thing of restricting API key for the 'revents-app' project
+- Now that we've restricted our API key usage, nobody (current authenticated users or new users) has permission to modify our application. What we want to do, however, is to create another API key that is unrestricted during development mode. So we should have two API keys: one restricted key for production mode and one unrestricted key for development mode
+- **Create an unrestricted API key:**
+  - Still in the 'Credentials' dashboard page for both the 'revents-app' and the 'revents' projects:
+    - Add a new API key by clicking on the CREATE CREDENTIALS button at the top and select 'API key' option
+    - Give this key a name: DevKey
+    - Select 'None' option for Application restrictions
+    - Select 'Dont restrict key' option for API restrictions
+    - Click SAVE button
+- **Create env files:**
+  - At the root of project directory, create two new files: .env.production and .env.development
+  - Add these two files to the .gitignore file
+  - In .env.development file:
+    - Go to the google developers console and copy the API key for DevKey (unrestricted API key). Do this for both revents-app and revents-maps projects
+    ```js
+    REACT_APP_API_KEY=<paste app unrestricted api key here>
+    REACT_APP_MAPS_KEY=<paste maps unrestricted api key  here>
+    ```
+  - In .env.production file:
+    - Go to the google developers console and copy the API key for ProductionKey (restricted API key). Do this for both revents-app and revents-maps projects
+    ```js
+    REACT_APP_API_KEY=<paste app restricted api key here>
+    REACT_APP_MAPS_KEY=<paste maps restricted api key  here>
+    ```
+- **Replace API keys with env variables:**
+  - We're going to replace the API keys with the env variables in three different places
+  - In firebase.js file:
+    - Inside the firebaseConfig object, replace the API key value for the `apiKey` property
+    - `apiKey: process.env.REACT_APP_API_KEY,`
+  - In public/index.html file:
+    - Replace the google maps api key with the env variable in between two `%paste_env_here%`
+    - `<script src="https://maps.googleapis.com/maps/api/js?key=%REACT_APP_MAPS_KEY%&libraries=places"></script>`
+  - In EventDetailedMap.jsx file:
+    - Replace the google maps api key with the env variable for maps
+    - `bootstrapURLKeys={{ key: process.env.REACT_APP_MAPS_KEY }}`
+- We need to restart our application dev server
+- **Hiding the event filter menu from unauthenticated users:**
+  - When an anonymous user visits the EventDashboard we don't want to show the filter events menu
+  - In EventFilters.jsx file:
+    - Import useSelector hook: `import { useSelector } from 'react-redux';`
+    - Destructure the `authenticated` property from the authReducer using useSelector() hook
+    - In JSX, write a condition to only display the filters Menu element if `authenticated` state is true
+    - `{authenticated && (<Menu></Menu>)}`
 
 
 
