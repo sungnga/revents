@@ -26,11 +26,13 @@ function UnauthModal({ history, setModalOpen }) {
 	}
 
 	// close the UnauthModal once the user clicked on either the Login or Register button
-  function handleOpenLoginModal(modalType) {
+	function handleOpenLoginModal(modalType) {
 		// NOTE: The modalType is pass an an object
 		dispatch(openModal({ modalType }));
 		setOpen(false);
-		setModalOpen(false);
+    if (setModalOpen !== undefined) {
+      setModalOpen(false);
+    }
 	}
 
 	return (

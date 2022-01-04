@@ -9494,7 +9494,9 @@ In the LoginForm, we want to display an error message to the user if they aren't
       // NOTE: The modalType is pass an an object
       dispatch(openModal({ modalType }));
       setOpen(false);
-      setModalOpen(false);
+      if (setModalOpen !== undefined) {
+        setModalOpen(false);
+      }
     }
     ```
   - In JSX, in the onClick event handlers for the Login and Register buttons, call the handleOpenLoginModal() function and pass in `'LoginForm'` as an argument for the Login button and pass in `'RegisterForm'` for the Register button
@@ -9609,7 +9611,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Go to the google developers console and copy the API key for DevKey (unrestricted API key). Do this for both revents-app and revents-maps projects
     ```js
     REACT_APP_API_KEY=<paste app unrestricted api key here>
-    REACT_APP_MAPS_KEY=<paste maps unrestricted api key  here>
+    REACT_APP_MAPS_KEY=<paste maps unrestricted api key here>
     ```
   - In .env.production file:
     - Go to the google developers console and copy the API key for ProductionKey (restricted API key). Do this for both revents-app and revents-maps projects
@@ -9636,6 +9638,257 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Destructure the `authenticated` property from the authReducer using useSelector() hook
     - In JSX, write a condition to only display the filters Menu element if `authenticated` state is true
     - `{authenticated && (<Menu></Menu>)}`
+
+
+## OPTIMIZING AND PUBLISHING THE APP
+
+### [1. Optimizing the events]()
+- The first time when we load the EventDashboard page, we fetch the events data from Firestore and we have this data stored in memory. As our users move around in our application going from one page to another and back to the EventDashboard page again, we don't need to make another request to query for the data again. We also want to retain the filtered events and the events based on the calendar date picker in memory as well. Since we are using Redux we can keep this data in our central store instead of in local states in the components
+- In eventReducer.js file:
+  - In the initialState object, 
+    - add a `lastVisible` property and set it to null
+    - add a `filter` property and set it to string all
+    - add a `startData` property and set it to today's date `new Date()`
+    - add a `retainState` property and set it to false
+    ```js
+    const initialState = {
+      events: [],
+      comments: [],
+      moreEvents: true,
+      selectedEvent: null,
+      lastVisible: null,
+      filter: 'all',
+      startDate: new Date(),
+      retainState: false
+    };
+    ```
+- In eventConstants.js file:
+  - Create and export three new constants
+    ```js
+    export const SET_FILTER = 'SET_FILTER';
+    export const SET_START_DATE = 'SET_START_DATE';
+    export const RETAIN_STATE = 'RETAIN_STATE';
+    ```
+- In eventActions.js file:
+  - Import the SET_FILTER and the SET_START_DATE constants
+  - Write and export a setFilter action creator function that first dispatches the clearEvents() function to clear the events in eventReducer store and then dispatches the SET_FILTER action with the provided value
+    - This action function returns a function because we want to perform multiple actions within this function
+    ```js
+    export function setFilter(value) {
+      return function (dispatch) {
+        dispatch(clearEvents());
+        dispatch({ type: SET_FILTER, payload: value });
+      };
+    }
+    ```
+  - Write and export a setStartDate action creator function that first dispatches the clearEvents() function to clear the events in eventReducer store and then dispatches the SET_START_DATE action with the provided date
+    - This action function returns a function because we want to perform multiple actions within this function
+    ```js
+    export function setStartDate(date) {
+      return function (dispatch) {
+        dispatch(clearEvents());
+        dispatch({ type: SET_START_DATE, payload: date });
+      };
+    }
+    ```
+  - In the fetchEvents() action creator function, we're going to make a few changes
+    - it no longer receives the `predicate` as an argument. Instead, it receives a `filter` and a `startDate` as two additional arguments
+    - in the try block, pass down the `filter` and `startDate` as arguments to the fetchEventsFromFirestore() function
+    - when we dispatch the FETCH_EVENTS action, we're also going to pass down the `lastVisible` value to payload. We want to store this value in Redux store
+    - it no longer returns the `lastVisible` value
+    ```js
+    export function fetchEvents(filter, startDate, limit, lastDocSnapshot) {
+      return async function (dispatch) {
+        dispatch(asyncActionStart());
+        try {
+          const snapshot = await fetchEventsFromFirestore(
+            filter,
+            startDate,
+            limit,
+            lastDocSnapshot
+          ).get();
+          const lastVisible = snapshot.docs[snapshot.docs.length - 1];
+          const moreEvents = snapshot.docs.length >= limit;
+          const events = snapshot.docs.map((doc) => dataFromSnapshot(doc));
+          dispatch({ type: FETCH_EVENTS, payload: { events, moreEvents, lastVisible } });
+          dispatch(asyncActionFinish());
+        } catch (error) {
+          dispatch(asyncActionError(error));
+        }
+      };
+    }
+    ```
+- In firestoreService.js file:
+  - In the fetchEventsFromFirestore() function,
+    - remove the `predicate` argument and add the `filter` and `startDate` as arguments to this function
+    - in the switch statement, instead of passing in the `predicate`, pass in the `filter` as an argument. Then for each of the three queries we make here, replace the `predicate` with the `startDate` 
+    ```js
+    export function fetchEventsFromFirestore(
+      filter,
+      startDate,
+      limit,
+      lastDocSnapshot = null
+    ) {
+      const user = firebase.auth().currentUser;
+      const eventRef = db
+        .collection('events')
+        .orderBy('date')
+        .startAfter(lastDocSnapshot)
+        .limit(limit);
+      // filter events based on the predicate
+      // get the events based on the key/value of the predicate set in EventFilters component
+      // use the firestore's .where() method to query the events
+      switch (filter) {
+        case 'isGoing':
+          return eventRef
+            .where('attendeeIds', 'array-contains', user.uid)
+            .where('date', '>', startDate);
+        case 'isHost':
+          return eventRef
+            .where('hostUid', '==', user.uid)
+            .where('date', '>=', startDate);
+        default:
+          return eventRef.where('date', '>=', startDate);
+      }
+    }
+    ```
+- In eventReducer.js file:
+  - Import the SET_FILTER, SET_START_DATE, and RETAIN_STATE constants
+    - `import { SET_START_DATE, RETAIN_STATE } from './eventConstants';`
+  - For the FETCH_EVENTS case, add a `lastVisible` property and set it to `payload.lastVisible`
+    ```js
+		case FETCH_EVENTS:
+			return {
+				...state,
+				events: [...state.events, ...payload.events],
+				moreEvents: payload.moreEvents,
+				lastVisible: payload.lastVisible
+			};
+    ```
+  - Add another case for SET_FILTER action
+    ```js
+		case SET_FILTER:
+			return {
+				...state,
+				retainState: false,
+				moreEvents: true,
+				filter: payload
+			};
+    ```
+  - Add another case for SET_START_DATE action
+    ```js
+		case SET_START_DATE:
+			return {
+				...state,
+				retainState: false,
+				moreEvents: true,
+				startDate: payload
+			};
+    ```
+  - Add another case for SET_START_DATE action
+    ```js
+		case RETAIN_STATE:
+			return {
+				...state,
+				retainState: true
+			};
+    ```
+  - For the CLEAR_EVENTS case, add a `lastVisible` property and set it to `null`
+    ```js
+		case CLEAR_EVENTS:
+			return {
+				...state,
+				events: [],
+				moreEvents: true,
+				lastVisible: null
+			};
+    ```
+- In EventDashboard.jsx file
+  - Import the RETAIN_STATE constant: `import { RETAIN_STATE } from '../eventConstants';`
+  - Destructure the filter, startDate, lastVisible, and retainState properties from eventReducer
+    - `const { events, moreEvents, filter, startDate, lastVisible, retainState } = useSelector((state) => state.event);`
+  - Remove the `predicate` and `lastDocSnapshot` local states
+  - Remove the handleSetPredicate function
+  - In the useEffect() hook:
+    - Write an if statement to check if retainState is true. If it is, return early
+    - In the fetchEvents() function, remove the `predicate` argument and pass in the `filter` and `startDate` as two additional arguments. Also, we no longer return `lastVisible` from this function, so remove the lastVisible from the .then() method. Remove the `setLastDocSnapshot(lastVisible);` method from the .then() method
+    - Add these three dependencies to the dependencies array: filter, startDate, retainState
+    ```js
+    useEffect(() => {
+      if (retainState) return;
+      setLoadingInitial(true);
+
+      // fetchEvents is an async function, so it returns a promise
+      // what's returned in the promise is lastVisible
+      // set this lastVisible in the lastDocSnapshot local state
+      dispatch(fetchEvents(filter, startDate, limit)).then(() => {
+        setLoadingInitial(false);
+      });
+
+      // reset the events to its initial state when the component unmounts
+      return () => {
+        dispatch({ type: RETAIN_STATE });
+      };
+    }, [dispatch, filter, startDate, retainState]);
+    ```
+  - In the handleFetchNextEvents function:
+    - Remove the `predicate` argument and pass in the `filter` and `startDate` as two additional arguments
+    - We no longer need to call the `setLastDocSnapshot(lastVisible);` method and we can remove the .then() method entirely
+    ```js
+    function handleFetchNextEvents() {
+      dispatch(fetchEvents(filter, startDate, limit, lastVisible));
+    }
+    ```
+  - In JSX and in the EventFilters component, we no longer passing down the `predicate` state and the `setPredicate` function
+    - `<EventFilters loading={loading} />` 
+- In EventFilters.jsx file:
+  - Import the setFilter and setStartDate action creators: `import { setFilter, setStartDate } from '../eventActions';`
+  - Remove the predicate and setPredicate properties as arguments
+  - Get the dispatch function by calling the useDispatch() hook
+    - `const dispatch = useDispatch();`
+  - Destructure the filter and startDate properties from the eventReducer
+    - `const { filter, startDate } = useSelector((state) => state.event);`
+  - In JSX:
+    - For each of 'All Events', 'isGoing', and 'isHosting' filter Menu.Item,
+      - for the active attribute, instead of calling the predicate.get() method, we're just going to set `filter === 'NAME_OF_FILTER_HERE'`
+      - for the onClick event handler, instead of calling the setPredicate() method, we're going to dispatch the setFilter() method and pass in the name of the filter
+      ```js
+			{authenticated && (
+				<Menu vertical size='large' style={{ width: '100%' }}>
+					<Header icon='filter' attached color='teal' content='Filters' />
+					<Menu.Item
+						content='All Events'
+						active={filter === 'all'}
+						onClick={() => dispatch(setFilter('all'))}
+						disabled={loading}
+					/>
+					<Menu.Item
+						content="I'm going"
+						active={filter === 'isGoing'}
+						onClick={() => dispatch(setFilter('isGoing'))}
+						disabled={loading}
+					/>
+					<Menu.Item
+						content="I'm hosting"
+						active={filter === 'isHost'}
+						onClick={() => dispatch(setFilter('isHost'))}
+						disabled={loading}
+					/>
+				</Menu>
+			)}
+      ```
+    - For the Calendar datepicker component,
+      - for the onChange attribute, instead of calling the setPredicate() method, dispatch the setStartDate() method and pass in date as an argument
+      - for the value attribute, instead of calling the predicate.get() method, just set the startDate property or today's date
+      ```js
+			<Calendar
+				onChange={(date) => dispatch(setStartDate(date))}
+				value={startDate || new Date()}
+				tileDisabled={() => loading}
+			/>
+      ```
+
+
 
 
 

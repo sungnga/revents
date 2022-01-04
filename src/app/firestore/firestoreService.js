@@ -25,7 +25,8 @@ export function dataFromSnapshot(snapshot) {
 
 // querying the events collection
 export function fetchEventsFromFirestore(
-	predicate,
+	filter,
+	startDate,
 	limit,
 	lastDocSnapshot = null
 ) {
@@ -38,17 +39,17 @@ export function fetchEventsFromFirestore(
 	// filter events based on the predicate
 	// get the events based on the key/value of the predicate set in EventFilters component
 	// use the firestore's .where() method to query the events
-	switch (predicate.get('filter')) {
+	switch (filter) {
 		case 'isGoing':
 			return eventRef
 				.where('attendeeIds', 'array-contains', user.uid)
-				.where('date', '>', predicate.get('startDate'));
+				.where('date', '>', startDate);
 		case 'isHost':
 			return eventRef
 				.where('hostUid', '==', user.uid)
-				.where('date', '>=', predicate.get('startDate'));
+				.where('date', '>=', startDate);
 		default:
-			return eventRef.where('date', '>=', predicate.get('startDate'));
+			return eventRef.where('date', '>=', startDate);
 	}
 }
 
