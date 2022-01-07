@@ -9757,51 +9757,51 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - `import { SET_START_DATE, RETAIN_STATE } from './eventConstants';`
   - For the FETCH_EVENTS case, add a `lastVisible` property and set it to `payload.lastVisible`
     ```js
-		case FETCH_EVENTS:
-			return {
-				...state,
-				events: [...state.events, ...payload.events],
-				moreEvents: payload.moreEvents,
-				lastVisible: payload.lastVisible
-			};
+    case FETCH_EVENTS:
+      return {
+        ...state,
+        events: [...state.events, ...payload.events],
+        moreEvents: payload.moreEvents,
+        lastVisible: payload.lastVisible
+      };
     ```
   - Add another case for SET_FILTER action
     ```js
-		case SET_FILTER:
-			return {
-				...state,
-				retainState: false,
-				moreEvents: true,
-				filter: payload
-			};
+    case SET_FILTER:
+      return {
+        ...state,
+        retainState: false,
+        moreEvents: true,
+        filter: payload
+      };
     ```
   - Add another case for SET_START_DATE action
     ```js
-		case SET_START_DATE:
-			return {
-				...state,
-				retainState: false,
-				moreEvents: true,
-				startDate: payload
-			};
+    case SET_START_DATE:
+      return {
+        ...state,
+        retainState: false,
+        moreEvents: true,
+        startDate: payload
+      };
     ```
   - Add another case for SET_START_DATE action
     ```js
-		case RETAIN_STATE:
-			return {
-				...state,
-				retainState: true
-			};
+    case RETAIN_STATE:
+      return {
+        ...state,
+        retainState: true
+      };
     ```
   - For the CLEAR_EVENTS case, add a `lastVisible` property and set it to `null`
     ```js
-		case CLEAR_EVENTS:
-			return {
-				...state,
-				events: [],
-				moreEvents: true,
-				lastVisible: null
-			};
+    case CLEAR_EVENTS:
+      return {
+        ...state,
+        events: [],
+        moreEvents: true,
+        lastVisible: null
+      };
     ```
 - In EventDashboard.jsx file
   - Import the RETAIN_STATE constant: `import { RETAIN_STATE } from '../eventConstants';`
@@ -9853,41 +9853,78 @@ In the LoginForm, we want to display an error message to the user if they aren't
       - for the active attribute, instead of calling the predicate.get() method, we're just going to set `filter === 'NAME_OF_FILTER_HERE'`
       - for the onClick event handler, instead of calling the setPredicate() method, we're going to dispatch the setFilter() method and pass in the name of the filter
       ```js
-			{authenticated && (
-				<Menu vertical size='large' style={{ width: '100%' }}>
-					<Header icon='filter' attached color='teal' content='Filters' />
-					<Menu.Item
-						content='All Events'
-						active={filter === 'all'}
-						onClick={() => dispatch(setFilter('all'))}
-						disabled={loading}
-					/>
-					<Menu.Item
-						content="I'm going"
-						active={filter === 'isGoing'}
-						onClick={() => dispatch(setFilter('isGoing'))}
-						disabled={loading}
-					/>
-					<Menu.Item
-						content="I'm hosting"
-						active={filter === 'isHost'}
-						onClick={() => dispatch(setFilter('isHost'))}
-						disabled={loading}
-					/>
-				</Menu>
-			)}
+      {authenticated && (
+        <Menu vertical size='large' style={{ width: '100%' }}>
+          <Header icon='filter' attached color='teal' content='Filters' />
+          <Menu.Item
+            content='All Events'
+            active={filter === 'all'}
+            onClick={() => dispatch(setFilter('all'))}
+            disabled={loading}
+          />
+          <Menu.Item
+            content="I'm going"
+            active={filter === 'isGoing'}
+            onClick={() => dispatch(setFilter('isGoing'))}
+            disabled={loading}
+          />
+          <Menu.Item
+            content="I'm hosting"
+            active={filter === 'isHost'}
+            onClick={() => dispatch(setFilter('isHost'))}
+            disabled={loading}
+          />
+        </Menu>
+      )}
       ```
     - For the Calendar datepicker component,
       - for the onChange attribute, instead of calling the setPredicate() method, dispatch the setStartDate() method and pass in date as an argument
       - for the value attribute, instead of calling the predicate.get() method, just set the startDate property or today's date
       ```js
-			<Calendar
-				onChange={(date) => dispatch(setStartDate(date))}
-				value={startDate || new Date()}
-				tileDisabled={() => loading}
-			/>
+      <Calendar
+        onChange={(date) => dispatch(setStartDate(date))}
+        value={startDate || new Date()}
+        tileDisabled={() => loading}
+      />
       ```
 
+### [2. Optimizing the profiles]()
+- The next small optimization we want to make is if we already have the currentUserProfile data then we don't need to listenToSelectedUserProfile. For example, if the currentUser is browsing on the EventDashboard page and clicks on a link to go to their profile page, we don't need to fetch the selectedUserProfile data
+- In ProfilePage.jsx file:
+  - Destructure the `currentUserProfile` property from profileReducer
+    - `const { selectedUserProfile, currentUserProfile } = useSelector((state) => state.profile);`
+  - In the custom useFirestoreDoc hook:
+    - Add a `shouldExecute` property and set it to `match.params.id !== currentUser.uid`
+    - That way, this custom hook runs to fetch the selectedUserProfile data only if the URL params id does not match the currently login user id
+  - At the top of the component, add a `let profile`
+  - Write an if statement that checks if match.params.id is equal to currentUser.uid. If it is, set the `profile` variable to currentUserprofile. If it isn't, set the `profile` variable to selectedUserProfile
+    ```js
+    if (match.params.id === currentUser.uid) {
+      profile = currentUserProfile;
+    } else {
+      profile = selectedUserProfile;
+    }
+    ```
+  - Then instead of checking for selectedUserProfile, we're going to check for profile everywhere in this component
+    ```js
+    if ((loading && !profile) || (!profile && !error))
+      return <LoadingComponent content='Loading profile...' />;
+
+    return (
+      <Grid>
+        <Grid.Column width={16}>
+          <ProfileHeader
+            profile={profile}
+            isCurrentUser={currentUser.uid === profile.id}
+          />
+          <ProfileContent
+            profile={profile}
+            isCurrentUser={currentUser.uid === profile.id}
+          />
+        </Grid.Column>
+      </Grid>
+    );
+    ```
 
 
 
