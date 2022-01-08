@@ -9926,6 +9926,14 @@ In the LoginForm, we want to display an error message to the user if they aren't
     );
     ```
 
+### [3. Building the application for production]()
+- Create-react-app gives us a tool to create a production build of our application
+- To create a production build, run: `npm run build`
+- This creates a `build` folder that contains all the asset files, Javascript code that has been optimized, minimized, and bundled
+- Install the serve package globally, which will allow us to serve the contents from a build folder: `npm install -g serve`
+- Then run: `serve -s build`. This serves our application in production mode on localhost
+- Go to `http://localhost:5000` to see the application
+
 
 
 
