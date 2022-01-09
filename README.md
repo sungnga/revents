@@ -9934,8 +9934,38 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - Then run: `serve -s build`. This serves our application in production mode on localhost
 - Go to `http://localhost:5000` to see the application
 
-
-
+### [4. Publishing the app to Firebase]()
+- Go to Firebase console and click on the Hosting menu item on the left. Then click the Get Started button
+  - We can deploy all of our code to be hosted by Firebase
+  - **Set up Firebase Hosting**
+    - Step 1: Install Firebase CLI: `npm install -g firebase-tools`. We already installed this. Click on Next
+    - Step 2: Initialize your project
+      - Sign in to Google: `firebase login`. We already logged in
+      - Initiate your project: `firebase init`. We already initiated our project
+      - Click on Next
+    - Step 3: Deploy to Firebase Hosting
+      - When you're ready to deploy your web app: `firebase deploy`. We don't do this
+      - Click on Continue to console
+  - It should now take us to the Hosting dashboard page
+- In package.json file:
+  - Add deploy to the scripts tag
+  - We want to build it first and then deploy
+    ```js
+    "scripts": {
+      "start": "react-scripts start",
+      "build": "react-scripts build",
+      "test": "react-scripts test",
+      "eject": "react-scripts eject",
+      "deploy": "npm run build && firebase deploy"
+    },
+    ```
+- In the terminal, stop the running server and run: `firebase init`
+  - Then the arrow key to select the 'Hosting: Configure and deploy Firebase Hosting sites' option and press return
+  - 'What do you want to use as your public directory?': type `build`. This is the folder we want to use
+  - 'Configure as a single-page app (rewrite all urls to /index.html)?': type `N`
+  - 'File build/index.html already exists. OverWrite?': type `N`. When we deploy, we're going to rebuild the build folder anyway
+  - Run: `npm run deploy`. We deploy our functions and hosting
+- Go back to the Firebase console and to the Hosting dashboard page. Here it should give us the hosting URL that we specified in the firebase config file. We should be able to see our deployed application using this URL
 
 
 
