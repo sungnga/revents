@@ -1,9 +1,9 @@
 /* global google */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, Header, Segment, Confirm } from 'semantic-ui-react';
-import { listenToSelectedEvent } from '../eventActions';
+import { listenToSelectedEvent, clearSelectedEvent } from '../eventActions';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import MyTextInput from '../../../app/common/form/MyTextInput';
@@ -23,12 +23,17 @@ import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { Redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-function EventForm({ match, history }) {
+function EventForm({ match, history, location }) {
 	const dispatch = useDispatch();
 	const [loadingCancel, setLoadingCancel] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const { selectedEvent } = useSelector((state) => state.event);
 	const { loading, error } = useSelector((state) => state.async);
+
+	useEffect(() => {
+		if (location.pathname !== '/createEvent') return;
+		dispatch(clearSelectedEvent());
+	}, [dispatch, location.pathname]);
 
 	// ?? is the null conditional operator
 	// The ?? means that if selectedEvent is null, the initialValues is set to whatever is on the right of the ??
@@ -78,7 +83,9 @@ function EventForm({ match, history }) {
 		// by default, shouldExecute is set to true
 		// if no event id (shouldExecute is false), return early
 		// this stops from listening to firestore
-		shouldExecute: !!match.params.id,
+		shouldExecute:
+			match.params.id !== selectedEvent?.id &&
+			location.pathname !== '/createEvent',
 		// query an event doc in the events collection in Firestore db
 		query: () => listenToEventFromFirestore(match.params.id),
 		// store the event in Redux store
@@ -93,6 +100,7 @@ function EventForm({ match, history }) {
 	return (
 		<Segment clearing>
 			<Formik
+				enableReinitialize
 				initialValues={initialValues}
 				validationSchema={validationSchema}
 				onSubmit={async (values, { setSubmitting }) => {
@@ -137,7 +145,8 @@ function EventForm({ match, history }) {
 							timeFormat='HH:mm'
 							showTimeSelect
 							timeCaption='time'
-							dateFormat='MMMM d, yyyy h:mm a'
+              dateFormat='MMMM d, yyyy h:mm a'
+              autoComplete='off'
 						/>
 
 						{selectedEvent && (

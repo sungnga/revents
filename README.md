@@ -9967,7 +9967,72 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Run: `npm run deploy`. We deploy our functions and hosting
 - Go back to the Firebase console and to the Hosting dashboard page. Here it should give us the hosting URL that we specified in the firebase config file. We should be able to see our deployed application using this URL
 
-
+### [5. Resolving issues with the app and redeploying]()
+- Let's remove the Delete event button, because the host of the event can only cancel the event but cannot delete an event
+- In EventListItem.jsx file:
+  - In JSX, remove the Delete button element
+- Next issue is if we're on an EventDetailedPage and we click on the Create Event button, the event form is still populated with the event data coming from the `selectedEvent` property in the eventReducer. We want to clear the Create Event form. So we want to check if we are on the create root path (create event), we need to clear the `selectedEvent` property in the eventReducer. But we want to keep the `selectedEvent` property if we are on the EventDetailedPage and going into the event form
+- In eventConstants.js file:
+  - Create and export a CLEAR_SELECTED_EVENT constant
+  - `export const CLEAR_SELECTED_EVENT = 'CLEAR_SELECTED_EVENT';`
+- In eventActions.js file:
+  - Import the CLEAR_SELECTED_EVENT constant: `import { CLEAR_SELECTED_EVENT } from './eventConstants';`
+  - Write and export a clearSelectedEvent action creator
+    ```js
+    export function clearSelectedEvent() {
+      return {
+        type: CLEAR_SELECTED_EVENT
+      };
+    }
+    ```
+- In eventReducer.js file:
+  - Import the CLEAR_SELECTED_EVENT constant: `import { CLEAR_SELECTED_EVENT } from './eventConstants';`
+  - Add a case for CLEAR_SELECTED_EVENT action
+    - This action sets the `selectedEvent` property to null
+    ```js
+		case CLEAR_SELECTED_EVENT:
+			return {
+				...state,
+				selectedEvent: null
+			};
+    ```
+- In EventForm.jsx file:
+  - We want to use useEffect() so that when this component mounts, we want to check the pathname in the `location` property. If the path location is `/createEvent`, we want to dispatch the clearSelectedEvent action to clear the `selectedEvent` property in eventReducer. This will clear the event form
+  - Import the clearSelectedEvent action: `import { clearSelectedEvent } from '../eventActions';`
+  - In the EventForm component, receive and destructure the `location` property
+  - Add a useEffect() hook:
+    - Write an if statement to check if location.pathname is NOT equal to '/createEvent', return early. If it is, dispatch the clearSelectedEvent action
+    - Add dispatch and location.pathname to the dependencies array
+    ```js
+    useEffect(() => {
+      if (location.pathname !== '/createEvent') return;
+      dispatch(clearSelectedEvent());
+    }, [dispatch, location.pathname]);
+    ```
+  - In the useFirestoreDoc custom hook:
+    - We need to be more specific when we want to go fetch the event doc in Firestore. Modify the `shouldExecute` property
+    ```js
+    shouldExecute:
+      match.params.id !== selectedEvent?.id &&
+      location.pathname !== '/createEvent',
+    ```
+  - In JSX and in Formik component, add the `enableReinitialize` attribute. This tells Formik to reset the form when new initialValues change
+- The next issue we want to address is to turn off the autocomplete date when picking a date for an event
+- In EventForm.jsx file:
+  - In JSX and in the MyDateInput component, add an `autoComplete` attribute and set it to off
+- The last issue we need to fix is to allow signed-in users to create events
+  - Go to Cloud Firestore Rules console and add one more rule to the 'events' collection document to allow isSignedIn user create an event document
+    ```js
+    match /events/{document=**} {
+      allow read, list;
+      allow update: if isHost();
+      allow update: if isSignedIn() && updateAttendeeFieldsOnly();
+      allow create: if isSignedIn();
+    }
+    ```
+  - Click the Publish button
+- **Redeploy the application to Firebase**
+  - In the terminal, stop the running server and run: `npm run deploy`
 
 
 ## LIBRARIES AND PACKAGES USED IN THIS PROJECT

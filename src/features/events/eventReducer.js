@@ -6,6 +6,7 @@ import {
 	LISTEN_TO_EVENT_CHAT,
 	CLEAR_COMMENTS,
 	LISTEN_TO_SELECTED_EVENT,
+	CLEAR_SELECTED_EVENT,
 	CLEAR_EVENTS,
 	SET_FILTER,
 	SET_START_DATE,
@@ -64,6 +65,11 @@ function eventReducer(state = initialState, { type, payload }) {
 			return {
 				...state,
 				selectedEvent: payload
+			};
+		case CLEAR_SELECTED_EVENT:
+			return {
+				...state,
+				selectedEvent: null
 			};
 		case CLEAR_EVENTS:
 			return {
