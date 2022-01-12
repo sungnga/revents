@@ -4,7 +4,7 @@ The codebase for each step can be found in the commit link
 
 ## PROJECT SETUP
 
-### [1. Create project using create-react-app]()
+### [1. Create project using create-react-app](https://github.com/sungnga/revents/commit/baf0f9062088f145f0aa712f31d844e30c48dcba?ts=2)
 - Run in the command line:
   - `npx create-react-app revents --use-npm`
   - The `--use-npm` flag is to ensure that we're using the npm package manager
@@ -12,7 +12,7 @@ The codebase for each step can be found in the commit link
 - Then run: `npm start`. This starts up the development server
 - Can view the revents application in the browser: `http://localhost:3000`
 
-### [2. Add hot module replacement]()
+### [2. Add hot module replacement](https://github.com/sungnga/revents/commit/4130f6db21ed028d52d0290bb5dac7e2724f57b5?ts=2)
 - The hot module replacement prevents a full page reload when we make changes to our code. It incrementally updates the page as we update our code. This is a common thing to do
 - In index.js file:
   ```js
@@ -33,12 +33,12 @@ The codebase for each step can be found in the commit link
   render();
   ```
 
-### [3. Add folder structure to our project]()
+### [3. Add folder structure to our project](https://github.com/sungnga/revents/commit/ac806009195aefaf28fca2b1be668aa6cc2a0c49?ts=2)
 - We want to add a little folder structure and rearrange files of our project and also clean up any files from create-react-app that we don't 
   - All the features we will build in this project will go inside the 'features' folder
   - All the common features and components that will be used across the application will go inside the 'app' folder
 
-### [4. Install Semantic UI CSS + Semantic UI React libraries]()
+### [4. Install Semantic UI CSS + Semantic UI React libraries](https://github.com/sungnga/revents/commit/11883c9a7a3f681311a0060a407614570006ded7?ts=2)
 - Docs: www.react.semantic-ui.com
 - Install Semantic UI React and Semantic UI CSS libraries
   - Run to install both: `npm i semantic-ui-react semantic-ui-css`
@@ -49,7 +49,7 @@ The codebase for each step can be found in the commit link
 
 ## EVENT DASHBOARD PAGE LAYOUTS
 
-### [1. Create a basic EventDashboard component]()
+### [1. Create a basic EventDashboard component](https://github.com/sungnga/revents/commit/f248d85d39e7d237bdcecc0e2482f738fea01fa7?ts=2)
 - This component renders two columns: a 10-column grid and a 6-column grid using Semantic Grid component
 - In src/features/events/eventDashboard folder, create a component called EventDashboard.jsx
 - NOTE: the file extension for a React component is `.jsx` instead of plain `.js` to denote that it contains JSX in it
@@ -91,7 +91,7 @@ The codebase for each step can be found in the commit link
   }
   ```
 
-### [2. Create a NavBar component, add styling]()
+### [2. Create a NavBar component, add styling](https://github.com/sungnga/revents/commit/f8e96072e0c73c13249ef20487e5832d4302131c?ts=2)
 - All the assets (logo, images, etc.) we will use in this project can be found in public/assets folder
 - Create a NavBar menu and add styles to it
 - In features/nav folder, create a component called NavBar.jsx
@@ -171,7 +171,7 @@ The codebase for each step can be found in the commit link
   }
   ```
 
-### [3. Create event list items: EventList, EventListItem, and EventListAttendee components]()
+### [3. Create event list items: EventList, EventListItem, and EventListAttendee components](https://github.com/sungnga/revents/commit/94ddd4493b337d1ed831be03420147210aed902e?ts=2)
 - In the EventDashboard 10-column grid section, create and display the EventList component. The EventList component renders the EventListItem components. Each EventListItem component renders the title of the event, who is hosting the event, date, venue, description of the event, a button to view the event detail, and list of attendees (the EventListAttendee component)
 - In features/events/eventDashboard folder, create a component called EventList.jsx
 - In EventList.jsx file:
@@ -260,7 +260,7 @@ The codebase for each step can be found in the commit link
   </Grid.Column>
   ```
 
-### [4. Create an event form: EventForm component]()
+### [4. Create an event form: EventForm component](https://github.com/sungnga/revents/commit/626ce584270ee540c09ec81c8aa02afd740d3b5b?ts=2)
 - In features/events/eventForm folder, create a component called EventForm.jsx
 - In EventForm.jsx file:
   - Import React: `import React from 'react';`
@@ -306,7 +306,7 @@ The codebase for each step can be found in the commit link
   </Grid.Column>
   ```
 
-### [5. Passing props down to child components]()
+### [5. Passing props down to child components](https://github.com/sungnga/revents/commit/8fe448d45173aa02dba82043659e971caf758258?ts=2)
 - In src/app/api folder, there's a sampleData.js file which contains sample data of events that we can use display events information
 - In EventDashboard.jsx file:
   - Import the sample data file: `import { sampleData } from '../../../app/api/sampleData';`
@@ -390,7 +390,7 @@ The codebase for each step can be found in the commit link
   }
   ```
 
-### [6. React component state: using React useState hook]()
+### [6. React component state: using React useState hook](https://github.com/sungnga/revents/commit/a96266594170aa9c1ee7d04447383ab625b96b31?ts=2)
 - We can make use of React's useState hook to keep track of the state of component. For example, we want to keep track of the state whether the EventForm component is displayed or not. And we can toggle this state in various places within our application. We can use useState hook to keep track of the list of events (when we add or delete events)
 - In EventDashboard.jsx file:
   - Import react useState hook: `import React, { useState } from 'react';`
@@ -481,7 +481,7 @@ The codebase for each step can be found in the commit link
   - Only concerned with altering State
   - Rely on React to manipulate the DOM via the Virtual DOM
 
-### [1. Basic forms in React: EventForm]()
+### [1. Basic forms in React: EventForm](https://github.com/sungnga/revents/commit/99df369c68f309fc6b67c6def67be07a78dcc4c0?ts=2)
 - Enable the EventForm component to receive input values from the user/EventForm and update the values state with the input values
 - In EventDashboard.jsx file:
   - Since we're going to be updating events, we're going to be updating them in events state. So we want to pass down the setEvents method as props to the EventForm child component 
@@ -535,7 +535,7 @@ The codebase for each step can be found in the commit link
     }
     ```
 
-### [2. Creating an event, cuid library]()
+### [2. Creating an event, cuid library](https://github.com/sungnga/revents/commit/ff14315f63f59350427240e96b07ac3542572f6c?ts=2)
 - We create a new event by updating the events state with the new event. Do this by creating a method and pass in the values state which comes from the form input values
 - In EventDashboard.jsx file:
   - Write a handleCreateEvent method that adds a new event received to the events state using the setEvents() method
@@ -584,7 +584,7 @@ The codebase for each step can be found in the commit link
     }
     ```
 
-### [3. Selecting an event to read]()
+### [3. Selecting an event to read](https://github.com/sungnga/revents/commit/1f673cdf38d9c3b6eae32aa10e5b29bfe82fa4b3?ts=2)
 - When we click on the 'View' button on an event, it opens up the event form and populates the values from the event inside the form as well. We need to create a selectedEvent state to store the selected event values. And depending on the condition of this state, we can either show an empty form or a form with the values from the event
 - In App.jsx file:
   - Create a selectedEvent state and give its initial value of null
@@ -672,7 +672,7 @@ The codebase for each step can be found in the commit link
     };
     ```
 
-### [4. Controlled components with a key: EventForm]()
+### [4. Controlled components with a key: EventForm](https://github.com/sungnga/revents/commit/1eb41f72fefc601fee49e695f6bc26dfacd6dcaa?ts=2)
 - The current problem we have is that when we click on the 'View' button to view a different event or click on the 'Create Event' button to create a new event, nothing causes the page to re-render so nothing happens. Behind the scene, however, the EventForm component does have the correct information in props when one of those buttons are clicked
 - When we send new props to a component, it does not cause the component to be re-rendered. The work-around solution is to use the special React attribute called `key`. We can add a `key` property to a component. So when the key changes, the component will be recreated with a freshly initialized state
 - So we're going to give our EventForm component a key
@@ -687,7 +687,7 @@ The codebase for each step can be found in the commit link
   - In the Header element, add a conditional to display one or the other
   - `<Header content={selectedEvent ? 'Edit the event' : 'Create new event'} />`
 
-### [5. Updating an event]()
+### [5. Updating an event](https://github.com/sungnga/revents/commit/ba6d3ed381f106cdd039b9071e9bc01ba054553d?ts=2)
 - We can update an event in the events state by check the updatedEvent id with the event id in the events state. If it matches, we can update the event with the new values. Write a method to handle the update event
 - In EventDashboard.jsx file:
   - Write a handleUpdateEvent method that updates an event in the events state based on the event id. Also sets the selectedEvent back to null and closes the form
@@ -726,7 +726,7 @@ The codebase for each step can be found in the commit link
     }
     ```
 
-### [6. Deleting an event]()
+### [6. Deleting an event](https://github.com/sungnga/revents/commit/a6d2e58c3d475becc3eef8b4fd1f7571e7032471?ts=2)
 - In EventDashboard.jsx file:
   - Write a handleDeleteEvent method removes an event from the events state based on its id
     - This method takes an eventId as argument
@@ -763,7 +763,7 @@ The codebase for each step can be found in the commit link
 
 ## ROUTING IN REACT
 
-### Intro to react-router
+### [Intro to react-router, install react-router-dom](https://github.com/sungnga/revents/commit/61fbf877750b024c82080b05e4cc1bec77b2b3c1?ts=2)
 - Routing
   - SPAs (single page applications) need routers
   - We only have one page (index.html). We don't have the ability to change the page that the user is on
@@ -792,7 +792,7 @@ The codebase for each step can be found in the commit link
 **Install react-router-dom**
   - Install: `npm i react-router-dom`
 
-### [1. Adding HomePage and EventDetailedPage components]()
+### [1. Adding HomePage and EventDetailedPage components](https://github.com/sungnga/revents/commit/8854e3cda592d5898622269dfaa3297369c1d580?ts=2)
 - In our Revents application, we will use react-router to direct users to these pages:
   - Home page
   - Event dashboard page
@@ -807,7 +807,7 @@ The codebase for each step can be found in the commit link
   - Import React: `import React from 'react';`
   - Write a EventDetailedPage functional component that render a 'Event Detailed Page' text for now
 
-### [2. Routing configuration]()
+### [2. Routing configuration](https://github.com/sungnga/revents/commit/d348332da0b52677554dd96a1a0e1956d08c462e?ts=2)
 - Website: https://reactrouter.com/web/guides/quick-start
 - In index.js file:
   - Import BrowserRouter component: `import { BrowserRouter } from 'react-router-dom';`
@@ -836,7 +836,7 @@ The codebase for each step can be found in the commit link
   </Container>
   ```
 
-### [3. Using NavLinks and Links]()
+### [3. Using NavLinks and Links](https://github.com/sungnga/revents/commit/54355323668cf389b2e1c13a40073bce700ab29e?ts=2)
 - `NavLink` and `Link` are two components provided by react-router-dom that we can use to redirect users to a different page
 - `<NavLink>` is a special version of the `<Link>` that will add styling attribute to the rendered element when it matches the current URL. It adds an activeClass and applies styles to a link
 - In NavBar.jsx file:
@@ -855,7 +855,7 @@ The codebase for each step can be found in the commit link
   </Menu.Item>
   ```
 
-### [4. Styling the HomePage]()
+### [4. Styling the HomePage](https://github.com/sungnga/revents/commit/54d03dbcab5902f9f1c0ef1c07f50e74a57377bd?ts=2)
 - We don't want the NavBar to show when we're on home page. We want something that takes up the entire screen and provide a button that takes us to the events page
 - In HomePage.jsx file:
   - Add content and styles to the page using Semantic UI
@@ -938,7 +938,7 @@ The codebase for each step can be found in the commit link
     </Button>
     ```
 
-### [5. Adding menus for authenticated and unauthenticated users]()
+### [5. Adding menus for authenticated and unauthenticated users](https://github.com/sungnga/revents/commit/838d2c7ab888d5089ee098702f2835ea13576069?ts=2)
 - We're not going to implement any user authentication at this point. We're just going to give the user the ability to fake a login or not login for now
 - In features/nav folder, create components/files called SignedInMenu.jsx and SignedOutMenu.jsx
 - In SignedOutMenu.jsx file:
@@ -988,24 +988,24 @@ The codebase for each step can be found in the commit link
   - Call the SignedOutMenu component in the render section: `<SignedOutMenu />`
   - Call the SignedInMenu component in the render section: `<SignedInMenu />`
 
-### [6. Adding fake authentication]()
+### [6. Adding fake authentication](https://github.com/sungnga/revents/commit/b75210f0c453b48acfd1ba67ba19105f2707b7bc?ts=2)
 - For now, we'll use local states in our NavBar component to check if a user is authenticated or not. If the user is authenticated, they get to see the 'Create Event' button and the SignedInMenu appears. If not authenticated, they won't see the 'Create Event' button and the SignedOutMenu appears
 - In NavBar.jsx file:
   - Create an authenticated state and set it to false as its initial value state
     - `const [authenticated, setAuthenticated] = useState(false);`
-  - In the render section:
+  - In JSX:
     - Write a ternary operator to check if a user is authenticated
       - If authenticated, show the `<SignedInMenu />` component
       - If not authenticated, show the `<SignedOutMenu />` component
       - `{authenticated ? <SignedInMenu /> : <SignedOutMenu />}`
     - Use the && operator to show the 'Create Event' Button/Link only if the user is authenticated
-      ```javascript
-      {authenticated && (
-        <Menu.Item as={NavLink} to='/createEvent'>
-          <Button positive inverted content='Create Event' />
-        </Menu.Item>
-      )}
-      ```
+    ```javascript
+    {authenticated && (
+      <Menu.Item as={NavLink} to='/createEvent'>
+        <Button positive inverted content='Create Event' />
+      </Menu.Item>
+    )}
+    ```
   - Pass down the setAuthenticated method as setAuthenticated props to both SignedInMenu and SignedOutMenu components
     - `<SignedInMenu setAuthenticated={setAuthenticated} />`
     - `<SignedOutMenu setAuthenticated={setAuthenticated} />`
@@ -1022,7 +1022,7 @@ The codebase for each step can be found in the commit link
     - So when the 'Sign out' dropdown is clicked, the 'Create Event' button will not show on the NavBar and switch to the SignedOutMenu
     - `<Dropdown.Item onClick={() => setAuthenticated(false)} text='Sign out' icon='power' />`
 
-### [7. Using the useHistory hook]()
+### [7. Using the useHistory hook](https://github.com/sungnga/revents/commit/ccad313fc714317fbdaf8c67a7308035de0e9d7d?ts=2)
 - Since the NavBar component is not in a Route component, it doesn't have access to the browser's history object. So we can't use the history.push() method to push the user to a new route. React-router comes with a useHistory hook that we can utilize instead
 - When the authenticated user clicks the 'Sign out' button, it'll direct them to the homepage
 - In NavBar.jsx file:
@@ -1046,7 +1046,7 @@ The codebase for each step can be found in the commit link
   - In the 'Sign out' DropDown.Item, call the signOut method on the onClick event handler. We don't need to use the setAuthenticated() method anymore
   - `<Dropdown.Item onClick={signOut} text='Sign out' icon='power' />`
 
-### [8. EventDetailedPage structure: creating smaller components]()
+### [8. EventDetailedPage structure: creating smaller components](https://github.com/sungnga/revents/commit/decbe22c0710485c1dd26a7286124a46658b0f49?ts=2)
 - The Event Detailed Page is significant and will have many features and functionalities. We'll break these into smaller components and render them onto the EventDetailedPage component
 - In the features/events/eventDetailed folder, create the following components/files:
   - EventDetailedHeader.jsx
@@ -1089,14 +1089,14 @@ The codebase for each step can be found in the commit link
   />
   ```
 
-### [9. Adding EventDetailedPage content]()
+### [9. Adding EventDetailedPage content](https://github.com/sungnga/revents/commit/f5bb4ecf530213d0be985a7af8bfa6a373e7468d?ts=2)
 - Add content and styles to the following components:
   - EventDetailedHeader.jsx
   - EventDetailedInfo.jsx
   - EventDetailedChat.jsx
   - EventDetailedSidebar.jsx
 
-### [10. Cleaning up the unused code]()
+### [10. Cleaning up the unused code](https://github.com/sungnga/revents/commit/8054d60a95528385367d5cd8d9fb43b9450adfeb?ts=2)
 - Cleaning up our code up to this point
 - Add a Link component to the 'Manage Event' button in EventDetailedHeader.jsx component, redirecting to manage event page
 - Add a Link component to the 'Cancel' button in EventForm.jsx component, redirecting to events page
@@ -1106,7 +1106,7 @@ The codebase for each step can be found in the commit link
 ## REDUX
 
 NOTE: Setting up and configure a Redux store is in the Redux Concepts section
-### [1. Setting up Redux store]()
+### [1. Setting up Redux store](https://github.com/sungnga/revents/commit/078e9dcd259adc91e42b2882bc37313f34354132?ts=2)
 - **Install Redux and React-Redux:**
   - Install: `npm i redux react-redux`
 - **Configure the store:**
@@ -1115,13 +1115,13 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - Import createStore function from Redux: `import { createStore } from 'redux';`
     - Write a configureStore function that returns a store using the createStore() method
       - The createStore() method takes a reducer as an argument
-      ```javascript
-      import { createStore } from 'redux';
+    ```javascript
+    import { createStore } from 'redux';
 
-      export function configureStore() {
-        return createStore();
-      }
-      ```
+    export function configureStore() {
+      return createStore();
+    }
+    ```
   - So when we initialize our store, we're going to tell about our reducer and our store is going to have some initialState
 - **Connecting the React app to the Redux store:**
   - Now we what need to do is tell our React application about our new Redux store and to do that we use the React-Redux library
@@ -1149,7 +1149,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
-### [2. Creating the event reducer]()
+### [2. Creating the event reducer](https://github.com/sungnga/revents/commit/0abdfe97299b6d549bada09f1c8275285fd1b0cd?ts=2)
 - In features/events folder, create eventActions.js, eventConstants.js, and eventReducer.js files
 - In eventConstants.js file:
   - Create constants for create event, update event, and delete event
@@ -1235,7 +1235,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
-### [3. Creating a root reducer]()
+### [3. Creating a root reducer](https://github.com/sungnga/revents/commit/9e5c0562eabcac2dfbc339850f02bdb7803a16f8?ts=2)
 - Even though we can only have a single store in our application, we can have as many reducers as we like. Think of each reducer as a way to access a piece of the store state. We can combine all the reducers into a single rootReducer and pass that to the createStore() method in the configureStore() function
 - In app/store folder, create a file called rootReducer.js
 - In app/store/rootReducer.js file:
@@ -1271,7 +1271,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   }
   ```
 
-### [4. Getting events from the Redux store]()
+### [4. Getting events from the Redux store](https://github.com/sungnga/revents/commit/1ad31d16a26060299a9ae445a24d8b435f00083e?ts=2)
 - Instead of getting events from the local state of a component, we can get the events from the Redux store using the useSelector() hook. useSelector() hook comes with React-Redux library. We display the events in the EventDashboard page and retrieve individual event from the store and display it in the EventDetailedPage
 - In EventDashboard.jsx file:
   - Import the useSelector() hook: `import { useSelector } from 'react-redux';`
@@ -1308,7 +1308,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `{attendees.length} {attendees.length > 1 ? 'People' : 'Person'} Going`
   - Call .map() method on the attendees array to display each attendee's displayName and photo in the attendees section of the page
 
-### [5. Dispatching event actions]()
+### [5. Dispatching event actions](https://github.com/sungnga/revents/commit/1415251dd6be2d87f0c467629a91503619f3937d?ts=2)
 - Now that we're able to read events or an event from Redux store, we want to dispatch event actions to update, delete, and create an event in the store
 - In EventListItem.jsx file:
   - Import the useDispatch hook: `import { useDispatch } from 'react-redux';`
@@ -1336,7 +1336,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - To create an event, call the dispatch() function and pass in the createEvent() action creator function as an argument
 - Everything should work as before except this time we retrieve, update, create, and delete an event from Redux store instead of from the local state
 
-### [6. Clean up code, add key to EventForm, solve routing issues]()
+### [6. Clean up code, add key to EventForm, solve routing issues](https://github.com/sungnga/revents/commit/756054dd0562f8b7bbccdf452b89c61a4a8ee9d6?ts=2)
 - After the user submitted the form to update an event, we want to redirect them to the events list page
 - In EventForm.jsx file:
   - Add the `history` props to the EventForm component
@@ -1353,7 +1353,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Specify the key property on the route that contains the EventForm component
     - `<Route path={['/createEvent', '/manage/:id']} component={EventForm} key={key} />`
 
-### [7. Scroll to top: ScrollToTop component]()
+### [7. Scroll to top: ScrollToTop component](https://github.com/sungnga/revents/commit/c856439deaa81bdc8ca7e2867b9ca9c057279680?ts=2)
 - Currently when we go to a different page, it doesn't automatically take us to the top of the page. React-router-dom doesn't do this automatically
 - In app/layout folder, create a component/file called ScrollToTop.jsx
 - In app/layout/ScrollToTop.jsx file:
@@ -1362,23 +1362,23 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Get the pathname property from the browser's location object using the useLocation hook
     - `const { pathname } = useLocation();`
   - Use useEffect() hook to execute the window.scrollTo() method to scroll to the top of the window when the location pathname property changes
-    ```javascript
-    import { useEffect } from 'react';
-    import { useLocation } from 'react-router-dom';
+  ```javascript
+  import { useEffect } from 'react';
+  import { useLocation } from 'react-router-dom';
 
-    export default function ScrollToTop() {
-      const { pathname } = useLocation();
+  export default function ScrollToTop() {
+    const { pathname } = useLocation();
 
-      // The useEffect hook will run when the ScrollToTop component first mounts
-      // Whenever there's a change to a page's pathname URL (useEffect dependency),
-      // the function window.scrollTo() will execute
-      useEffect(() => {
-        window.scrollTo(0, 0);
-      }, [pathname]);
+    // The useEffect hook will run when the ScrollToTop component first mounts
+    // Whenever there's a change to a page's pathname URL (useEffect dependency),
+    // the function window.scrollTo() will execute
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
 
-      return null;
-    }
-    ```
+    return null;
+  }
+  ```
 - In the index.js file:
   - Import the ScrollToTop component: `import ScrollToTop from './app/layout/ScrollToTop';`
   - Use the ScrollToTop component just above the App component: `<ScrollToTop />`
@@ -1395,7 +1395,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - handling submission
 - Our goal is to create reusable fields, with validation that can be used in any project
 
-### [1. Setting up Formik]()
+### [1. Setting up Formik](https://github.com/sungnga/revents/commit/fa26044d4420f71c44407d6022cb49ff9a2cbd9c?ts=2)
 - Docs: https://formik.org/docs/api/formik
 - Install package: `npm i formik`
 - In EventForm.jsx file:
@@ -1436,7 +1436,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
       ```
   - Test to make sure Formik is working, create a new event and see if the field values are populated and displayed in the console
 
-### [2. Formik with less code]()
+### [2. Formik with less code](https://github.com/sungnga/revents/commit/cf3a3ca1c29a383e29a93081a5e7ebe06c590f98?ts=2)
 - We can make use of some of Formik's helper components such as Form and Field to help us write less code for our EventForm component:
   - `<Form />`: Form is a small wrapper around an HTML `<form>` element that automatically hooks into Formik's `handleSubmit` and `handleReset`. All other props are passed directly through to the DOM node
   - `<Field />`: Field will automatically hook up inputs to Formik. It uses the `name` attribute to match up with Formik state. `<Field />` will default to an HTML `<input />` element 
@@ -1491,7 +1491,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     </Formik>
     ```
 
-### [3. Form validation with Formik validationSchema]()
+### [3. Form validation with Formik validationSchema](https://github.com/sungnga/revents/commit/3e54f9bccb86db1702588b1cc96b310fb801ac5a?ts=2)
 - Docs: https://formik.org/docs/guides/validation
 - Formik Validation: Formik is designed to manage forms with complex validation with ease. Formik supports synchronous and asynchronous form-level and field-level validation. Furthermore, it comes with baked-in support for schema-based form-level validation through Yup
 - Install Yup: `npm i yup`
@@ -1529,7 +1529,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     </FormField>
     ```
 
-### [4. Creating a reusable text input field: MyTextInput component]()
+### [4. Creating a reusable text input field: MyTextInput component](https://github.com/sungnga/revents/commit/1c69dc23e805e88f02ca718c9e67a02db94537d6?ts=2)
 - DOCS for useField() hook: https://formik.org/docs/api/useField 
 - Let's create a reusable text input field component that has input error handling and styling. Use Semantic UI for styling and Formik Field props for error handling
 - Formik's useField() component:
@@ -1595,7 +1595,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     <MyTextInput name='title' placeholder='Event title' />
     ```
 
-### [5. Cleaning up the event form]()
+### [5. Cleaning up the event form](https://github.com/sungnga/revents/commit/ed3413e3cef9018959c54f2b1c46ebe3145e35f4?ts=2)
 - In EventForm.jsx file:
   - Replace the rest of the FormField input fields `<FormField><Form ... />></FormField>` with the MyTextInput component to create the input fields instead.
     - Fill in the values for name and placeholder properties for each component
@@ -1655,7 +1655,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     >
     ```
 
-### [6. Creating a reusable textarea input field: MyTextArea component]()
+### [6. Creating a reusable textarea input field: MyTextArea component](https://github.com/sungnga/revents/commit/328b36eab6bd77b0864803affef56408eab8e202?ts=2)
 - A textarea field gives you a larger text area than an input field does. This reusable component will have the exact same functionality as the MyTextInput component does. The only difference is instead of an `<input />` element, it uses a `<textarea />` element
 - In src/app/common/form folder, create a component/file called MyTextArea.jsx
 - In MyTextArea.jsx file:
@@ -1667,7 +1667,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - We can specify the number of rows the textarea will display using the rows property 
     - `<MyTextArea name='description' placeholder='Description' rows={3} />`
 
-### [7. Creating a reusable select input field: MySelectInput component]()
+### [7. Creating a reusable select input field: MySelectInput component](https://github.com/sungnga/revents/commit/1314e14cd2c10b0e43aebb9b3618098fc1c85f92?ts=2)
 - This component will have the same error handling functionality as the MyTextInput and MyTextArea components
 - DOC for useField() hook: https://formik.org/docs/api/useField 
 - In src/app/common/form folder, create a component/file called MySelectInput.jsx
@@ -1697,7 +1697,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - Add the `options` property to the component and set its value to `categoryData`. The categoryOptions.js file contains the select options data
     - `<MySelectInput name='category' placeholder='Category' options={categoryData} />`
 
-### [8. Creating a reusable date input field: MyDateInput component]()
+### [8. Creating a reusable date input field: MyDateInput component](https://github.com/sungnga/revents/commit/6332490b6e5b26e0212525cb76931863d659def0?ts=2)
 - We'll be using the React Datepicker library. It gives us a consistent datepicker across every different browsers and operating systems
 - Install: `npm i react-datepicker`
 - In src/app/common/form folder, create a component/file called MyDateInput.jsx
@@ -1771,7 +1771,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   }
   ```
 
-### [9. Date-fns package: format Javascript date object into string]()
+### [9. Date-fns package: format Javascript date object into string](https://github.com/sungnga/revents/commit/4503146bc678229af0f8ff3c20e4770e1c3320da?ts=2)
 - date-fns docs: date-fns.org
 - We have a little issue with our current date value. Our date value is a Javascript date object, not a string. So we need to format a Javascript date object into a string that can be displayed on a page. We will use a date package to help us format dates into strings
 - The react-datepicker library is already using date-fns, but we want to install a date-fns package separately. When installing date-fns, we want to install the same version as the one in react-datepicker. Run `npm ls date-fns` to see the version that react-datepicker is using. Then install date-fns of the same version. This way, we won't run into any issues
@@ -1781,7 +1781,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Replace the `{event.id}` Javascript date object with the format version
     - `{format(event.date, 'MMMM d, yyyy h:mm a')}`
 
-### [10. Formik props: control the submit and cancel buttons in event form]()
+### [10. Formik props: control the submit and cancel buttons in event form](https://github.com/sungnga/revents/commit/d830741167b98cba8efc6d24ef65528828341950?ts=2)
 - In our event form, we want to disable the 'Submit' button if the user hasn't completed the form correctly. To do that, we need to look into other properties/props from Formik to pass down to our form
 - We're going to pass properties down to our form from Formik via 'render' props. The way we do that is:
   - Inside the `<Formik />` component, use render props. Render props starts with curly braces and uses an arrow function
@@ -1833,7 +1833,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     />
     ```
 
-### [11. Modals: create a modalReducer and ModalWrapper component]()
+### [11. Modals: create a modalReducer and ModalWrapper component](https://github.com/sungnga/revents/commit/84a4b83b9fb9338bd4c7589e49ae8e99ec840149?ts=2)
 - When a user clicks on the 'Login' or 'Register' button, we want to display a modal on the screen to allow them to enter login details or register to the application
 - Semantic UI has modals that we can use to create our user login/register form
 - We'll use Redux to store the state of the modal. So we'll need a modalReducer to communicate with the store
@@ -1930,7 +1930,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
-### [12. Adding a Modal Manager: ModalManager component, testing the modal in Sandbox]()
+### [12. Adding a Modal Manager: ModalManager component, testing the modal in Sandbox](https://github.com/sungnga/revents/commit/5fe4ac16df0e4f61f7a4005086032dc03ba7c098?ts=2)
 - Now that we have a a modalReducer and a modalWrapper that we can use around any modals that we create, what we need to do is have a way to select a specific modal and display it on the page
 - In src/app/common/modals folder, create a component/file called ModalManager.jsx
 - In ModalManager.jsx file:
@@ -2039,7 +2039,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
       )
       ```
 
-### [13. Creating the sign in form: LoginForm component]()
+### [13. Creating the sign in form: LoginForm component](https://github.com/sungnga/revents/commit/a2cb269401075cccaaf847033343103d5897f31d?ts=2)
 - On the NavBar, when the user clicks on the 'Login' button, a sign-in modal opens on the page and the user can provide their email and password to login. We'll create a LoginForm component which has the modal content that can be rendered inside the ModalWrapper as children. The ModalManger will look for the type of modal to be displayed. The LoginForm will have validation as well
 - In src/features/auth folder, create a component/file called LoginForm.jsx
 - In LoginForm.jsx file:
@@ -2141,7 +2141,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     />
     ```
 
-### [14. Adding an authReducer]()
+### [14. Adding an authReducer](https://github.com/sungnga/revents/commit/6765a05c97a39c309332bd89dbbedc1f1643f091?ts=2)
 - Let's create an authReducer so we can store our authentication state in Redux store
 - In src/features/auth folder, create authConstants.js, authActions.js, and authReducer.js files
 - In authConstants.js file:
@@ -2236,7 +2236,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     });
     ```
 
-### [15. Hooking up the LoginForm]()
+### [15. Hooking up the LoginForm](https://github.com/sungnga/revents/commit/b8cf5af66e6913f3021cc267991e53dd872c1369?ts=2)
 - When we submit the LoginForm, we want to dispatch the signInUser() action with the login data. We also want to dispatch a closeModal action to close the LoginForm modal
 - In LoginForm.jsx file:
   - Import the useDispatch() hook: `import { useDispatch } from 'react-redux';`
@@ -2302,7 +2302,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Provides a map of an area with given coordinates
   - Takes a Lat/Lng
 
-### [1. Enable Google Maps APIs, generate Google API key]()
+### [1. Enable Google Maps APIs, generate Google API key](https://github.com/sungnga/revents/commit/824ced03d285ac4c197fc8d7b1a83234bdbffbb8?ts=2)
 - Go to Google Developer Console site and login with Google account
   - https://console.developers.google.com/
 1. Click on the 'New Project' button to create a new project. Name the project
@@ -2317,7 +2317,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Click the '+ CREATE CREDENTIALS' button at the top. This will generate the Google API key. Copy this key
 5. While we are developing our application, don't worry about setting the Key restrictions. We will come back to set API restrictions once we publish our application to Firebase
 
-### [2. Setting up React Places Autocomplete, test Google Places in Sandbox]()
+### [2. Setting up React Places Autocomplete, test Google Places in Sandbox](https://github.com/sungnga/revents/commit/ac7cce6d3e7ea1839f3b755581817efce7d9b79f?ts=2)
 - The react-places-autocomplete library is a React component to build a customized UI for Google Maps Places Autocomplete
 - Docs: https://github.com/hibiken/react-places-autocomplete
 - Install: `npm i react-places-autocomplete`
@@ -2339,7 +2339,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - Instantiate the component in the render section: `<div><TestPlaceInput /></div>`
   - When typing in the input field, it should give an auto-suggest list of places. And when a place is selected, that selected place will show up in the input field. The lat/long of the place will print in the console
 
-### [3. Creating a custom place input field: MyPlaceInput component]()
+### [3. Creating a custom place input field: MyPlaceInput component](https://github.com/sungnga/revents/commit/a3426b28e196cf048d6f0774bcf814724695cd1f?ts=2)
 - The react-places-autocomplete library gives us:
   - A `<PlacesAutocomplete />` component
   - The geocodeByAddress() method:
@@ -2441,7 +2441,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
-### [4. Using the place input field: MyPlaceInput component]()
+### [4. Using the place input field: MyPlaceInput component](https://github.com/sungnga/revents/commit/9d666834969c3b6dcb63a02b506d011737d6b390?ts=2)
 - Let's make use of our MyPlaceInput component in our EventForm
 - In EventForm.jsx file:
   - Import the MyPlaceInput component: `import MyPlaceInput from '../../../app/common/form/MyPlaceInput';`
@@ -2502,7 +2502,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
       />
       ```
 
-### [5. Narrowing the place input search results: EventForm]()
+### [5. Narrowing the place input search results: EventForm](https://github.com/sungnga/revents/commit/8c2463e25f207a10a559a584eb23db0bd90f7bbf?ts=2)
 - What we want to do next is when we select a specific city, we want to see venues that are located in that city area
 - In EventForm.jsx file:
   - In render props, pass down the `values` props to our form
@@ -2544,7 +2544,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - Lastly, in EventListItem.jsx and EventDetailedInfo.jsx files:
   - Update `event.venue` to `event.venue.address`
 
-### [6. google-map-react lib: displaying google maps onto a page in Sandbox]()
+### [6. google-map-react lib: displaying google maps onto a page in Sandbox](https://github.com/sungnga/revents/commit/ad092106f13a31385b90c4e7993bb629d051698c?ts=2)
 - Docs: https://www.npmjs.com/package/google-map-react
 - Install: `npm i google-map-react`
 - Display a Google map based on the given city's latLng coordinates. We'll use the google-map-react library to display the map. We'll first test out the Google maps in sandbox to display a map based on the city's latLng coordinates that the user typed in the 'Search Places' input field
@@ -2626,7 +2626,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     export default TestMap;
     ```
 
-### [7. Adding the map to the EventDetailedPage: EventDetailedMap component]()
+### [7. Adding the map to the EventDetailedPage: EventDetailedMap component](https://github.com/sungnga/revents/commit/91c9eb85cb793b5cbeeabc98c6be2098cd2d2ece?ts=2)
   - On the EventDetailedPage, when we click on the 'Show Map' button, we get to see a map of where the event is taking place. The 'Hide Map' button will hide the map
   - In src/features/events/eventDetailed folder, create a component/file called EventDetailedMap.jsx
   - In EventDetailedMap.jsx file:
@@ -2708,7 +2708,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 **Install Redux Thunk**
 - Install: `npm i redux-thunk`
 
-### [1. Setting up Redux Thunk, create an asyncReducer]()
+### [1. Setting up Redux Thunk, create an asyncReducer](https://github.com/sungnga/revents/commit/1468870aae235aa62355ae5f661dd8ca610aa659?ts=2)
 - In configureStore.js file:
   - The createStore() method takes 3 params: a reducer, a preloadedState(optional), and an enhancer
   - An example of an enhancer is the Redux devTool that we have installed and use earlier. The only store enhancer that ships with Redux is applyMiddleware(). The middleware that we're going to apply is the Redux thunk, but we've also got a devToolEnhancer(). So in order to use both of the devToolEnhancer() and Redux thunk, we're going to bring in the composeWithDevTools() method from redux-devtools-extension. The composeWithDevTools() is already come with the devToolEnhancer()
@@ -2800,7 +2800,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Import the asyncReducer: `import asyncReducer from '../async/asyncReducer';`
   - Add the asyncReducer to the combineReducers() method as the value for async property: `async: asyncReducer`
 
-### [2. Returning async functions in action creators]()
+### [2. Returning async functions in action creators](https://github.com/sungnga/revents/commit/9f914f5a62948566731109314fd15df34dee4f8e?ts=2)
 - In src/app/common/util folder, create a file called util.js. Any functions that don't belong anywhere else that we can apply anywhere in our application go in this folder
 - In util.js file:
   - Write a delay function that delays for a certain amount of time in millisecond (ms)
@@ -2881,7 +2881,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     />
     ```
 
-### [3. Isolating the loading indicators: counter Sandbox]()
+### [3. Isolating the loading indicators: counter Sandbox](https://github.com/sungnga/revents/commit/b15bf639f1c051e255aa7a8d83b1f88784e9cad7?ts=2)
 - Right now both of the increment and decrement button loading indicators are loading when only one button is clicked. So first we need to identify which button is actually clicked. We can specify a `name` property for each button element. We can then get this name value on the onClick event handler by calling `event.target.name`. For the increment button element, we can name it 'increment' and for the decrement button, name it 'decrement'
 - Sandbox.jsx file:
   - Create a target local state using the useState() hook and initialize its value to null
@@ -2906,7 +2906,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     />
     ```
 
-### [4. Adding toast notifications: react-toastify library]()
+### [4. Adding toast notifications: react-toastify library](https://github.com/sungnga/revents/commit/bd183f8bd75fdd7e5336af8386ebd7fd5f2fd087?ts=2)
 - Let's add the ability to notify the user when there's a problem. We'll use a toast notification library called react-toastify
 - Install: `npm i react-toastify`
 - Toasts, like modals, they need to appear anywhere in our application. For that, we use toasts at the top of the application inside the App.jsx file
@@ -2951,7 +2951,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }
     ```
 
-### [5. Adding a mock API, create loadEvents action creator]()
+### [5. Adding a mock API, create loadEvents action creator](https://github.com/sungnga/revents/commit/8052f96ab05de4170f4b0f8e8ee17884afae4b68?ts=2)
 - Instead of displaying a static events coming from the sampleData.js file on the EventDashboard page, we can write a fetch-events asynchronous action to fetch the events and store it in the Redux store and then display the events coming from the store. Later on we can fetch the data from a database, such as Firestore, and display it on the page
 - In src/app/api folder, create a file called mockApi.js
 - In mockApi.js file:
@@ -3035,7 +3035,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `store.dispatch(loadEvents());`
   - Notice that this is now an asynchronous action and there's a slight delay before the events load onto the page. This is because in the fetchSampleData() method, we added the `delay(1000)` method for 1 second
 
-### [6. Adding a LoadingComponent to EventDashboard page]()
+### [6. Adding a LoadingComponent to EventDashboard page](https://github.com/sungnga/revents/commit/acb58d076cda5befd3026330d1d5ed6ca9b7a2af?ts=2)
 - On the EventDashboard page, while we are fetching the events data, it would be nice to have a loading indicator to let the use know that something is still happening. We're going to create a LoadingComponent that we can display to the user whenever something is still loading
 - In src/app/layout folder, create a component/file called LoadingComponent.jsx
 - In LoadingComponent.jsx file:
@@ -3061,7 +3061,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `if (loading) return <LoadingComponent />;`
   - If we are not loading or finished loading, then we want to return/display the JSX
 
-### [7. Using placeholders to improve the UI: EventListItemPlaceholder component]()
+### [7. Using placeholders to improve the UI: EventListItemPlaceholder component](https://github.com/sungnga/revents/commit/1c37c96f404a3bfb7e364b0f94bd6a07ac2ce63b?ts=2)
 - Instead of having a loading indictor taking up the entire page while we are waiting for the content to load, we can indicate the loading using a Semantic UI Placeholder component. A placeholder is used to reserve space for content that soon will appear in a layout. This is a common practice. So we can design where the EventListItem component is showing that it's loading while we're waiting for its content
 - In src/features/events/eventDashboard folder, create a component/file called EventListItemPlaceholder.jsx
 - In EventListItemPlaceholder.jsx file:
@@ -3117,7 +3117,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     )}
     ```
 
-### [8. Adding an event filters component: EventFilters component]()
+### [8. Adding an event filters component: EventFilters component](https://github.com/sungnga/revents/commit/7e3f8e0c70ab351dc5853081b091a9e70c41896d?ts=2)
 - We want our user to be able to filter the event list based on the filter setting. They can also filter the events by selecting a date on a calendar. These filters will be on the right hand column of the EventDashboard page. We will use a react-calendar widget library for the calendar
 - Install the React Calendar widget: `npm i react-calendar`
 - In src/features/events/eventDashboard folder, create a component/file called EventFilters.jsx
@@ -3187,7 +3187,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - For example, if somebody creates a new event in our application and we send that up to Firestore, then anybody who's connected is also going to receive live of that event
 - This means that we don't have to write Javascript code to update our application because we maintain that connection to Firestore. As soon as Firestore is updated, then we get the updates on our application without needing to do the extra work
 
-### [1. Setting up Firebase, create Firestore]()
+### [1. Setting up Firebase, create Firestore](https://github.com/sungnga/revents/commit/6a75a9748cfa025c5985fd52650af489feae51ec?ts=2)
 - Website: https://console.firebase.google.com/ Login to the Firebase console with a Google account
 - Click the 'Add project' button to create a new project. Give the project a name. If the billing plan screen pops up, choose a different project name. This project is called `re-vents`
 - Disable the Google Analytics for this project
@@ -3221,7 +3221,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     export default firebase;
     ```
 
-### [2. Firestore document fields, add events Collection]()
+### [2. Firestore document fields, add events Collection](https://github.com/sungnga/revents/commit/d94800a783ea9b9972c20cfd9d9b8dadcab3718e?ts=2)
 - We're going to manually add data to Firestore database to get a feel of the database structure
 - In Firebase, there are two types of database we can create. One is the **Firebase database** and the other is the **Firestore database**
 - In Firebase re-vent main dashboard:
@@ -3240,7 +3240,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - the Type for attendees Field is an array. Each item in the array is an object Field
   - We're filling in this document data one time to get a feel of the Collection structure
 
-### [3. Listening to Firestore data]()
+### [3. Listening to Firestore data](https://github.com/sungnga/revents/commit/28a5ff050390a4ab56c91f6d7ccd24260da02b20?ts=2)
 - Now that we have some data in Firestore, let's implement how we can get the data into our application
 - In src/app/firestore folder, create a file called firestoreService.js. This file stores our Firebase and Firestore queries
 - In firestoreService.js file:
@@ -3290,7 +3290,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     });
     ```
 
-### [4. Shaping the Firestore data, getting it into Redux store]()
+### [4. Shaping the Firestore data, getting it into Redux store](https://github.com/sungnga/revents/commit/384295c1666f59c2cbdbeddce5627a1b995cdaca?ts=2)
 - The data we get back from Firestore has missing document id and the format of the date property is Firestore Timestamp, which is not usable for us. A common thing to do with Firebase and Firestore is shape the data so it's usable in our application. We're going to create a function to help us do that
 - In firestoreService.js file:
   - Write a dataFromSnapshot function that makes changes to the data from snapshot and returns the new version of data
@@ -3408,7 +3408,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - In our case, the dependency is the dispatch() method. We can list dispatch as a dependency in the dependency array
       - `useEffect(callback, [dispatch])`
 
-### [5. Restoring the loading indicator]()
+### [5. Restoring the loading indicator](https://github.com/sungnga/revents/commit/d2af604e6ce295b5c84d832315657e5828fd4580?ts=2)
 - What happens when we listen to data from Firestore is we don't get a promise from Firestore. We're observing the data
 - There's actually three parts to the `observer` response we get from Firestore:
   - `next` - we get to say what happens next, i.e we can dispatch an action to update the events in Redux store
@@ -3445,31 +3445,31 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }, [dispatch]);
     ```
 
-### [6. Creating a custom hook: useFirestoreCollection() hook]()
+### [6. Creating a custom hook: useFirestoreCollection() hook](https://github.com/sungnga/revents/commit/67e9a6d1f91ef93f9cd5756caeb1bbe721012c61?ts=2)
 - Up until now we've been using other people's hooks to write our application. Our useEffect() hook inside our EventDashboard component is getting long with more actions being dispatched. We can write our own custom hook so it can be reusable
 - Our current useEffect() hook when EventDashboard component mounts:
   ```js
-	useEffect(() => {
-		// turn on loading indicator
-		dispatch(asyncActionStart());
-		const unsubscribe = getEVentsFromFirestore({
-			// what to do next with the data
-			next: (snapshot) => {
-				dispatch(
-					listenToEvents(
-						snapshot.docs.map((docSnapshot) => dataFromSnapshot(docSnapshot))
-					)
-				);
-				// turn off loading indicator
-				dispatch(asyncActionFinish());
-			},
-			// store the error message in Redux store
-			error: (error) => dispatch(asyncActionError(error)),
-			// when listening to the data, we'll never get to this point
-			complete: () => console.log('you will never see this message')
-		});
-		return unsubscribe;
-	}, [dispatch]);
+  useEffect(() => {
+    // turn on loading indicator
+    dispatch(asyncActionStart());
+    const unsubscribe = getEVentsFromFirestore({
+      // what to do next with the data
+      next: (snapshot) => {
+        dispatch(
+          listenToEvents(
+            snapshot.docs.map((docSnapshot) => dataFromSnapshot(docSnapshot))
+          )
+        );
+        // turn off loading indicator
+        dispatch(asyncActionFinish());
+      },
+      // store the error message in Redux store
+      error: (error) => dispatch(asyncActionError(error)),
+      // when listening to the data, we'll never get to this point
+      complete: () => console.log('you will never see this message')
+    });
+    return unsubscribe;
+  }, [dispatch]);
   ```
 - In src/app/hooks folder, create a file called useFirestoreCollection.js
   - By convention, whenever creating a hook, start with 'use'
@@ -3564,7 +3564,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     });
     ```
 
-### [7. Adding a useFirestoreDoc() hook]()
+### [7. Adding a useFirestoreDoc() hook](https://github.com/sungnga/revents/commit/463e8bb9ec1a68e7b9700e712af4957f9be20284?ts=2)
 - We want to get individual documents rather than a collection from Firestore. We need to create another custom hook and a query function to get a document from Firestore
 - In src/app/hooks folder, create a file called useFirestoreDoc.js
 - In useFirestoreDoc.js file:
@@ -3634,7 +3634,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Check to see if loading state is true or if there's no event in the store. If one of these cases is true, return the `<LoadingComponent />` component instead of JSX
     - `if (loading || !event) return <LoadingComponent content='Loading event...' />;`
 
-### [8. Handling not found documents]()
+### [8. Handling not found documents](https://github.com/sungnga/revents/commit/e4101d69d8a39f4f5054ed01d4f1b3ecfebc5c95?ts=2)
 - When we try to fetch an event from Redux store or from Firestore, we use the event id from the URL params of the EventDetailedPage. When we try to get a document in Firestore based on the event id and it can't find it, Firestore will not return an error. However, it will still return a snapshot object and in the snapshot, there's an `exists` property that's set to `false`
 - We can use this `exists` property to check if a document data is found in Firestore. If this `exists` property is false, we can dispatch an asyncActionError() action and provide a custom code and message about the error
 - In useFirestoreDoc.js file:
@@ -3673,7 +3673,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     ```
 - So in the event that we don't get back an event doc from Firestore (event doesn't exist), we're rendering the `<LoadingComponent />` component. However, the loading indicator keeps running and we're not turning it off as long as we don't have an event doc for the EventDetailedPage
 
-### [9. Adding an error component: ErrorComponent]()
+### [9. Adding an error component: ErrorComponent](https://github.com/sungnga/revents/commit/5f0bbaefa1d7d9640a41333947afbeae22add535?ts=2)
 - The current problem we're having is if no event document is found, the `<LoadingComponent />` is continuously running. Also, we're not letting our user know what's going on or why we're not able to display the event detail on the page. So we're going to create an error component to handle errors and redirect user
 - In src/app/common/errors folder, create a component/file called ErrorComponent.jsx
 - In ErrorComponent.jsx file:
@@ -3722,7 +3722,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - Write a condition that checks for the error state. If there's an error, render the `<Redirect />` component (from react-router-dom) and set the path to '/error'. The route of this '/error' path will render the ErrorComponent on the error page
     - `if (error) return <Redirect to='/error' />;`
 
-### [10. Creating and updating events in Firestore]()
+### [10. Creating and updating events in Firestore](https://github.com/sungnga/revents/commit/4886e602f84fd50a671b6905462ec5ecf964a23a?ts=2)
 - At the moment, when we go to manage our event (the EventForm) the data will populate in the EventForm, but when we refresh the page the data will disappear. So we need to go to Firestore to retrieve the event when we refresh the page
 - In EventForm.jsx file:
   - Import the following:
@@ -3816,7 +3816,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }}
     ```
 
-### [11. Fix an issue with create event, sort events by date]()
+### [11. Fix an issue with create event, sort events by date](https://github.com/sungnga/revents/commit/cf8fc0704608c15930798893bab0a819020c5977?ts=2)
 - We're running into a problem when we click on the 'Create Event' button to create a new event. The useFirestoreDoc() hook runs and tries to find an event document id in Firestore. Obviously when we first try to create a new event, there isn't an event id. When we're creating a new event, we don't want to run the useEffect()/useFirestoreDoc() hook which trigger the query in Firestore. However, we cannot stop running a useEffect() hook and that's the rule
 - To work around this issue, we can write a condition to exit out of the useFirestoreDoc() hook and thus listening to Firestore doesn't start when we're creating a new event
 - In useFirestoreDoc.js file:
@@ -3856,7 +3856,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   }
   ```
 
-### [12. Deleting an event]()
+### [12. Deleting an event](https://github.com/sungnga/revents/commit/845b131f7ff795f0fcef5511ce4e9f998eb18eb6?ts=2)
 - In firestoreService.js file:
   - Write a deleteEventInFirestore function to delete an event in Firestore
     - This function takes an eventId as an argument
@@ -3882,7 +3882,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     ```
 - NOTE: In our application, however, a user won't be able to delete an event. They can cancel an event instead. While we are developing our application we want to be able to delete an event in Firestore
 
-### [13. Cancelling an event function]()
+### [13. Cancelling an event function](https://github.com/sungnga/revents/commit/a92b29bf3f84bdb7c20f638a84bf75c202b3aea2?ts=2)
 - In firestoreService.js file:
   - Write a cancelEventToggle function that toggles the cancel state of an event
     - This function takes an event as an argument
@@ -3929,7 +3929,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     )}
     ```
 
-### [14. Adding a confirmation prompt]()
+### [14. Adding a confirmation prompt](https://github.com/sungnga/revents/commit/2f18507b7f849496c951f08222946f344579d419?ts=2)
 - When the user clicks on the 'Cancel Event' or 'Reactivate Event' button, we want to display a confirmation dialog box for them to confirm. Semantic UI has a Confirm component that we can use to achieve this
 - In EventForm.jsx file:
   - Import the cancelEventToggle function: `import { cancelEventToggle } from '../../../app/firestore/firestoreService';`
@@ -4015,7 +4015,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
 - Cannot add additional properties to the User object directly
 - We're going store user profile which have more flexibility. Can store additional properties in Firestore
 
-### [1. Logging in with email and password]()
+### [1. Logging in with email and password](https://github.com/sungnga/revents/commit/c3b383276c5b8c91b919c0170be8fb29076f486c?ts=2)
 - We want a user to login to our application with their email and password. To enable this functionality, we first need to enable email and password sign-in method in Firebase authentication. Then the Firebase SDK comes with a handle of auth methods that we can use to authenticate a user
 - **Enable email and password sign-in method in Firebase:**
 - Go to Google Firebase console: https://console.firebase.google.com/
@@ -4072,7 +4072,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     };
     ```
 
-### [2. Persisting the login]()
+### [2. Persisting the login](https://github.com/sungnga/revents/commit/00d9d88e3dd658cef62fed9ccbedb19752cdeb19?ts=2)
 - What Firebase and Firestore uses to retain information inside the browser to persist things like user login is inside the Application/Storage/IndexedDB/firebaseLocalStorageDb
 - When we login with a user or do anything with authentication, then Firebase gives us a listener for when the authentication state is changed. The `firebase.auth().onAuthStateChanged()` method adds an observer for changes to the user's sign-in state. So when a user logs in or a user logs out, then this particular method is going to listen for that particular status. And then we can dispatch actions when the authentication state is changed
 - We'll use this method and what it returns is a Firebase user object. So we're going to check to see if we have a user. If a user is authenticated, then we have a user object
@@ -4141,7 +4141,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     }}
     ```
 
-### [3. Signing out the user in Firebase]()
+### [3. Signing out the user in Firebase](https://github.com/sungnga/revents/commit/a0029b859103eff1da4720ea7692767103a3213c?ts=2)
 - When a user clicks on the 'Sign out' button, we want the user sign out in Firebase. Firebase auth has a .signOut() method that we can use to achieve this
 - In firebaseService.js file:
   - Write a signOutFirebase function that signs out user in Firebase
@@ -4177,7 +4177,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - `<Dropdown.Item onClick={handleSignOut} text='Sign out' icon='power' />`
 - By signing out a user, the auth state in Firebase is changed. Our verifyAuth action creator is continuously listening to the user auth state change. So if there's a change in auth state, the verifyAuth function will execute. The verifyAuth function will dispatch the signInUser action creator if there's a user or dispatch the signOutUser action creator if there's no user. This updates the authReducer in Redux store
 
-### [4. Registering new users in Firebase: RegisterForm component]()
+### [4. Registering new users in Firebase: RegisterForm component](https://github.com/sungnga/revents/commit/817be9f820b0d7db151954bb9a4e177a0d4cf1f8?ts=2)
 - In src/features/auth folder, create a component/file called RegisterForm.jsx
 - In RegisterForm.jsx file:
   - The RegisterForm is very similar to the the LoginForm. Copy and paste the code as starter code
@@ -4185,55 +4185,55 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
     - Add validation to displayName field in the validationSchema as well
     - Change the Button element to 'Register'
     - Add the header to say 'Register to Re-vents'
-    ```javascript
-    export default function RegisterForm() {
-      const dispatch = useDispatch();
+  ```javascript
+  export default function RegisterForm() {
+    const dispatch = useDispatch();
 
-      return (
-        <ModalWrapper size='mini' header='Register to Re-vents'>
-          <Formik
-            initialValues={{ displayName: '', email: '', password: '' }}
-            validationSchema={Yup.object({
-              displayName: Yup.string().required(),
-              email: Yup.string().required().email(),
-              password: Yup.string().required()
-            })}
-            onSubmit={async (values, { setSubmitting }) => {
-              try {
-                await registerInFirebase(values);
-                setSubmitting(false);
-                dispatch(closeModal());
-              } catch (error) {
-                setSubmitting(false);
-                console.log(error);
-              }
-            }}
-          >
-            {({ isSubmitting, isValid, dirty }) => (
-              <Form className='ui form'>
-                <MyTextInput name='displayName' placeholder='displayName' />
-                <MyTextInput name='email' placeholder='Email Address' />
-                <MyTextInput
-                  name='password'
-                  placeholder='Password'
-                  type='password'
-                />
-                <Button
-                  loading={isSubmitting}
-                  disabled={!isValid || !dirty || isSubmitting}
-                  type='submit'
-                  fluid
-                  size='large'
-                  color='teal'
-                  content='Register'
-                />
-              </Form>
-            )}
-          </Formik>
-        </ModalWrapper>
-      );
-    }
-    ```
+    return (
+      <ModalWrapper size='mini' header='Register to Re-vents'>
+        <Formik
+          initialValues={{ displayName: '', email: '', password: '' }}
+          validationSchema={Yup.object({
+            displayName: Yup.string().required(),
+            email: Yup.string().required().email(),
+            password: Yup.string().required()
+          })}
+          onSubmit={async (values, { setSubmitting }) => {
+            try {
+              await registerInFirebase(values);
+              setSubmitting(false);
+              dispatch(closeModal());
+            } catch (error) {
+              setSubmitting(false);
+              console.log(error);
+            }
+          }}
+        >
+          {({ isSubmitting, isValid, dirty }) => (
+            <Form className='ui form'>
+              <MyTextInput name='displayName' placeholder='displayName' />
+              <MyTextInput name='email' placeholder='Email Address' />
+              <MyTextInput
+                name='password'
+                placeholder='Password'
+                type='password'
+              />
+              <Button
+                loading={isSubmitting}
+                disabled={!isValid || !dirty || isSubmitting}
+                type='submit'
+                fluid
+                size='large'
+                color='teal'
+                content='Register'
+              />
+            </Form>
+          )}
+        </Formik>
+      </ModalWrapper>
+    );
+  }
+  ```
 - Since this RegisterForm is a modal, we need to add this component to the modalLookup
 - In ModalManager.jsx file:
   - Import the RegisterForm component: `import RegisterForm from '../../../features/auth/RegisterForm';`
@@ -4280,7 +4280,7 @@ NOTE: Setting up and configure a Redux store is in the Redux Concepts section
   - On the onSubmit event handler, call the registerInFirebase() method inside the try block and pass in the values as an argument. Add the 'await' keyword in front of it since this is an async operation
     - `await registerInFirebase(values);`
 
-### [5. Handling auth errors in LoginForm and RegisterForm]()
+### [5. Handling auth errors in LoginForm and RegisterForm](https://github.com/sungnga/revents/commit/3b84f8be3ec17dfcda5495d25f0efb7154b0f04e?ts=2)
 - Let's handle errors with user authentication - something went wrong when they attempt to login or register as a new user
 In the LoginForm, we want to display an error message to the user if they aren't able to login
 - In LoginForm.jsx file:
@@ -4343,7 +4343,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     )}
     ```
 
-### [6. Setting user profile data in Firestore and Firebase]()
+### [6. Setting user profile data in Firestore and Firebase](https://github.com/sungnga/revents/commit/2e6574b14826b68c2736cdcf8a28e44a07051d07?ts=2)
 - After we registered a new user in Firebase we want to add the user profile data into Firestore database as well. And we want to do this all in one function. By storing user profile in Firestore db, we get live updates when they make changes to their profile information. So we're going to add users profile data into Firestore db. Right now we have events collection in Firestore. We're going to have a collection of document for each user that registers to our application
 - In firestoreService file:
   - Write a setUserProfileData function that creates a 'users' collection in Firestore db that contains a collection of user profile documents
@@ -4392,7 +4392,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [7. Creating a social login component: SocialLogin component]()
+### [7. Creating a social login component: SocialLogin component](https://github.com/sungnga/revents/commit/67f6356ab921af7124d5773476f256ab298ee73b?ts=2)
 - In src/features/auth folder, create a component/file called SocialLogin.jsx
 - In SocialLogin.jsx file:
   - Import React: `import React from 'react';`
@@ -4422,7 +4422,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     <SocialLogin />
     ```
 
-### [8. Facebook login setup]()
+### [8. Facebook login setup](https://github.com/sungnga/revents/commit/c4cc0f2a1254ffe9fa1fc1f748049acdee278ef6?ts=2)
 - Go to Facebook developers website: https://developers.facebook.com/
 - Once logged in with Facebook account, click on the 'Add a New project' button
 - Select the 'For Everything Else' option. Give the project a name
@@ -4442,7 +4442,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Add 2 Number of Test Users to Create
   - Once the Test Users are listed, change their names and give new passwords
 
-### [9. Adding the Facebook login method]()
+### [9. Adding the Facebook login method](https://github.com/sungnga/revents/commit/e79d857d0a1ae034f0fbe6345e96c39df4127510?ts=2)
 - In firebaseService.jsx file:
   - Import the setUserProfileData function : `import { setUserProfileData } from './firestoreService';`
   - Import toast: `import { toast } from 'react-toastify';`
@@ -4548,13 +4548,13 @@ In the LoginForm, we want to display an error message to the user if they aren't
   ```
 - NOTE: if there's a problem logging in with Facebook with error messages such as this URL is not available and try later or privacy issues, wait for a little while (4 hours) and try to login again with the Test User email and password
 
-### [10. Google login setup]()
+### [10. Google login setup](https://github.com/sungnga/revents/commit/48606256b00bda9f043efcb1197300b3d56e23e2?ts=2)
 - Go to Google Firebase console: https://console.firebase.google.com/
 - Click on Authentication in main menu. Then in Authentication page, select 'Sign-in method' at the top menu bar
 - Enable Google Sign-in. Provide Project support email and click Save. Easy peasy
 - Now when a user logs in with Google, if they're a new user to our application, a user object will be created in Firebase Auth and a user document created in Firestore db
 
-### [11. Adding an account page: AccountPage component]()
+### [11. Adding an account page: AccountPage component](https://github.com/sungnga/revents/commit/de6e4468e2f775842c2b35983ab7d330a00e0468?ts=2)
 - Create an account page that allows users to change their password. We will use Formik form validation before submitting the new password. If they logged in with Facebook or Google we provide a link to Facebook or Google to change their password there
 - In src/features/auth folder, create a component/file called AccountPage.jsx
 - In AccountPage.jsx file:
@@ -4657,26 +4657,26 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Make this dropdown as a link and set the pathname to '/account'
   - `<Dropdown.Item as={Link} to='/account' text='My account' icon='settings' />`
 
-### [12. Adding additional user info into the authReducer]()
+### [12. Adding additional user info into the authReducer](https://github.com/sungnga/revents/commit/c11b7d4e54d92cecc92671d43c1d24f80827c0f9?ts=2)
 - Once a user is successfully logged into our app, either through email/password, Facebook, or Google, Firebase Auth returns the user data from the provider. One of the properties called `providerData` contains the property `providerId` that tells the method which the user used to sign into the application. We can display different content on the page based on how they signed in
 - In authReducer.js file:
   - In the SIGN_IN_USER case, add additional properties to the currentUser object
-    ```javascript
-    // the provider is the method the user signed into the app
-    // email/password = password, fb = facebook.com, google = google.com
-		case SIGN_IN_USER:
-			return {
-				...state,
-				authenticated: true,
-				currentUser: {
-					email: payload.email,
-					photoURL: payload.photoURL,
-					uid: payload.uid,
-					displayName: payload.displayName,
-					providerId: payload.providerData[0].providerId
-				}
-			};
-    ```
+  ```javascript
+  // the provider is the method the user signed into the app
+  // email/password = password, fb = facebook.com, google = google.com
+  case SIGN_IN_USER:
+    return {
+      ...state,
+      authenticated: true,
+      currentUser: {
+        email: payload.email,
+        photoURL: payload.photoURL,
+        uid: payload.uid,
+        displayName: payload.displayName,
+        providerId: payload.providerData[0].providerId
+      }
+    };
+  ```
 - In SignedInMenu.jsx file:
   - Once the user is logged in, we want to display their displayName instead of their email address at the top NavBar
   - In the Dropdown component, change the text property to currentUser.displayName
@@ -4692,7 +4692,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - `{currentUser.providerId === 'facebook.com' && ( ... )`
     - `{currentUser.providerId === 'google.com' && ( ... )`
 
-### [13. Adding a password change function]()
+### [13. Adding a password change function](https://github.com/sungnga/revents/commit/ea4658b38ed463c9a7200b2b36b09c682d1cb3cb?ts=2)
 - In firebaseService.js file:
   - Write an updateUserPassword function that updates user password
     - This function takes creds as an argument. creds is the newPassword1 and newPassword2 values
@@ -4756,7 +4756,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - NOTE: At current state of our application we're running into one problem. When we're on the account page and we refresh the page, our application crashes saying that providerId is null. This is because when the application initializes itself and tries to load the AccountPage component, the currentUser is null (providerId property is inside the currentUser object). Only after the SIGN_IN_USER action creator runs do we get the currentUser object. 
 
-### [14. Fixing our issue with app initialization]()
+### [14. Fixing our issue with app initialization](https://github.com/sungnga/revents/commit/c8277072a01efa362d8b05069c03728a73b57dee?ts=2)
 - When a user is signed in and then visits the My Account page and then refreshes the page, we will run into an error that says Cannot read property 'providerId' of null. That is because we've initialized our app and the auth state is currently null and there's no user object. Certain page or component requires the user visiting the page be authenticated and we wrote a conditional somewhere in the component that is looking for the user object. ProviderId is one of the properties of the user object. When the Account page refreshes, it causes the component to re-render. And in the application initialization stage, it's looking for the providerId property but the currentUser object is currently null (no user object), so the application crashed
 - So what we need to take a look at is our application initialization. Our components are going to attempt to display as soon as possible and we need to add some control into that and wait until certain things have loaded in our application before we attempt to display the components. At the moment, whether we're authenticated or not, there may be other information that we want to load in when we initialize our application before anything else loads up
 - In our case, we're going to do this in the asyncReducer. We want to add an initialized flag into our asyncReducer and anything else that we need to do before our component renders
@@ -4774,11 +4774,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Add another case to the asyncReducer function at the bottom
     - This function will return as an object, the existing state and set the initialized property to true
     ```javascript
-		case APP_LOADED:
-			return {
-				...state,
-				initialized: true
-			};
+    case APP_LOADED:
+      return {
+        ...state,
+        initialized: true
+      };
     ```
 - All of our initialization is taken place in the verifyAuth() action. We want to wait until we've got our current user before we can say our app is now loaded
 - Go to authActions.js file:
@@ -4827,7 +4827,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 
 ## USER PROFILES
 
-### [1. Adding a profile page: ProfilePage and ProfileHeader components]()
+### [1. Adding a profile page: ProfilePage and ProfileHeader components](https://github.com/sungnga/revents/commit/f508f521006151bde533f6371e0056249bed3c9f?ts=2)
 - Let's start creating the user profile page. This page contains the profile header and profile content
 - The profile header contains:
   - user profile image
@@ -4921,7 +4921,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     />
     ```
 
-### [2. Adding the profile content: ProfileContent component]()
+### [2. Adding the profile content: ProfileContent component](https://github.com/sungnga/revents/commit/5c01f21f400c7598fe06349a7596452cef153c8e?ts=2)
 - The layout of the ProfileContent component is we have two columns. On the right column is a vertical menu tab which contains various information about the user. On the left column is the detail content of each menu item
 - In features/profiles/profilePage folder, create a component/file called ProfileContent.jsx
 - In ProfileContent.jsx file:
@@ -4951,7 +4951,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Import the ProfileContent component: `import ProfileContent from './ProfileContent';`
     - In jsx, instantiate the ProfileContent component right after the ProfileHeader component: `<ProfileContent />`
 
-### [3. Creating the redux actions: profileReducer]()
+### [3. Creating the redux actions: profileReducer](https://github.com/sungnga/revents/commit/d9cb30496962c0f575ebd021acb0e625f0a6d5b9?ts=2)
 - In src/features/profiles folder, create a file called profileConstants.js
 - In profileConstants.js file:
   - Add a constant LISTEN_TO_CURRENT_USER_PROFILE action
@@ -5020,7 +5020,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - `profile: profileReducer`
 - We can go to the Redux devTools console and check out our Redux state and we should be able to find a new `profile` state with a `currentUserProfile` property in it. The currentUserProfile is currently null, but we can hook up our ProfilePage to Firestore and get the user profile data down so we can display it in the page
 
-### [4. Connecting the ProfilePage to the store]()
+### [4. Connecting the ProfilePage to the store](https://github.com/sungnga/revents/commit/bd6a3d1487b31d87c8be0eb3bcbe29ea56d78392?ts=2)
 - In ProfilePage.jsx file:
   - Import useDispatch() and useSelector() hooks: `import { useDispatch, useSelector } from 'react-redux';`
   - Create a dispatch() method using useDispatch() hook
@@ -5084,7 +5084,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Set the Header content to display the profile displayName
     - `content={profile.displayName}`
 
-### [5. Adding an about page: AboutTab component]()
+### [5. Adding an about page: AboutTab component](https://github.com/sungnga/revents/commit/0c8a28458aa3c8a69e0b4601d14dcdbb77d56533?ts=2)
 - The About tab displays information about the user. If this profile belongs to the currentUser, the 'Edit' button is available for them to edit their profile information
 - In features/profiles/profilePage folder, create a component/file called AboutTab.jsx
 - In AboutTab.jsx file:
@@ -5149,7 +5149,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Then pass down the profile props to the AboutTab child component
     - `{ menuItem: 'About', render: () => <AboutTab profile={profile} /> }`
 
-### [6. Adding the profile form: ProfileForm component]()
+### [6. Adding the profile form: ProfileForm component](https://github.com/sungnga/revents/commit/1cd7c678b2288537686eacaf7178a2b2495832f9?ts=2)
 - The ProfileForm allows the user to edit and update their profile displayName and profile description. This form has form validation (using Formik) where they must provide a displayName. There's also a Cancel button to exit out of ProfileForm
 - In features/profiles/profilePage folder, create a component/file called ProfileForm.jsx
 - In ProfileForm.jsx file:
@@ -5208,7 +5208,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Pass down the profile props to the ProfileForm child component
     - `{editMode ? ( <ProfileForm profile={profile} /> ) : ( ... )}`
 					
-### [7. Adding the update user actions: updateUserProfile]()
+### [7. Adding the update user actions: updateUserProfile](https://github.com/sungnga/revents/commit/3a58aea685a8baf6bfcb5363a1ca7281b3d8af68?ts=2)
 - When the 'Update profile' button is clicked, we want to update the user profile in Firebase Auth and in the user document in Firestore users collection. And since we're listening to Firebase user profile, the profileReducer in Redux store will receive the update and then the update is display in the page
 - To get this done, we want to check if the currentUser object in the authReducer has a differently displayName. If it does, then we want to update the firebase.auth().currentUser profile in the Firebase using the .updateProfile() method. We also want to update the user profile document in Firestore users collection
 - In firestoreService.js file:
@@ -5271,7 +5271,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - NOTE: even though the user profile data is updated in both Firebase Auth and Firestore db, the user displayName in the Navbar does not automatically update unless the user refreshes the page. This is because this displayName in NavBar is listening to Firebase Auth state change from authReducer and not listening to user profile data
 
-### [8. Initializing the app with the current user profile]()
+### [8. Initializing the app with the current user profile](https://github.com/sungnga/revents/commit/622dba55e539692d3006eb4c1ba8e19372a325f1?ts=2)
 - Once a user is successfully logged in, the user displayName is displayed in the NavBar on the right hand side is currently populated from the authReducer. It's listening to state change in Firebase Auth. If the user updates their displayName, they would have to refresh the ProfilePage to see the updated change. Instead, we want this to listen to the currentUserProfile from profileReducer in Firestore and update the change from there. Another thing we want to do is to initialize our app with the current user profile data. We want to get the currentUserProfile data from Firestore and store it in the profileReducer and continuously listening to it. This way we get live updates. We do this in the verifyAuth action creator because the `store` object dispatches this action creator the moment the `store` object is initialized
 - We will need to create another action and another state for the profileReducer
 - In profileConstants.js file:
@@ -5378,7 +5378,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Now when the user updates their displayName in the 'Update profile' form, it'll update the current user displayName in the NavBar as well
 
-### [9. Selecting other user profiles]()
+### [9. Selecting other user profiles](https://github.com/sungnga/revents/commit/ce34c06981042faf9fc602c2327e2d1bb1fd6291?ts=2)
 - When a user visits another user's profile page we want to show or hide certain data depending on whether they are the current login user. For example, we don't want a user have access to the 'Edit/Cancel' button to edit a profile if they're are not the current user of this profile page. Or make the 'Follow' button available if the current login user visits their own profile page. We can find out the current login user with their uid in the currentUser property in the authReducer
 - In ProfilePage.jsx file:
   - Import the listenToSelectedUserProfile() action: `import { listenToSelectedUserProfile } from '../profileActions';`
@@ -5433,25 +5433,26 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - In ProfileContent.jsx file:
   - Receive the isCurrentUser props from the ProfilePage parent component and destructure it
   - Pass down the isCurrentUser props to the AboutTab child component
-    ```javascript
-		{
-			menuItem: 'About',
-			render: () => <AboutTab profile={profile} isCurrentUser={isCurrentUser} />
-		},
-    ```
+  ```javascript
+  {
+    menuItem: 'About',
+    render: () => <AboutTab profile={profile} isCurrentUser={isCurrentUser} />
+  },
+  ```
 - In AboutTab.jsx file:
   - Receive the isCurrentUser props from the ProfileContent parent component and destructure it
   - In JSX, we only want the isCurrentUser to be able to edit their own profile. Write a condition to check if the user is a current user. If they are, then display the 'Cancel/Edit' button
-    ```javascript
-    {isCurrentUser && (
-      <Button
-        onClick={() => setEditMode(!editMode)}
-        floated='right'
-        basic
-        content={editMode ? 'Cancel' : 'Edit'}
-      />
-    )}
-    ```
+  ```javascript
+  {isCurrentUser && (
+    <Button
+      onClick={() => setEditMode(!editMode)}
+      floated='right'
+      basic
+      content={editMode ? 'Cancel' : 'Edit'}
+    />
+  )}
+  ```
+
 
 ## IMAGE UPLOAD
 - Storage with Firebase Storage
@@ -5463,7 +5464,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Set a photo as their main photo
   - Delete a photo
 
-### [1. Adding a profile photos page: PhotosTab component]()
+### [1. Adding a profile photos page: PhotosTab component](https://github.com/sungnga/revents/commit/92d20eca57aa440e95f96aa3b840492dde78b29a?ts=2)
 - Let's create a place where a user can view their photos, upload new images, set an image as their main photo, and delete a photo
 - In src/features/profiles/profilePage folder, create a component/file called PhotosTab.jsx
 - In PhotosTab.jsx file:
@@ -5473,57 +5474,57 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Write a PhotosTab functional component that renders a profile photos tab using Semantic UI
     - This PhotosTab allows the user to add a photo, set a photo as their main profile image, and delete a photo
     - This component receives the profile and isCurrentUser props from the ProfileContent parent component 
-    ```javascript
-    export default function PhotosTab({ profile, isCurrentUser }) {
-      const [editMode, setEditMode] = useState(false);
+  ```javascript
+  export default function PhotosTab({ profile, isCurrentUser }) {
+    const [editMode, setEditMode] = useState(false);
 
-      return (
-        <Tab.Pane>
-          <Grid>
-            <Grid.Column width={16}>
-              <Header floated='left' icon='user' content={`Photos`} />
-              {isCurrentUser && (
-                <Button
-                  onClick={() => setEditMode(!editMode)}
-                  floated='right'
-                  basic
-                  content={editMode ? 'Cancel' : 'Add Photo'}
-                />
-              )}
-            </Grid.Column>
-            <Grid.Column width={16}>
-              {editMode ? (
-                <p>Photo widget will go here</p>
-              ) : (
-                <Card.Group itemsPerRow={5}>
-                  <Card>
-                    <Image src='/assets/user.png' />
-                    <Button.Group fluid width={2}>
-                      <Button basic color='green' content='Main' />
-                      <Button basic color='red' icon='trash' />
-                    </Button.Group>
-                  </Card>
-                </Card.Group>
-              )}
-            </Grid.Column>
-          </Grid>
-        </Tab.Pane>
-      );
-    }
-    ```
+    return (
+      <Tab.Pane>
+        <Grid>
+          <Grid.Column width={16}>
+            <Header floated='left' icon='user' content={`Photos`} />
+            {isCurrentUser && (
+              <Button
+                onClick={() => setEditMode(!editMode)}
+                floated='right'
+                basic
+                content={editMode ? 'Cancel' : 'Add Photo'}
+              />
+            )}
+          </Grid.Column>
+          <Grid.Column width={16}>
+            {editMode ? (
+              <p>Photo widget will go here</p>
+            ) : (
+              <Card.Group itemsPerRow={5}>
+                <Card>
+                  <Image src='/assets/user.png' />
+                  <Button.Group fluid width={2}>
+                    <Button basic color='green' content='Main' />
+                    <Button basic color='red' icon='trash' />
+                  </Button.Group>
+                </Card>
+              </Card.Group>
+            )}
+          </Grid.Column>
+        </Grid>
+      </Tab.Pane>
+    );
+  }
+  ```
 - In ProfileContent.jsx file:
   - Import the PhotosTab component: `import PhotosTab from './PhotosTab';`
   - Inside the 'Photos' menuItem panes:
     - Render the PhotosTab component inside the arrow function of the render property
     - Then pass down the profile and isCurrentUser props to the PhotosTab child component
     ```javascript
-		{
-			menuItem: 'Photos',
-			render: () => <PhotosTab profile={profile} isCurrentUser={isCurrentUser} />
-		},
+    {
+      menuItem: 'Photos',
+      render: () => <PhotosTab profile={profile} isCurrentUser={isCurrentUser} />
+    },
     ```
 
-### [2. Adding a photo upload widget: PhotoUploadWidget component]()
+### [2. Adding a photo upload widget: PhotoUploadWidget component](https://github.com/sungnga/revents/commit/d44fe69743bcd0a184768669e55c218024e05705?ts=2)
 - In the PhotosTab, when a user clicks on the 'Add Photo' button, it'll take them to the photo upload widget. The PhotoUploadWidget component takes the user step by step to add a photo, resize the photo, and preview and upload the photo
 - In src/app/common/photos folder, create a component/file called PhotoUploadWidget.jsx
 - In PhotoUploadWidget.jsx file:
@@ -5567,7 +5568,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   />
   ```
 
-### [3. React-dropzone library: PhotoWidgetDropzone component]()
+### [3. React-dropzone library: PhotoWidgetDropzone component](https://github.com/sungnga/revents/commit/0a2598a3fff46fcf3272f879fcf5f2e16be6b4a1?ts=2)
 - We're going to use the react-dropzone library to help us upload a file from the computer. This the 'Step 1' of the PhotoUploadWidget component
 - React-dropzone docs: https://www.npmjs.com/package/react-dropzone
 - Install react-dropzone library: `npm i react-dropzone`
@@ -5575,28 +5576,28 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - In PhotoWidgetDropzone.jsx file:
   - Copy and paste the example demo code from the react-dropzone docs website
   - Console log the `acceptedFiles` to see what we get when we drag and drop a file
-    ```javascript
-    import React, { useCallback } from 'react';
-    import { useDropzone } from 'react-dropzone';
+  ```javascript
+  import React, { useCallback } from 'react';
+  import { useDropzone } from 'react-dropzone';
 
-    export default function PhotoWidgetDropzone() {
-      const onDrop = useCallback((acceptedFiles) => {
-        console.log(acceptedFiles)
-      }, []);
-      const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  export default function PhotoWidgetDropzone() {
+    const onDrop = useCallback((acceptedFiles) => {
+      console.log(acceptedFiles)
+    }, []);
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-      return (
-        <div {...getRootProps()}>
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <p>Drop the files here ...</p>
-          ) : (
-            <p>Drag 'n' drop some files here, or click to select files</p>
-          )}
-        </div>
-      );
-    }
-    ```
+    return (
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        {isDragActive ? (
+          <p>Drop the files here ...</p>
+        ) : (
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        )}
+      </div>
+    );
+  }
+  ```
 - In PhotoUploadWidget.jsx file:
   - Import the PhotoWidgetDropzone component: `import PhotoWidgetDropzone from './PhotoWidgetDropzone';`
   - Right after the Header component, instantiate the PhotoWidgetDropzone component
@@ -5666,7 +5667,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Now when we drag an image file to the dropzone widget, the border should turn green. When it's not active, it should have a grey dashed border. Also, the `files` state of the PhotoUploadWidget component should contain the image file we just uploaded
 
-### [4. Crop and resize image with react-cropper lib: PhotoWidgetCropper component]()
+### [4. Crop and resize image with react-cropper lib: PhotoWidgetCropper component](https://github.com/sungnga/revents/commit/d99dc69abb83f63976bed5a1e6304647fef14557?ts=2)
 - After the user uploaded an image, we want them to be able to crop and resize the image with the help of the react-cropper library. This the 'Step 2' and 'Step 3' of the PhotoUploadWidget component
 - React-cropper docs: https://github.com/react-cropper/react-cropper
 - Install react-cropper library: `npm i react-cropper`
@@ -5725,17 +5726,17 @@ In the LoginForm, we want to display an error message to the user if they aren't
       - Also pass down the imagePreview props to the PhotoWidgetCropper child component. This props is the files state of the first element of the files array and the preview property that we created in the PhotoWidgetDropzone component
       - `<PhotoWidgetCropper setImage={setImage} imagePreview={files[0].preview} />`
     - We also want to write a condition to make sure that there is at least one file in the files state array before we display the PhotoWidgetCropper component
-      ```javascript
-			<Grid.Column width={4}>
-				<Header color='teal' sub content='Step 2 - Resize' />
-				{files.length > 0 && (
-					<PhotoWidgetCropper
-						setImage={setImage}
-						imagePreview={files[0].preview}
-					/>
-				)}
-			</Grid.Column>
-      ```
+    ```javascript
+    <Grid.Column width={4}>
+      <Header color='teal' sub content='Step 2 - Resize' />
+      {files.length > 0 && (
+        <PhotoWidgetCropper
+          setImage={setImage}
+          imagePreview={files[0].preview}
+        />
+      )}
+    </Grid.Column>
+    ```
 - In PhotoWidgetCropper.jsx file:
   - Receive the setImage and imagePreview props from the PhotoUploadWidget parent component and destructure them
   - In the cropImage() function:
@@ -5797,13 +5798,13 @@ In the LoginForm, we want to display an error message to the user if they aren't
           <Button.Group>
             <Button style={{ width: 100 }} positive icon='check' />
             <Button style={{ width: 100 }} icon='close' />
-					</Button.Group>
+          </Button.Group>
         </>
       )}
     </Grid.Column>
     ```
 
-### [5. Adding an upload image method: upload to FirebaseStorage, Firebase.auth, and Firestore]()
+### [5. Adding an upload image method: upload to FirebaseStorage, Firebase.auth, and Firestore](https://github.com/sungnga/revents/commit/5292c98f06cf922d96ad1e8c058906f0c6bd6ccd?ts=2)
 - Now that we have the image upload widget working, we want to upload to FirebaseStorage. We also want to update the photoURL in the Firebase.auth, so that if we do need to use the currentUser anywhere in our app, we have the updated user profile. We also want to update the user's main profile photo if this is the first image they uploaded. We need to create two methods. One is for FirebaseStorage to upload the file and the second is for firestoreService
 - In firebaseService.js file:
   - Write an uploadToFirebaseStorage method that uploads a file to FirebaseStorage
@@ -5871,7 +5872,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [6. Using the upload method in the photo widget]()
+### [6. Using the upload method in the photo widget](https://github.com/sungnga/revents/commit/14ea23dd45a91b7170891952b723eb0548421f09?ts=2)
 - In src/app/common/util/util.js file:
   - Write a getFileExtension util function to get a file extension
     ```javascript
@@ -5990,7 +5991,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Next go to the Firebase dashboard and click on the 'Storage' icon from the main menu. Here, we should see a folder (folder name is the user.uid) that contains the uploaded image. Any future image upload by this particular user will be stored in this folder
   - Then click on the 'Firestore Database' icon from the main menu. If this user document didn't have a photoURL, the photoURL property will be updated. Then inside this user document, a 'photos' collection folder has also been created. This folder contains the uploaded image
 
-### [7. Displaying the images in PhotosTab]()
+### [7. Displaying the images in PhotosTab](https://github.com/sungnga/revents/commit/4b6ca5d566df3e2c0d7eb28b85deb92fd3c62857?ts=2)
 - Now that we're able to upload photos to firebaseStorage, firebase.auth, and Firestore, we want to create a new constant, a new action, and new reducer to store photos in Redux store. We can listen to the 'photos' collection and update the photos property in profileReducer when there's a change. After that we can display the user photos collection (getting them from the profileReducer) in the PhotosTab
 - In profileConstants.js file:
   - Create a new constant for LISTEN_TO_USER_PHOTOS
@@ -6085,7 +6086,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
       ```
 - Now we should be able to see the user photos collection in the PhotosTab
 
-### [8. Setting the main profile photo functionality]()
+### [8. Setting the main profile photo functionality](https://github.com/sungnga/revents/commit/f6c65e7b5c9c84d3d9fec79ccce4c731d27b131d?ts=2)
 - In firestoreService.js file:
   - Write an async setMainPhoto function that updates the photoURL property in Firestore user document and updates the user profile photoURL property in firebase.auth
     - This function takes photo as an argument
@@ -6194,7 +6195,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     />    
     ```
 
-### [9. Deleting a photo]()
+### [9. Deleting a photo](https://github.com/sungnga/revents/commit/acbf2c2e724f52aefd02dda9f39a702cee90668a?ts=2)
 - When deleting a photo, we want to remove it from firebaseStorage and from Firestore db 'photos' collection. However, if the photo is set as their main profile photo, we want to prevent them from deleting it
 - In firebaseService.js file:
   - Write a deleteFromFirebaseStorage function that deletes a photo from firebaseStorage
@@ -6315,7 +6316,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - An array can be a maximum of 20,000 rows
   - Firestore is designed to scale with millions of documents inside a collection
 
-### [1. Adding attendances to an event]()
+### [1. Adding attendances to an event](https://github.com/sungnga/revents/commit/92ed9758cb90c83a090a8ce326680e64d53d29c2?ts=2)
 - Let's update the addEventToFirestore function so the fields populate the data dynamically when we create an event and we want to add additional fields to the event object
 - In firestoreService.js file:
   - In addEventToFirestore() function:
@@ -6352,7 +6353,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [2. Setting up the event detailed header]()
+### [2. Setting up the event detailed header](https://github.com/sungnga/revents/commit/29221630f548586033a2cb21f5d023998a94fd47?ts=2)
 - We want to configure the EventDetailedHeader component so that only certain buttons show depending on the user's status to that event. Are they the host? Are they the attendee or are they not an attendee? If the currentUser is the host of the event, show the 'Manage Event' button in the EventDetailHeader. If the currentUser is an attendee, show the 'Cancel' button. If the user isn't an attendee of the event, show the 'Join this Event' button
 - In EventDetailedPage.jsx file:
   - First, we want to get the currentUser property from authReducer using useSelector() hook
@@ -6389,7 +6390,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
       )}
       ```
 
-### [3. Adding the join event handler]()
+### [3. Adding the join event handler](https://github.com/sungnga/revents/commit/26bafdb0a1dcac1c3ed56a7b9bf3c8f19275c623?ts=2)
 - In firestoreService.js file:
   - Write a addUserAttendance function that adds the currentUser to an event attendance
     - This function takes an event as an argument
@@ -6449,7 +6450,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Now when a currentUser joins an event it'll display their profile picture and displayName in the list of attendees on the EventDetailPage. Also, on the events page, it'll show profile icons of the list of attendees for each event
 
-### [4. Cancelling a user attendance]()
+### [4. Cancelling a user attendance](https://github.com/sungnga/revents/commit/571a97e0adc1e9da8c5ac51d72328fb2a7d67ef9?ts=2)
 - When a user cancels their attendance to an event, on the backend, it removes the user object from the `attendees` array property of the event document in Firestore. It also removes the user.uid element from the `attendeeIds` array property. On the frontend, their name will be removed from the attendees list on the EventDetailedPage. On the events page, their profile icon will be removed from the attendees list from that particular event
 - When it comes to removing objects from Firestore arrays it can be a bit of a challenge. We can't use Firestore's arrayRemove() method to remove an object from an array. In our case, it's removing a user from an event's attendees list. The attendees array contains the user objects. To get this done, first, we need to get the events collection and then use a normal JS array filter method to update the array and remove the currentUser from the array
 - In firestoreService.js file:
@@ -6515,7 +6516,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Button>
     ```
 
-### [5. Adding the user nav links]()
+### [5. Adding the user nav links](https://github.com/sungnga/revents/commit/66494a702d2d480a306a26d0757b961ede6a2054?ts=2)
 - In the EventDetailedPage, we want to add a ribbon label to the user that hosts the event. We also want to add nav links for the attendees and hosts throughout the event page. This way, when other users visiting the event page, they can easily go to others profile pages
 - In EventDetailedPage.jsx file:
   - Pass down the event.hostUid as hostUid props to the EventDetailedSidebar child component
@@ -6564,7 +6565,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Item.Description>
     ```
 
-### [6. Adding the filter functionality]()
+### [6. Adding the filter functionality](https://github.com/sungnga/revents/commit/f1ab94817235d2c06fadc031254ba1cb510a1739?ts=2)
 - In EventDashboard.jsx file:
   - Create a predicate state using useState() hook
     - What we're going to use to initialize the state is a Javascript map. This is a Javascript object that allows us to use certain methods and we can get and set different elements in this map easily. This is a sufficient way for users to set a particular filter
@@ -6640,7 +6641,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [7. Getting the filtered data]()
+### [7. Getting the filtered data](https://github.com/sungnga/revents/commit/47881689e1efc000f92296916ec2bb3d078227d0?ts=2)
 - Now we're going to hook up the filter functionality to listen to events from the Firestore listenToEventsFromFirestore() method in firestoreService. So we can go out and listen to the new data we're going to get returned from Firestore based on the filter value that we set
 - In firestoreService.js file:
   - Let's modify the listenToEventsFromFirestore() function that we wrote earlier:
@@ -6703,7 +6704,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - The problem we're running into is when we're filtering more than one Fields in Firestore, we need to create a composite index in Firestore. Every time we're querying multiple Fields we will run into this issue. Firestore will generate the index for us, but we need to go to the Firebase website to create the index
   - In Firebase Firestore webpage, the composite indexes are enabled and listed in the 'Indexes' menu tab. We should see two indexes listed for our application
 
-### [8. Adding the user event filters: EventsTab component]()
+### [8. Adding the user event filters: EventsTab component](https://github.com/sungnga/revents/commit/ae1215921e7bdc3ceeb9f096cb34c9c2675f7527?ts=2)
 - The EventsTab component displays in the Events menu tab on the user profile page. This component displays another tab menu of 'Future Events', 'Past Events', and 'Hosting'. A user can click on these tabs to see different events. Each event is in a card form and it'll direct user to that event page
 - In src/features/profiles/profilePage folder, create a component/file called EventsTab.jsx
 - In EventsTab.jsx file:
@@ -6779,7 +6780,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - In the 'Events' menuItem, render the EventsTab component
     - `{ menuItem: 'Events', render: () => <EventsTab /> },`
 
-### [9. Adding the user event query]()
+### [9. Adding the user event query](https://github.com/sungnga/revents/commit/966b4c9c3c0166abd2ee64f8197639363e7b5df1?ts=2)
 - In firestoreService.js file:
   - Write an getUserEventsQuery function that gets the user events in Firestore events collection based on the specified query clauses
     - This function takes activeTab and userUid as parameters
@@ -6816,7 +6817,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [10. Adding profile actions for user events]()
+### [10. Adding profile actions for user events](https://github.com/sungnga/revents/commit/5568291d97ce3ab197c94db445e1badbb7e8d77e?ts=2)
 - Next is we're going to create a LISTEN_TO_USER_EVENTS action creator to listen to user events in Firestore and store the events data in profileEvents property in profileReducer
 - What is taking place in the backend when a user clicks on the Events tab on a user profile page is:
   - the EventsTab component mounts
@@ -6858,11 +6859,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
       - This action returns as an object, the existing state and the profileEvents property of payload
       - When this action is dispatched, profileEvents property in profileReducer redux store will contain an array of filtered events from Firestore events collection
     ```javascript
-		case LISTEN_TO_USER_EVENTS:
-			return {
-				...state,
-				profileEvents: payload
-			};
+    case LISTEN_TO_USER_EVENTS:
+      return {
+        ...state,
+        profileEvents: payload
+      };
     ```
 - In the ProfileContent.jsx file:
   - Pass down the profile as props to the EventsTab child component
@@ -6937,7 +6938,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Realtime Database: Store and sync data in realtime across all connected clients
   - Firestore Database: Realtime updates, powerful queries, and automatic scaling
 
-### [1. Setting up Firebase Realtime Database]()
+### [1. Setting up Firebase Realtime Database](https://github.com/sungnga/revents/commit/23f37e3288d2fe8e1da26bccbcc15f48410591b1?ts=2)
 - Go to Firebase dashboard: https://console.firebase.google.com/
 - Select Realtime Database from the main menu
 - Click on the Rules tab at the top and edit the rules
@@ -6974,7 +6975,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [2. Setting up the chat form: EventDetailedChatForm component]()
+### [2. Setting up the chat form: EventDetailedChatForm component](https://github.com/sungnga/revents/commit/21b54c7a56547a31939697a7b2a8f52c7b79a81b?ts=2)
 - Let's create an EventDetailedChatForm component that has a comment text input field and a submit button. When submitting the chat form, we can hook it up to the firebaseDatabase's addEventChatComment function to add the chat comment to the Realtime Database
 - In EventDetailedPage.jsx file:
   - Pass down the eventId as props to the EventDetailedChat child component
@@ -7042,7 +7043,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Now when a currentUser adds a comment in the event chat form, the chat comment is added to the Realtime Database under: chat -> eventId -> commentId -> comment detailed info
 
-### [3. Listening to the chat data]()
+### [3. Listening to the chat data](https://github.com/sungnga/revents/commit/31004c3c8c9e83135aaa9ece773eb3d99ae21b7a?ts=2)
 - Now that we have some comments in firebase Realtime Database to listen to, we're going to add them to Redux store and use that to display on the EventDetailedChat
 - In eventConstants.js file:
   - Create another constant for LISTEN_TO_EVENT_CHAT
@@ -7076,11 +7077,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
       - This action returns as an object, the existing state and the comments state property of payload
       - When this action is dispatched, comments property in the eventReducer redux store will contain an array of comments from firebase database of an event chat
     ```javascript
-		case LISTEN_TO_EVENT_CHAT:
-			return {
-				...state,
-				comments: payload
-			};
+    case LISTEN_TO_EVENT_CHAT:
+      return {
+        ...state,
+        comments: payload
+      };
     ```
 - In firebaseService.js file:
   - Write a getEventChatRef function that gets an event chat reference from Realtime Database
@@ -7169,7 +7170,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }, [eventId, dispatch]);
     ```
 
-### [4. Displaying the chat comments]()
+### [4. Displaying the chat comments](https://github.com/sungnga/revents/commit/870dd88792c6c95a02ee9809d069cb1a6d926d66?ts=2)
 - Now that we have the comments array in eventReducer we can display them on the event page
 - In EventDetailedChat.jsx file:
   - Import the Link component: `import { Link } from 'react-router-dom';`
@@ -7205,7 +7206,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Comment.Group>
     ```
 
-### [5. Improving the chat UI]()
+### [5. Improving the chat UI](https://github.com/sungnga/revents/commit/e00f78ca7d95b457152a7968bc51ef3f7c05df2a?ts=2)
 - In EventDetailedChat.jsx file:
   - Right now the chat displays the last comment at the bottom. We have no way to change the order in firebase db, but we can reverse the order on the client side
     - Inside useEffect() hook, use the .reverse() method on firebaseObjectToArray() to reverse the snapshot array
@@ -7269,7 +7270,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
   - Note that in firebase database, the text property of a comment will still have the '\n' included in the text string. What we did in the Comment.Text element is how we want to display the text on the page. The .split() method did not change the original text string
 
-### [6. Clearing the chat comments and chat form validation]()
+### [6. Clearing the chat comments and chat form validation](https://github.com/sungnga/revents/commit/206feff4131ffd7f84512d5bdfe68df89ec71f83?ts=2)
 - Right now when we go visit another event page, the current chat comments array that's in the redux store is displaying on every event page. We should not be able to see some other event's chat comments when we visit an event page. What we need to do is clear the comments property in eventReducer redux state when the EventDetailedPage dismounts. We need to create an action to clear the redux store
 - In eventConstants.js file:
   - Create another constant for CLEAR_COMMENTS action
@@ -7281,11 +7282,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
       - This action returns as an object, the existing state and set the comments property back to an empty array
       - When this action is dispatched, comments property in the eventReducer redux store will reset back to an empty array
     ```javascript
-		case CLEAR_COMMENTS:
-			return {
-				...state,
-				comments: []
-			};
+    case CLEAR_COMMENTS:
+      return {
+        ...state,
+        comments: []
+      };
     ```
 - In the EventDetailedChat.jsx file:
   - Import the constant: `import { CLEAR_COMMENTS } from '../eventConstants';`
@@ -7335,7 +7336,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [7. Adding the reply functionality]()
+### [7. Adding the reply functionality](https://github.com/sungnga/revents/commit/077b7c06abdccca6c844a51c2051fb1b3e40c22c?ts=2)
 - Enable a user to reply to a chat comment and we'll only make it one level deep. When the user hits the 'Reply' to a comment, we want to display the EventDetailedChatForm component. And after they submitted the reply, we want to close the reply form automatically. Another thing we want to do is add a parentId property to the comment data object. If it's the original comment, then the parentId is set to 0. But if it's a reply comment, then the parentId is set to its parent comment id
 - In firebaseService.js file:
   - Lets modify the addEventChatComment function:
@@ -7423,7 +7424,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }}
     ```
 
-### [8. Displaying the replies]()
+### [8. Displaying the replies](https://github.com/sungnga/revents/commit/7bca46c71611908f48ad5042f0ad843f38435842?ts=2)
 - Right now all of our original comments and reply comments are in one array in firebase database and we have no way to organize the comments in a tree structure (i.e. a reply to a comment). However, we can organize the display of it on the client side. We need to create a utility function to organize our dataset
 - In src/app/common/util/util.js file:
   - Write a createDataTree utility function to create a data tree based on a given array/dataset
@@ -7531,7 +7532,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - Intro to security rules
 - Intro to cloud functions
 
-### [1. Adding the Firestore functions: follow a user functionality]()
+### [1. Adding the Firestore functions: follow a user functionality](https://github.com/sungnga/revents/commit/924ec65f079eb2df209b3ce44d637a48d47c7e55?ts=2)
 - A few things take place in the backend when a currently login user follows another user profile. We're going to create a 'following' collection at the root of our Firestore db. Then in the 'users' collection, when a user has a follower and/or following, we're going to add the followingCount and followerCount properties to the user document as well
 - In firestoreService.js file:
   - Write an async followUser function for following a user
@@ -7624,7 +7625,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     />
     ```
 
-### [2. Unfollow a user functionality]()
+### [2. Unfollow a user functionality](https://github.com/sungnga/revents/commit/c83daa9e2d9f1efb5f4b657106d65fa545f89f13?ts=2)
 - The functionality of unfollowing a user is very similar to the functionality of following a user. We delete the profile.id document in the 'userFollowing' collection of user.uid doc and delete the user.uid document in the 'userFollowers' collection of profile.id doc. And we decrement the followingCount and followerCount fields in the 'users' collection
 - In firestoreService.js file:
   - Write an async unfollowUser function for unfollowing a user
@@ -7695,7 +7696,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     />
     ```
 
-### [3. Listening to the following data]()
+### [3. Listening to the following data](https://github.com/sungnga/revents/commit/fa80f29616508fc80f9277b31df8da367cdb2c74?ts=2)
 - To retrieve data of following and followers from the Redux store and display them onto the page, we're going to write action creators for the profileReducer
 - In profileConstants.js file:
   - Create and export the LISTEN_TO_FOLLOWERS and the LISTEN_TO_FOLLOWINGS constants
@@ -7737,19 +7738,19 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
   - In the profileReducer function, add two more cases for LISTEN_TO_FOLLOWERS and LISTEN_TO_FOLLOWINGS
     ```js
-		case LISTEN_TO_FOLLOWERS:
-			return {
-				...state,
-				followers: payload
-			};
-		case LISTEN_TO_FOLLOWINGS:
-			return {
-				...state,
-				followings: payload
-			};
+    case LISTEN_TO_FOLLOWERS:
+      return {
+        ...state,
+        followers: payload
+      };
+    case LISTEN_TO_FOLLOWINGS:
+      return {
+        ...state,
+        followings: payload
+      };
     ```
 
-### [4. Adding the following components: ProfileCard and FollowingTab components]()
+### [4. Adding the following components: ProfileCard and FollowingTab components](https://github.com/sungnga/revents/commit/8ec1a53dd619dacd577630b66b032b1b4a02977d?ts=2)
 - In src/features/profiles/profilePage folder, create a component called ProfileCard.jsx
 - In ProfileCard.jsx file:
   - Import the following:
@@ -7817,7 +7818,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   { menuItem: 'Following', render: () => <FollowingTab profile={profile} /> }
   ```
 
-### [5. Listening to the followers data]()
+### [5. Listening to the followers data](https://github.com/sungnga/revents/commit/19b63831daefbfd647665b888a438356efa38098?ts=2)
 - In firestoreService.js file:
   - Write and export a getFollowersCollection function to get userFollowers collection from profileId doc in firestore db
   - Write and export a getFollowingCollection function to get userFollowering collection from profileId doc
@@ -7840,13 +7841,13 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - `onTabChange={(e, data) => setActiveTab(data.activeIndex)}`
   - Lastly, pass down the activeTab state as props to the FollowingTab component. Do this for both the 'Follower' and 'Followings' menuItems
     ```js
-		menuItem: 'Followers',
-			render: () => <FollowingTab profile={profile} activeTab={activeTab} />
-		},
-		{
-			menuItem: 'Following',
-			render: () => <FollowingTab profile={profile} activeTab={activeTab} />
-		}
+    menuItem: 'Followers',
+      render: () => <FollowingTab profile={profile} activeTab={activeTab} />
+    },
+    {
+      menuItem: 'Following',
+      render: () => <FollowingTab profile={profile} activeTab={activeTab} />
+    }
     ```
 - In FollowingTab.jsx file:
   - Import the following:
@@ -7908,17 +7909,17 @@ In the LoginForm, we want to display an error message to the user if they aren't
       </Grid.Column>
       ```
 
-### [6. Updating the following count]()
+### [6. Updating the following count](https://github.com/sungnga/revents/commit/5207c21f888383ede4ec27cfc7f357624d2a8a56?ts=2)
 - The next step we want to do is when a currently login user (currentUser) visits another user profile page, we want to see if the currentUser has already followed this user profile. If they have, display the 'Following' button on the user profile page. If not, display the 'Not following' button. When a user profile page loads/mounts, we want to listen in firestore for the currentUser's 'userFollowing' collection and see if the user profileId  doc is in this collection. If there is, that means the currentUser is following the user profile. We'r going to write a function to get the user following doc from firestore
 - The second thing we want to do is create a `followingUser` state in profileReducer store to keep track of whether the currentUser is following the user profile. We will create actions to toggle the `followingUser` state. We show the 'Following' or the 'Not following' button based on this state
 - In ProfileHeader.jsx file:
   - Display the followerCount and followingCount in the ProfileHeader section of the user profile page
-    ```js
-    <Statistic.Group>
-      <Statistic label='Followers' value={profile.followerCount || 0} />
-      <Statistic label='Following' value={profile.followingCount || 0} />
-    </Statistic.Group>
-    ```
+  ```js
+  <Statistic.Group>
+    <Statistic label='Followers' value={profile.followerCount || 0} />
+    <Statistic label='Following' value={profile.followingCount || 0} />
+  </Statistic.Group>
+  ```
 - In firestoreService.js file:
   - Write and export a getFollowingDoc function that gets a following doc from firestore based on the given profileId
   ```js
@@ -7976,19 +7977,19 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Add a case for the SET_FOLLOW_USER action creator. When this action creator is invoked the followingUser property is set to true
   - Add a case for the SET_UNFOLLOW_USER action creator. When this action creator is invoked the followingUser property is set to false
     ```js
-		case SET_FOLLOW_USER:
-			return {
-				...state,
-				followingUser: true
-			};
-		case SET_UNFOLLOW_USER:
-			return {
-				...state,
-				followingUser: false
-			};
+    case SET_FOLLOW_USER:
+      return {
+        ...state,
+        followingUser: true
+      };
+    case SET_UNFOLLOW_USER:
+      return {
+        ...state,
+        followingUser: false
+      };
     ```
 
-### [7. Updating the following user status functionality]()
+### [7. Updating the following user status functionality](https://github.com/sungnga/revents/commit/a6158054283980f6c7fbbea106a2a9b473cf01d1?ts=2)
 - In ProfileHeader.jsx file:
   - Import the following:
     ```js
@@ -8097,7 +8098,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [8. Clearing the followings]()
+### [8. Clearing the followings](https://github.com/sungnga/revents/commit/bb9577fadda60a40ca568f22a5dd3cc222278ae6?ts=2)
 - When we go from one user profile page to another user profile page, let's say we're looking at the 'Followers' tab, we will see the same data going from one profile page to the next profile page. This is because we haven't done any data cleanup (clear the data) in the useEffect() hook after the ProfileHeader component has unmounted
 - In profileConstants.js file:
   - Create and export a CLEAR_FOLLOWINGS constant
@@ -8107,12 +8108,12 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Import the CLEAR_FOLLOWINGS constant: `import { CLEAR_FOLLOWINGS } from './profileConstants';`
   - Add a case for the CLEAR_FOLLOWINGS action. This action sets the `followers` and `followings` properties back to empty arrays in profileReducer
     ```js
-		case CLEAR_FOLLOWINGS:
-			return {
-				...state,
-				followers: [],
-				followings: []
-			};
+    case CLEAR_FOLLOWINGS:
+      return {
+        ...state,
+        followers: [],
+        followings: []
+      };
     ```
 -  In ProfileHeader.jsx file:
   - Import the CLEAR_FOLLOWINGS constant: `import { CLEAR_FOLLOWINGS } from '../../../features/profiles/profileReducer';`
@@ -8144,7 +8145,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   }
   ```
 
-### [9. Firestore batches and setting security rules]()
+### [9. Firestore batches and setting security rules](https://github.com/sungnga/revents/commit/51fe57ca93b002fd22d0c31fa6339ad2f4614df9?ts=2)
 - Up until this point we've only looked at the the happy path of following and unfollowing a user. When we follow or unfollow a user we perform several async operations to update the 'following' collection as well as updating the 'users' collection of following count in Firestore db. Each of the async operation is somewhat related to the other. So if one of the operations fails we're going to have inconsistency in our database. Firestore has security rules section that we can make use of to set some rules on how to read and write to our database. We're going to set a few simple rules for Firestore security
 - In Firestore dashboard page, click on the 'Rules' tab at the top of the page. Here is where we can specify Firestore security rules telling what a user is allowed to do based on a condition. Some rules we're going to set are:
   - Only authenticated user can read other users' documents
@@ -8290,7 +8291,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - `firebase login`
   - `firebase init`
 
-### [10. Setting up Cloud Functions]()
+### [10. Setting up Cloud Functions](https://github.com/sungnga/revents/commit/9831503148037a7d7e582628ce64142dfb851283?ts=2)
 - **Firebase initialization via the CLI**
   - In the command line, run: `npm install -g firebase-tools`
   - Then run: `firebase login`. Login with an email account
@@ -8313,7 +8314,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - If successful, a Function URL link is provided. Paste this link into the browser and you should see a "hello from firebase" message
   - NOTE: Whenever we make changes to the cloud functions we need to redeploy to Firebase
 
-### [11. Creating our own cloud functions]()
+### [11. Creating our own cloud functions](https://github.com/sungnga/revents/commit/60c77d72078cfd090a852d3a10b1e0e01114cf14?ts=2)
 - The issue we're trying to resolve at the moment is if a user decides to follow or unfollow another user, based on the firestore security rules we've setup, this user does not have permission to update another user's following collection and we will get an error
 - We're going to use Cloud Functions to give us full permission in Firebase admin to our database regardless of what security rules are in place
 - In /functions/index.js file:
@@ -8403,7 +8404,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Lastly, deploy both of these two cloud functions to Firebase via CLI: `firebase deploy --only functions`
 
-### [12. Creating a personalized news feed: EventsFeed component]()
+### [12. Creating a personalized news feed: EventsFeed component](https://github.com/sungnga/revents/commit/e1849dc6713a5b42c0ba24a3144d21217a9be5e9?ts=2)
 - We're going to create a news feed in the events dashboard page. This feed only shows up if the user is currently logged in (authenticated user)
 - In /src/features/events/eventDashboard folder, create a component called EventsFeed.jsx
 - In EventsFeed.jsx file:
@@ -8441,7 +8442,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Display the EventsFeed component at the top of the second column of the EventDashboard page
     - `{authenticated && <EventsFeed />}`
 
-### [13. Adding functions for the feed]()
+### [13. Adding functions for the feed](https://github.com/sungnga/revents/commit/e1f697ad69b4b7d7d79fe716ec6d30b7d07ab1cc?ts=2)
 - The way the news feed functionality works is we're going to check for updates in an event doc in Firestore db, specifically the length of the attendees array of the event. If the after attendees array has increased, that means a user has joined the event. If that is the case, we're going to create a new post with the code 'joined-event' in Firebase Realtime Database. Similarly, if the after attendees array is less than the before attendees array, that means a user has left the event. In this case, we're going to create a new post with the code 'left-event' in Realtime Database
 - On the client side, we then create action creators to listen for these posts in Firebase Realtime and display them in a currentUser's news feed. So the currentUser will be able to see the events of the users they are following when they joined or left an event
 - In /functions/index.js file:
@@ -8528,7 +8529,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [14. Listening to the news feed]()
+### [14. Listening to the news feed](https://github.com/sungnga/revents/commit/f4d65f756b2250b1ce2e406bc8258bd2da86fa46?ts=2)
 - Let's setup the functionality to listen for news feed in Firebase Realtime DB on the client side
 - In firebaseService.js file
   - Write a getUserFeedRef function that gets the currentUser's latest 5 feed posts from Firebase Realtime database
@@ -8573,11 +8574,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
   - Then in the `profileReducer` function, add a switch case for the LISTEN_TO_FEED action. It returns all the existing states and the `feed` property is set to payload
     ```js
-		case LISTEN_TO_FEED:
-			return {
-				...state,
-				feed: payload
-			};
+    case LISTEN_TO_FEED:
+      return {
+        ...state,
+        feed: payload
+      };
     ```
 - In EventsFeed.jsx file:
   - Import the following:
@@ -8617,7 +8618,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }, [dispatch]);
     ```
 
-### [15. Displaying the news feed events]()
+### [15. Displaying the news feed events](https://github.com/sungnga/revents/commit/464a389fc81f717c3de727184a1941bcff140568?ts=2)
 - First, we need to add one additional property to the feed post object when creating a feed post
 - In functions/index.js file:
   - We need to add the event title to the post object. We can get this event title from the `before` snapshot data in the eventUpdated function
@@ -8706,7 +8707,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 
 ## PAGINATION AND DATA CONSISTENCY
 
-### [1. Implementing pagination]()
+### [1. Implementing pagination](https://github.com/sungnga/revents/commit/43cd31297e0177649f39320b84f11235dfa7964a?ts=2)
 - To implement the page pagination functionality for our events on the EventDashboard page, we need to make a change to we way we are getting the events from Firestore db. Right now we are listening to live events data in Firestore and this essentially means that we are reading the entire the documents in the 'events' collection. This is not a good idea if we have millions of docs in a collection and we only want a few. An alternative solution to listening to live data is by making a normal query request just like we would with a normal API request
 - In firestoreService.js file:
   - In the listenToEventsFromFirestore function:
@@ -8779,12 +8780,12 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
   - Then in the FETCH_EVENTS action, set the `events` property to payload.events and add the `moreEvents` property and set it to payload.moreEvents
     ```js
-		case FETCH_EVENTS:
-			return {
-				...state,
-				events: payload.events,
-				moreEvents: payload.moreEvents
-			};
+    case FETCH_EVENTS:
+      return {
+        ...state,
+        events: payload.events,
+        moreEvents: payload.moreEvents
+      };
     ```
 - In EventDashboard.jsx file:
   - Import the fetchEvents function: `import { fetchEvents } from '../eventActions';`
@@ -8829,7 +8830,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
       ```
     - When we click on the More button, we should be able to see the next batch of events listed on the page
 
-### [2. Improving the paging UI]()
+### [2. Improving the paging UI](https://github.com/sungnga/revents/commit/6b42e80919941a59f0380dbb3049a6ab04cb10c5?ts=2)
 - The first improvement we want to make is when we fetch more events, we don't want to do a full page refresh. Meaning that we don't need to load the events placeholder when we load more events
 - In EventDashboard.jsx file:
   - Create a local state called `loadingInitial` and initialize it to false
@@ -8884,7 +8885,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     };
   ```
 
-### [3. Implementing infinite scroll]()
+### [3. Implementing infinite scroll](https://github.com/sungnga/revents/commit/85c486bc7a41cfab50ea97d1e9a3ef4504ea31e8?ts=2)
 - Install the react-infinite-scroller library
   - `npm i --legacy-peer-deps --save react-infinite-scroller`
 - The next improvement we're going to make is instead of having the user clicking on the More button to load more events, we're going to implement infinite scrolling to load more events when the user reaches the bottom of the events list. We're also going to show a loading spinner at the bottom while we're loading more events
@@ -8903,9 +8904,9 @@ In the LoginForm, we want to display an error message to the user if they aren't
       ```
     - Add another Grid.Column at the bottom of EventList that will display the `Loader` component (display a loading spinner) if `loading` state is true
       ```js
-			<Grid.Column width={10}>
-				<Loader active={loading} />
-			</Grid.Column>
+      <Grid.Column width={10}>
+        <Loader active={loading} />
+      </Grid.Column>
       ```
 - In EventList.jsx file:
   - Import the InfiniteScroll component from the react-infinite-scroller library
@@ -8940,7 +8941,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - Now when we are scrolling to the bottom of the events page, the InfiniteScroll component will fetch and display more events if moreEvents is true
 
-### [4. Fixing the EventDetailedPage]()
+### [4. Fixing the EventDetailedPage](https://github.com/sungnga/revents/commit/5f992710b73f23e22bd9894eaadceeb058d37f75?ts=2)
 - Now that we are fetching events data for the EventDashboard page from Firestore via a normal query rather than listening to live data, we broke the functionality to view an event detailed page. We still want to listen to live data for the EventDetailedPage, so when someone decides to join the event we can see the update in real time. This means we need to modify the way we get and store the selected event in Redux store
 - In eventConstants.js file:
   - Create and export a LISTEN_TO_SELECTED_EVENT constant
@@ -8970,11 +8971,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
   - Add a case for the LISTEN_TO_SELECTED_EVENT action. It returns, as an object, all the existing states and set the selectedEvent property to payload
     ```js
-		case LISTEN_TO_SELECTED_EVENT:
-			return {
-				...state,
-				selectedEvent: payload
-			};
+    case LISTEN_TO_SELECTED_EVENT:
+      return {
+        ...state,
+        selectedEvent: payload
+      };
     ```
 - In EventDetailedPage.jsx file:
   - When this component loads, we want to listen to the event doc in Firestore and dispatch the listenToSelectedEvent() action to store the event in the selectedEvent property in the eventReducer
@@ -9016,7 +9017,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     });
     ```
 
-### [5. Fixing the event filters]()
+### [5. Fixing the event filters](https://github.com/sungnga/revents/commit/fd1d85f63e4def39627ec03830c0e7e50d10d375?ts=2)
 - What we have going on right now is when we click on the 'I'm going' or 'I'm hosting' filter on the EventDashboard page, it displays the existing events and the filtered events after it. This is because we have not cleared out any events currently in Redux store. So we need to create an action creator to clear the events in the store and go get the events that match the specified filter. We also need to clear the events and reset it to its initial state when we unmount the EventDashboard component
 - In eventConstants.js file:
   - Create and export a CLEAR_EVENTS constant
@@ -9044,12 +9045,12 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
   - Add a case for the CLEAR_EVENTS action. It returns, as an object, all the existing states, set the events state to an empty array, and set the moreEvents state to true just to be explicit
     ```js
-		case CLEAR_EVENTS:
-			return {
-				...state,
-				events: [],
-				moreEvents: true
-			};
+    case CLEAR_EVENTS:
+      return {
+        ...state,
+        events: [],
+        moreEvents: true
+      };
     ```
 - In EventDashboard.jsx file:
   - Import the clearEvents action: `import { clearEvents } from '../eventActions';`
@@ -9082,7 +9083,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }, [dispatch, predicate]);
     ```
 
-### [6. Implementing data consistency: updating photoURL]()
+### [6. Implementing data consistency: updating photoURL](https://github.com/sungnga/revents/commit/4288ba236e425fed330341715d6edb012e448b20?ts=2)
 - One area in our app where we experience data inconsistency is when a user updates their main profile photo, their profile photo isn't updated in the event's hostPhotoURL or in an event's attendees array or in a userFollowers collection. This is because we don't have relational database between the 'users' collection, the 'events' collection, and the 'following' collection
 - The setMainPhoto function (firestoreService.js) updates a user photoURL in five different areas:
   - The currentUser doc in 'users' collection
@@ -9188,7 +9189,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [7. Updating Firestore security rules]()
+### [7. Updating Firestore security rules](https://github.com/sungnga/revents/commit/ca3c4a3319971cd85fb8df8bf26b09252a43da04?ts=2)
 - We need to update our security rules in Firestore DB to allow a user to update a document that matches their own id even if it is inside someone else's collection. They won't have permission to create or delete a document in another person's collection
 - Go to the Cloud Firestore Database dashboard page and click in the Rules tab at the top of the screen
   - Add another rule that allows a user to update a document that's inside another user's 'following' collection if the document id matches that user uid
@@ -9204,7 +9205,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 
 ## SECURING THE APPLICATION
 
-### [1. Checking anonymous access]()
+### [1. Checking anonymous access](https://github.com/sungnga/revents/commit/52d9a6f802fb187fa4e3574567c435fdae583ee8?ts=2)
 - Let's take a look at what happens when an anonymous user (unauthenticated user) interacts our application
 - In EventDetailedPage.jsx file:
   - We should allow an anonymous user to see the EventDetailedPage
@@ -9229,7 +9230,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     - Then use the `&&` to show the chat functionality only if `authenticated` is true
       - `{authenticated && (<chat segment>)}`
 
-### [2. Creating a modal to prompt login: UnauthModal component]()
+### [2. Creating a modal to prompt login: UnauthModal component](https://github.com/sungnga/revents/commit/5babcc15ce13119ce1d0c6a5cbcc1148d7dc1752?ts=2)
 - If an anonymous user wants to join an event or view another user profile, for example, we want to display a modal to prompt them to login or register
 - In /features/auth folder, create a component called UnauthModal.jsx
 - In UnauthModal.jsx file:
@@ -9284,7 +9285,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     export default UnauthModal;
     ```
 
-### [3. Creating a private route: PrivateRoute component]()
+### [3. Creating a private route: PrivateRoute component](https://github.com/sungnga/revents/commit/6c79e7007a07c15d586df28dd98d7d12cf278a63?ts=2)
 - Some of the pages we want to limit access and set them to private routes. If an anonymous user visits one of these pages we want to prompt the user to either login or register or continue as a guest
 - In /src/app/layout folder, create a component called PrivateRoute.jsx
 - In PrivateRoute.jsx file:
@@ -9338,7 +9339,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Container>
     ```
 
-### [4. Connecting the router to the store]()
+### [4. Connecting the router to the store](https://github.com/sungnga/revents/commit/6e1f96222cc363b7349fc33cbb49c62a68c084eb?ts=2)
 - At the moment, if a user decides not to sign in by hitting the Cancel button in the UnauthModal prompt, we have no way of redirecting them back to the page where they came from. And react-router-dom does not have a previous location in the `history` prop for us to go back
 - To make this work, we're going to use a library called connected-react-router
   - Install: `npm i connected-react-router`
@@ -9394,16 +9395,16 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Import the ConnectedRouter component: `import { ConnectedRouter } from 'connected-react-router';`
   - Instead of using the `<BrowserRouter />`, we're going to use the `<ConnectedRouter />` component. Then pass down the `history` as props to the ConnectedRouter component
     ```js
-		<Provider store={store}>
-			<ConnectedRouter history={history}>
-				<ScrollToTop />
-				<App />
-			</ConnectedRouter>
-		</Provider>
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
+        <ScrollToTop />
+        <App />
+      </ConnectedRouter>
+    </Provider>
     ```
 - Now what happens is whenever we change route/page, we're given a LOCATION_CHANGE action in Redux store and we have a `location` property that has the pathname in payload. We can make use of this information to store it in Redux store
 
-### [5. Redirecting the user with connected router]()
+### [5. Redirecting the user with connected router](https://github.com/sungnga/revents/commit/f14e7d6fd24c6bb803d116c8cc2f1560cee7c5d5?ts=2)
 - We want to store the previous location that a user has visited and the current location that the user is on in the authReducer in Redux store. This way when an unauthenticated user visits a PrivateRoute page and chooses not to sign in, we can redirect them back to the previous page where they came from
 - In authReducer.js file:
   - Import the LOCATION_CHANGE action: `import { LOCATION_CHANGE } from 'connected-react-router';`
@@ -9445,7 +9446,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     ```
 - So when an unauthenticated user visits a PrivateRoute page, the UnauthModal prompt window pops up and ask them to sign in. If they choose not to sign in, we redirect them to the previous page where they came from. If they happen to visit a PrivateRoute page from somewhere else and decide not to sign in, we redirect them to the EventDashboard page upon the UnauthModal window closes
 
-### [6. Showing the modal on click]()
+### [6. Showing the modal on click](https://github.com/sungnga/revents/commit/399e205f61d3179266b506bafe393a7c5d984830?ts=2)
 - If an anonymous user visits the event detailed page and wants to join the event by clicking on the 'Join this event' button, we would get an error. What we want is to show the sign in modal to ask the user to log in
 - In EventDetailedHeader.jsx file:
   - The 'Join this event' button lives in this component. What we want to do here is display the UnauthModal component if this button is clicked by an unauthenticated user
@@ -9518,7 +9519,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     </Button.Group>
     ```
 
-### [7. More on Firestore security rules]()
+### [7. More on Firestore security rules](https://github.com/sungnga/revents/commit/542724b67071a71cffb5fb3d56e43edd3d11abfd?ts=2)
 - Up until this point we've only been writing simple security rules in Firestore and hiding specific features from users when we don't wnat them to have access to on the client side. We're going to further lock down our application on the server side by creating and refining more rules in Firestore security rules
 - In the Firestore Database dashboard, click on the Rules tab at the top to see our existing rules
   - Instead of writing the same logic and using them line by line inside the security rules, we can make it easier to read and use the logic by writing custom functions
@@ -9581,7 +9582,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     }
     ```
 
-### [8. Restricting API key usage]()
+### [8. Restricting API key usage](https://github.com/sungnga/revents/commit/7c92fbda39f30b98d6025390a681ab5cc0fc2f02?ts=2)
 - When we created our 'revents' project in Google Firebase, it automatically created an `authDomain` URL for us. We use this URL when we publish our application. We also use this URL to restrict our API key usage so that only authenticated users of our application can read/write to our database
 - **Restrict API Key:**
   - Go to google developers console https://console.cloud.google.com/ and select 'revents' project
@@ -9642,7 +9643,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 
 ## OPTIMIZING AND PUBLISHING THE APP
 
-### [1. Optimizing the events]()
+### [1. Optimizing the events](https://github.com/sungnga/revents/commit/18e168612dd90bbc37a8bf36c2baff0485a3cc32?ts=2)
 - The first time when we load the EventDashboard page, we fetch the events data from Firestore and we have this data stored in memory. As our users move around in our application going from one page to another and back to the EventDashboard page again, we don't need to make another request to query for the data again. We also want to retain the filtered events and the events based on the calendar date picker in memory as well. Since we are using Redux we can keep this data in our central store instead of in local states in the components
 - In eventReducer.js file:
   - In the initialState object, 
@@ -9888,7 +9889,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
       />
       ```
 
-### [2. Optimizing the profiles]()
+### [2. Optimizing the profiles](https://github.com/sungnga/revents/commit/580204963ceedf584d1e37461b6c6a0bdf18cc57?ts=2)
 - The next small optimization we want to make is if we already have the currentUserProfile data then we don't need to listenToSelectedUserProfile. For example, if the currentUser is browsing on the EventDashboard page and clicks on a link to go to their profile page, we don't need to fetch the selectedUserProfile data
 - In ProfilePage.jsx file:
   - Destructure the `currentUserProfile` property from profileReducer
@@ -9926,7 +9927,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
     );
     ```
 
-### [3. Building the application for production]()
+### [3. Building the application for production](https://github.com/sungnga/revents/commit/76acb62632c514a64d16e29f3cd4bd44edfdcfa4?ts=2)
 - Create-react-app gives us a tool to create a production build of our application
 - To create a production build, run: `npm run build`
 - This creates a `build` folder that contains all the asset files, Javascript code that has been optimized, minimized, and bundled
@@ -9934,7 +9935,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - Then run: `serve -s build`. This serves our application in production mode on localhost
 - Go to `http://localhost:5000` to see the application
 
-### [4. Publishing the app to Firebase]()
+### [4. Publishing the app to Firebase](https://github.com/sungnga/revents/commit/89519aa008bbbad0bf3d4f7a111c610e7ba7d2ce?ts=2)
 - Go to Firebase console and click on the Hosting menu item on the left. Then click the Get Started button
   - We can deploy all of our code to be hosted by Firebase
   - **Set up Firebase Hosting**
@@ -9967,7 +9968,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Run: `npm run deploy`. We deploy our functions and hosting
 - Go back to the Firebase console and to the Hosting dashboard page. Here it should give us the hosting URL that we specified in the firebase config file. We should be able to see our deployed application using this URL
 
-### [5. Resolving issues with the app and redeploying]()
+### [5. Resolving issues with the app and redeploying](https://github.com/sungnga/revents/commit/4ad6bcf0dfaf08bcc24b06bcac6e2127515df939?ts=2)
 - Let's remove the Delete event button, because the host of the event can only cancel the event but cannot delete an event
 - In EventListItem.jsx file:
   - In JSX, remove the Delete button element
@@ -9990,11 +9991,11 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - Add a case for CLEAR_SELECTED_EVENT action
     - This action sets the `selectedEvent` property to null
     ```js
-		case CLEAR_SELECTED_EVENT:
-			return {
-				...state,
-				selectedEvent: null
-			};
+    case CLEAR_SELECTED_EVENT:
+      return {
+        ...state,
+        selectedEvent: null
+      };
     ```
 - In EventForm.jsx file:
   - We want to use useEffect() so that when this component mounts, we want to check the pathname in the `location` property. If the path location is `/createEvent`, we want to dispatch the clearSelectedEvent action to clear the `selectedEvent` property in eventReducer. This will clear the event form
@@ -10034,6 +10035,8 @@ In the LoginForm, we want to display an error message to the user if they aren't
 - **Redeploy the application to Firebase**
   - In the terminal, stop the running server and run: `npm run deploy`
 
+
+-----------------------------------------------------------------------------------------
 
 ## LIBRARIES AND PACKAGES USED IN THIS PROJECT
 - Semantic UI React and Semantic UI CSS
@@ -10157,7 +10160,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 
 ## REDUX CONCEPTS
 
-### [Intro to Redux]()
+### [Intro to Redux](https://github.com/sungnga/revents/commit/fb67975a36ccb03789c16c803d2fa2c4ede3a52f?ts=2)
 **What is Redux?**
 - Predictable State Container for Javascript apps. This allows us to store our applications states centrally in a Redux store 
 - Not specific to React
@@ -10226,7 +10229,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   - useDispatch() - dispatches an action to the reducer
 
 
-### Setting up Redux Store
+### [Setting up Redux Store](https://github.com/sungnga/revents/commit/fb67975a36ccb03789c16c803d2fa2c4ede3a52f?ts=2)
 1. Configure the Store
 2. Create a root reducer
 3. Add the store to the index.js file. Then we pass the store via the Provider to our application
@@ -10287,7 +10290,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   }
   ```
 
-### [Installing Redux DevTools]()
+### [Installing Redux DevTools](https://github.com/sungnga/revents/commit/fcb1b42a3bb93553d21dbfa540896ca803d591f8?ts=2)
 - Install: `npm i redux-devtools-extension --save-dev`
 **Add the DevTools to Redux store**
 - In app/store/configureStore.js file:
@@ -10308,7 +10311,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 
 ## A TASTE OF REDUX
 
-### [Playing with Redux in a Sandbox component]()
+### [Playing with Redux in a Sandbox component](https://github.com/sungnga/revents/commit/42c3fe00ebdfb1aea2fdbe339fd775099855a762?ts=2)
 **The Reducer Function**
 - The reducer function takes two arguments:
   - 1st arg is the initial state in the store
@@ -10484,7 +10487,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
 **Install Redux Thunk**
 - Install: `npm i redux-thunk`
 
-### [1. Setting up Redux Thunk, create an asyncReducer]()
+### [1. Setting up Redux Thunk, create an asyncReducer](https://github.com/sungnga/revents/commit/1468870aae235aa62355ae5f661dd8ca610aa659?ts=2)
 - In configureStore.js file:
   - The createStore() method takes 3 params: a reducer, a preloadedState(optional), and an enhancer
   - An example of an enhancer is the Redux devTool that we have installed and use earlier. The only store enhancer that ships with Redux is applyMiddleware(). The middleware that we're going to apply is the Redux thunk, but we've also got a devToolEnhancer(). So in order to use both of the devToolEnhancer() and Redux thunk, we're going to bring in the composeWithDevTools() method from redux-devtools-extension. The composeWithDevTools() is already come with the devToolEnhancer()
@@ -10572,7 +10575,7 @@ In the LoginForm, we want to display an error message to the user if they aren't
   }
   ```
 
-### [2. Returning async functions in action creators]()
+### [2. Returning async functions in action creators](https://github.com/sungnga/revents/commit/9f914f5a62948566731109314fd15df34dee4f8e?ts=2)
 - In src/app/common/util folder, create a file called util.js. Any functions that don't belong anywhere else that we can apply anywhere in our application go in this folder
 - In util.js file:
   - Write a delay function that delays for a certain amount of time in millisecond (ms)
