@@ -2,20 +2,20 @@ import React, { useRef } from 'react';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 
-function PhotoWidgetCropper({ setImage, imagePreview }) {
+function PhotoWidgetCropper({ setCropper, imagePreview }) {
 	const cropperRef = useRef(null);
 
-	function cropImage() {
-		const imageElement = cropperRef?.current;
-		const cropper = imageElement?.cropper;
+	// function cropImage() {
+	// 	const imageElement = cropperRef?.current;
+	// 	const cropper = imageElement?.cropper;
 
-		if (typeof cropper.getCroppedCanvas() === 'undefined') {
-			return;
-		}
-		cropper.getCroppedCanvas().toBlob((blob) => {
-			setImage(blob);
-		}, 'image/jpeg');
-	}
+	// 	if (typeof cropper.getCroppedCanvas() === 'undefined') {
+	// 		return;
+	// 	}
+	// 	cropper.getCroppedCanvas().toBlob((blob) => {
+	// 		setImage(blob);
+	// 	}, 'image/jpeg');
+	// }
 
 	return (
 		<Cropper
@@ -31,7 +31,7 @@ function PhotoWidgetCropper({ setImage, imagePreview }) {
 			scalable={true}
 			cropBoxMovable={true}
 			cropBoxResizable={true}
-			crop={cropImage}
+			crop={() => setCropper(cropperRef.current.cropper)}
 		/>
 	);
 }

@@ -60,7 +60,7 @@ function MyPlaceInput({ label, options, ...props }) {
 							<List selection>
 								{suggestions.map((suggestion, index) => (
 									<List.Item
-										key={index}
+										key={suggestion.placeId}
 										{...getSuggestionItemProps(suggestion)}
 									>
 										<List.Header>
