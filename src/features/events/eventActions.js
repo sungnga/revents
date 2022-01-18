@@ -19,18 +19,18 @@ import {
 	dataFromSnapshot,
 	fetchEventsFromFirestore
 } from '../../app/firestore/firestoreService';
+import { getDocs } from '@firebase/firestore';
 
 // Action creators
 export function fetchEvents(filter, startDate, limit, lastDocSnapshot) {
 	return async function (dispatch) {
 		dispatch(asyncActionStart());
 		try {
-			const snapshot = await fetchEventsFromFirestore(
-				filter,
-				startDate,
-				limit,
-				lastDocSnapshot
-			).get();
+			// the getDocs() method is when we want to get the docs once and
+			// we don't want to listen to them
+			const snapshot = await getDocs(
+				fetchEventsFromFirestore(filter, startDate, limit, lastDocSnapshot)
+			);
 			const lastVisible = snapshot.docs[snapshot.docs.length - 1];
 			const moreEvents = snapshot.docs.length >= limit;
 			const events = snapshot.docs.map((doc) => dataFromSnapshot(doc));

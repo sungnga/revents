@@ -1,6 +1,30 @@
-import firebase from '../config/firebase';
+import {
+	getFirestore,
+	collection,
+	Timestamp,
+	doc,
+	addDoc,
+	setDoc,
+	getDoc,
+	getDocs,
+	arrayUnion,
+	arrayRemove,
+	updateDoc,
+	query,
+	orderBy,
+	where,
+	deleteDoc,
+	serverTimestamp,
+	increment,
+	writeBatch,
+	limit,
+	startAfter
+} from 'firebase/firestore';
+import { getAuth, updateProfile } from 'firebase/auth';
+import { app } from '../config/firebase';
 
-const db = firebase.firestore();
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 export function dataFromSnapshot(snapshot) {
 	// If snapshot doesn't exist, return undefined
@@ -10,7 +34,7 @@ export function dataFromSnapshot(snapshot) {
 
 	for (const prop in data) {
 		if (data.hasOwnProperty(prop)) {
-			if (data[prop] instanceof firebase.firestore.Timestamp) {
+			if (data[prop] instanceof Timestamp) {
 				data[prop] = data[prop].toDate();
 			}
 		}
@@ -27,97 +51,100 @@ export function dataFromSnapshot(snapshot) {
 export function fetchEventsFromFirestore(
 	filter,
 	startDate,
-	limit,
+	pageSize,
 	lastDocSnapshot = null
 ) {
-	const user = firebase.auth().currentUser;
-	const eventRef = db
-		.collection('events')
-		.orderBy('date')
-		.startAfter(lastDocSnapshot)
-		.limit(limit);
+	const user = auth.currentUser;
+	const q = query(
+		collection(db, 'events'),
+		orderBy('date'),
+		startAfter(lastDocSnapshot),
+		limit(pageSize)
+	);
 	// filter events based on the predicate
 	// get the events based on the key/value of the predicate set in EventFilters component
 	// use the firestore's .where() method to query the events
 	switch (filter) {
 		case 'isGoing':
-			return eventRef
-				.where('attendeeIds', 'array-contains', user.uid)
-				.where('date', '>', startDate);
+			return query(
+				q,
+				where('attendeeIds', 'array-contains', user.uid),
+				where('date', '>=', startDate)
+			);
 		case 'isHost':
-			return eventRef
-				.where('hostUid', '==', user.uid)
-				.where('date', '>=', startDate);
+			return query(
+				q,
+				where('hostUid', '==', user.uid),
+				where('date', '>=', startDate)
+			);
 		default:
-			return eventRef.where('date', '>=', startDate);
+			return query(q, where('date', '>=', startDate));
 	}
 }
 
 // querying an event document in events collection
 export function listenToEventFromFirestore(eventId) {
-	return db.collection('events').doc(eventId);
+	return doc(db, 'events', eventId);
 }
 
 // add an event to Firestore
 export function addEventToFirestore(event) {
-	const user = firebase.auth().currentUser;
-	return db.collection('events').add({
+	const user = auth.currentUser;
+	return addDoc(collection(db, 'events'), {
 		...event,
 		hostUid: user.uid,
 		hostedBy: user.displayName,
 		hostPhotoURL: user.photoURL || null,
 		// attendees is an array of objects
 		// NOTE: we cannot query an array of objects
-		attendees: firebase.firestore.FieldValue.arrayUnion({
+		attendees: arrayUnion({
 			id: user.uid,
 			displayName: user.displayName,
 			photoURL: user.photoURL || null
 		}),
 		// create an array containing user uids. user.uid is a string
 		// we can query this instead
-		attendeeIds: firebase.firestore.FieldValue.arrayUnion(user.uid)
+		attendeeIds: arrayUnion(user.uid)
 	});
 }
 
 // update an event in Firestore
 export function updateEventInFirestore(event) {
-	return db.collection('events').doc(event.id).update(event);
+	const eventDoc = doc(db, 'events', event.id);
+	return updateDoc(eventDoc, event);
 }
 
 // delete an event
 export function deleteEventInFirestore(eventId) {
-	return db.collection('events').doc(eventId).delete();
+	return deleteDoc(doc(db, 'events', eventId));
 }
 
 // cancel an event
 export function cancelEventToggle(event) {
-	return db.collection('events').doc(event.id).update({
+	const eventDoc = doc(db, 'events', event.id);
+	return updateDoc(eventDoc, {
 		isCancelled: !event.isCancelled
 	});
 }
 
 // set user profile data in users collection
 export function setUserProfileData(user) {
-	return db
-		.collection('users')
-		.doc(user.uid)
-		.set({
-			displayName: user.displayName,
-			email: user.email,
-			photoURL: user.photoURL || null,
-			createdAt: firebase.firestore.FieldValue.serverTimestamp()
-		});
+	return setDoc(doc(db, 'users', user.uid), {
+		displayName: user.displayName,
+		email: user.email,
+		createdAt: serverTimestamp()
+	});
 }
 
 // get user profile
 export function getUserProfile(userId) {
-	return db.collection('users').doc(userId);
+	return doc(db, 'users', userId);
 }
 
 // update user profile in Firebase Auth and Firestore db
 export async function updateUserProfile(profile) {
 	//get the currentUser object from firebase auth
-	const user = firebase.auth().currentUser;
+	const user = auth.currentUser;
 
 	// if the displayName in firebase auth is different from the submitted profile displayName
 	// update the firebase displayName with the submitted displayName
@@ -125,11 +152,11 @@ export async function updateUserProfile(profile) {
 	// if an error occurs, throw the error back to the form
 	try {
 		if (user.displayName !== profile.displayName) {
-			await user.updateProfile({
+			updateProfile(user, {
 				displayName: profile.displayName
 			});
 		}
-		return await db.collection('users').doc(user.uid).update(profile);
+		return await updateDoc(doc(db, 'users', user.uid), profile);
 	} catch (error) {
 		throw error;
 	}
@@ -138,37 +165,37 @@ export async function updateUserProfile(profile) {
 // update user profile photo in firebase.auth and firestore if there isn't a photoURL
 // create a photos collection inside of the firestore user document
 export async function updateUserProfilePhoto(downloadURL, filename) {
-	const user = firebase.auth().currentUser;
-	const userDocRef = db.collection('users').doc(user.uid);
-
+	const user = auth.currentUser;
+	const userDocRef = doc(db, 'users', user.uid);
 	try {
 		// Get user document data in firestore
 		// This is getting the data only once. Not listening to the data
-		const userDoc = await userDocRef.get();
+		const userDoc = await getDoc(userDocRef);
 		// If there isn't a photoURL, perform these 2 operations
 		// Update the photoURL in firestore user document to the provided downloadURL
 		// Update the photoURL in firebase.auth currentUser to the provided downloadURL
 		if (!userDoc.data().photoURL) {
-			await db.collection('users').doc(user.uid).update({
+			await updateDoc(userDocRef, {
 				photoURL: downloadURL
 			});
-			await user.updateProfile({
+			await updateProfile(user, {
 				photoURL: downloadURL
 			});
 		}
 		// Inside the user document object, add a photos collection
-		return await db.collection('users').doc(user.uid).collection('photos').add({
+		return await addDoc(collection(db, 'users', user.uid, 'photos'), {
 			name: filename,
 			url: downloadURL
 		});
 	} catch (error) {
+		console.log('fserror', error);
 		throw error;
 	}
 }
 
 // get user photos in photos collection
 export function getUserPhotos(userUid) {
-	return db.collection('users').doc(userUid).collection('photos');
+	return collection(db, 'users', userUid, 'photos');
 }
 
 // set user main photo
@@ -178,31 +205,36 @@ export function getUserPhotos(userUid) {
 // 4. update the currentUser photoURL in the 'userFollowers' collection inside the 'following' collection
 // 5. update the user photoURL in firebase.auth
 export async function setMainPhoto(photo) {
-	const user = firebase.auth().currentUser;
+	const user = auth.currentUser;
 	// get today's date
 	const today = new Date();
 	// get a ref to all events
 	// where currentUser is attending and greater than today's date
-	const eventDocQuery = db
-		.collection('events')
-		.where('attendeeIds', 'array-contains', user.uid)
-		.where('date', '>=', today);
+	const eventDocQuery = query(
+		collection(db, 'events'),
+		where('attendeeIds', 'array-contains', user.uid),
+		where('date', '>=', today)
+	);
 	// get a ref to the userFollowing collection
 	// all the users the currentUser is following
-	const userFollowingRef = db
-		.collection('following')
-		.doc(user.uid)
-		.collection('userFollowing');
+	const userFollowingRef = collection(
+		db,
+		'following',
+		user.uid,
+		'userFollowing'
+	);
 
 	// use batch so that we don't get data inconsistency if it fails
-	const batch = db.batch();
+	const batch = writeBatch(db);
 
 	// updating the currentUser photoURL in Firestore
-	batch.update(db.collection('users').doc(user.uid), { photoURL: photo.url });
+	batch.update(doc(db, 'users', user.uid), {
+		photoURL: photo.url
+	});
 
 	try {
 		// get the events from Firestore based on eventDocQuery ref
-		const eventsQuerySnap = await eventDocQuery.get();
+		const eventsQuerySnap = await getDocs(eventDocQuery);
 		// for each event in eventsQuerySnap.docs array,
 		// update the hostPhotoURL, if the hostUid matches the user.uid
 		// update the attendee.photoURL in attendees array, if attendee.id matches the user.uid
@@ -225,16 +257,19 @@ export async function setMainPhoto(photo) {
 		}
 
 		// get the userFollowing docs data from Firestore
-		const userFollowingSnap = await userFollowingRef.get();
+		const userFollowingSnap = await getDocs(userFollowingRef);
 		// for each doc in userFollowingSnap.docs array,
 		// get a ref to currentUser doc in userFollowers collection
 		// update the photoURL of this ref using the batch method
 		userFollowingSnap.docs.forEach((docRef) => {
-			let followingDocRef = db
-				.collection('following')
-				.doc(docRef.id)
-				.collection('userFollowers')
-				.doc(user.uid);
+			let followingDocRef = doc(
+				db,
+				'following',
+				docRef.id,
+				'userFollowers',
+				user.uid
+			);
+
 			batch.update(followingDocRef, {
 				photoURL: photo.url
 			});
@@ -244,7 +279,7 @@ export async function setMainPhoto(photo) {
 
 		// updating photoURL in Firebase.auth
 		// this operation is separate from the batch made to Firestore
-		return await user.updateProfile({
+		return await updateProfile(user, {
 			photoURL: photo.url
 		});
 	} catch (error) {
@@ -254,74 +289,64 @@ export async function setMainPhoto(photo) {
 
 // delete a photo from photos collection
 export function deletePhotoFromCollection(photoId) {
-	const userUid = firebase.auth().currentUser.uid;
-	return db
-		.collection('users')
-		.doc(userUid)
-		.collection('photos')
-		.doc(photoId)
-		.delete();
+	const userUid = auth.currentUser.uid;
+	return deleteDoc(doc(db, 'users', userUid, 'photos', photoId));
 }
 
 // add a currentUser to an event attendance
 export function addUserAttendance(event) {
-	const user = firebase.auth().currentUser;
-	return db
-		.collection('events')
-		.doc(event.id)
-		.update({
-			attendees: firebase.firestore.FieldValue.arrayUnion({
-				id: user.uid,
-				displayName: user.displayName,
-				photoURL: user.photoURL || null
-			}),
-			attendeeIds: firebase.firestore.FieldValue.arrayUnion(user.uid)
-		});
+	const user = auth.currentUser;
+	return updateDoc(doc(db, 'events', event.id), {
+		attendees: arrayUnion({
+			id: user.uid,
+			displayName: user.displayName,
+			photoURL: user.photoURL || null
+		}),
+		attendeeIds: arrayUnion(user.uid)
+	});
 }
 
 // cancel a user attendance
 export async function cancelUserAttendance(event) {
-	const user = firebase.auth().currentUser;
-
+	const user = auth.currentUser;
 	try {
-		const eventDoc = await db.collection('events').doc(event.id).get();
-		return db
-			.collection('events')
-			.doc(event.id)
-			.update({
-				// attendeeIds is an array of string
-				// we can use firestore's arrayRemove method
-				attendeeIds: firebase.firestore.FieldValue.arrayRemove(user.uid),
+		const eventDoc = await getDoc(doc(db, 'events', event.id));
+		// attendeeIds is an array of string
+		// we can use firestore's arrayRemove method
+		return updateDoc(doc(db, 'events', event.id), {
+			attendees: eventDoc
+				.data()
 				// attendees is an array of objects. Cannot use arrayRemove method
 				// using a normal JS filter method instead. Filter method returns a new array of attendees
-				attendees: eventDoc
-					.data()
-					.attendees.filter((attendee) => attendee.id !== user.uid)
-			});
+				.attendees.filter((attendee) => attendee.id !== user.uid),
+			attendeeIds: arrayRemove(user.uid)
+		});
 	} catch (error) {
-		console.log(error);
 		throw error;
 	}
 }
 
 // get user events query
 export function getUserEventsQuery(activeTab, userUid) {
-	let eventsRef = db.collection('events');
+	let eventsRef = collection(db, 'events');
 	const today = new Date();
 	switch (activeTab) {
 		case 1: // past events
-			return eventsRef
-				.where('attendeeIds', 'array-contains', userUid)
-				.where('date', '<=', today)
-				.orderBy('date', 'desc');
-		case 2: // hosting
-			return eventsRef.where('hostUid', '==', userUid).orderBy('date');
+			return query(
+				eventsRef,
+				where('attendeeIds', 'array-contains', userUid),
+				where('date', '<=', today),
+				orderBy('date', 'desc')
+			);
+		case 2: // hosted
+			return query(eventsRef, where('hostUid', '==', userUid), orderBy('date'));
 		default:
-			// future events
-			return eventsRef
-				.where('attendeeIds', 'array-contains', userUid)
-				.where('date', '>=', today)
-				.orderBy('date');
+			return query(
+				eventsRef,
+				where('attendeeIds', 'array-contains', userUid),
+				where('date', '>=', today),
+				orderBy('date')
+			);
 	}
 }
 
@@ -329,70 +354,51 @@ export function getUserEventsQuery(activeTab, userUid) {
 // add a following collection at the root of firestore db
 // add followingCount and followerCount properties to user doc
 export async function followUser(profile) {
-	const user = firebase.auth().currentUser;
-	const batch = db.batch();
-
+	const user = auth.currentUser;
+	const batch = writeBatch(db);
 	try {
-		batch.set(
-			db
-				.collection('following')
-				.doc(user.uid)
-				.collection('userFollowing')
-				.doc(profile.id),
-			{
-				displayName: profile.displayName,
-				photoURL: profile.photoURL,
-				uid: profile.id
-			}
-		);
-		batch.update(db.collection('users').doc(user.uid), {
-			followingCount: firebase.firestore.FieldValue.increment(1)
+		batch.set(doc(db, 'following', user.uid, 'userFollowing', profile.id), {
+			displayName: profile.displayName,
+			photoURL: profile.photoURL || '/assets/user.png',
+			uid: profile.id
+		});
+
+		batch.update(doc(db, 'users', user.uid), {
+			followingCount: increment(1)
 		});
 		return await batch.commit();
-	} catch (error) {
-		throw error;
+	} catch (e) {
+		throw e;
 	}
 }
 
 // unfollow a user
 export async function unfollowUser(profile) {
-	const user = firebase.auth().currentUser;
-	const batch = db.batch();
-
+	const user = auth.currentUser;
+	const batch = writeBatch(db);
 	try {
-		batch.delete(
-			db
-				.collection('following')
-				.doc(user.uid)
-				.collection('userFollowing')
-				.doc(profile.id)
-		);
-		batch.update(db.collection('users').doc(user.uid), {
-			followingCount: firebase.firestore.FieldValue.increment(-1)
+		batch.delete(doc(db, 'following', user.uid, 'userFollowing', profile.id));
+		batch.update(doc(db, 'users', user.uid), {
+			followingCount: increment(-1)
 		});
 		return await batch.commit();
-	} catch (error) {
-		throw error;
+	} catch (e) {
+		throw e;
 	}
 }
 
 // get userFollowers collection
 export function getFollowersCollection(profileId) {
-	return db.collection('following').doc(profileId).collection('userFollowers');
+	return collection(db, 'following', profileId, 'userFollowers');
 }
 
 // get userFollowering collection
 export function getFollowingCollection(profileId) {
-	return db.collection('following').doc(profileId).collection('userFollowing');
+	return collection(db, 'following', profileId, 'userFollowing');
 }
 
 // get following doc
 export function getFollowingDoc(profileId) {
-	const userUid = firebase.auth().currentUser.uid;
-	return db
-		.collection('following')
-		.doc(userUid)
-		.collection('userFollowing')
-		.doc(profileId)
-		.get();
+	const userUid = auth.currentUser.uid;
+	return getDoc(doc(db, 'following', userUid, 'userFollowing', profileId));
 }

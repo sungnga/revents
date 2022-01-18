@@ -7,6 +7,7 @@ import { getFileExtension } from '../util/utils';
 import { uploadToFirebaseStorage } from '../../firestore/firebaseService';
 import { toast } from 'react-toastify';
 import { updateUserProfilePhoto } from '../../firestore/firestoreService';
+import { getDownloadURL } from 'firebase/storage';
 
 function PhotoUploadWidget({ setEditMode }) {
 	const [files, setFiles] = useState([]);
@@ -30,7 +31,7 @@ function PhotoUploadWidget({ setEditMode }) {
 					toast.error(error.message);
 				},
 				() => {
-					uploadTask.snapshot.ref.getDownloadURL().then((getDownloadURL) => {
+					getDownloadURL(uploadTask.snapshot.ref).then((getDownloadURL) => {
 						updateUserProfilePhoto(getDownloadURL, filename)
 							.then(() => {
 								setLoading(false);

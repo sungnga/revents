@@ -6,6 +6,7 @@ import {
 	asyncActionStart
 } from '../async/asyncReducer';
 import { dataFromSnapshot } from '../firestore/firestoreService';
+import { onSnapshot } from '@firebase/firestore';
 
 export default function useFirestoreDoc({
 	query,
@@ -20,7 +21,8 @@ export default function useFirestoreDoc({
 		// this will prevent this useEffect hook from querying firestore
 		if (!shouldExecute) return;
 		dispatch(asyncActionStart());
-		const unsubscribe = query().onSnapshot(
+		const unsubscribe = onSnapshot(
+			query(),
 			(snapshot) => {
 				// console.log(snapshot)
 				// if the exists property in snapshot is set to false

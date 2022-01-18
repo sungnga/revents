@@ -1,8 +1,4 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/database';
-import 'firebase/compat/auth';
-import 'firebase/compat/storage';
+import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
 	// PASTE_FIREBASE_CONFIG_HERE
@@ -14,7 +10,4 @@ const firebaseConfig = {
 	appId: '1:947031853800:web:208027c804fab5f24d975d'
 };
 
-firebase.initializeApp(firebaseConfig);
-firebase.firestore();
-
-export default firebase;
+export const app = initializeApp(firebaseConfig);

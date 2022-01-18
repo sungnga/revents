@@ -7,6 +7,7 @@ import {
 } from '../../../app/firestore/firebaseService';
 import { listenToFeed } from '../../profiles/profileActions';
 import EventFeedItem from './EventFeedItem';
+import { onValue, off } from '@firebase/database';
 
 function EventsFeed() {
 	const dispatch = useDispatch();
@@ -14,7 +15,7 @@ function EventsFeed() {
 	// console.log(feed);
 
 	useEffect(() => {
-		getUserFeedRef().on('value', (snapshot) => {
+		onValue(getUserFeedRef(), (snapshot) => {
 			if (!snapshot.exists()) {
 				return;
 			}
@@ -23,7 +24,7 @@ function EventsFeed() {
 		});
 
 		return () => {
-			getUserFeedRef().off();
+			off(getUserFeedRef());
 		};
 	}, [dispatch]);
 

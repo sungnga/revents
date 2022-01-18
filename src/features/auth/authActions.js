@@ -1,4 +1,3 @@
-import firebase from '../../app/config/firebase';
 import { SIGN_IN_USER, SIGN_OUT_USER } from './authConstants';
 import { APP_LOADED } from '../../app/async/asyncReducer';
 import {
@@ -6,6 +5,11 @@ import {
 	getUserProfile
 } from '../../app/firestore/firestoreService';
 import { listenToCurrentUserProfile } from '../profiles/profileActions';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app } from '../../app/config/firebase';
+import { onSnapshot } from '@firebase/firestore';
+
+const auth = getAuth(app);
 
 // Action creators
 export function signInUser(user) {
@@ -20,7 +24,7 @@ export function signInUser(user) {
 export function verifyAuth() {
 	return function (dispatch) {
 		// Listening to auth state change of firebase auth
-		return firebase.auth().onAuthStateChanged((user) => {
+		return onAuthStateChanged(auth, (user) => {
 			if (user) {
 				// Update currentUser object in authReducer
 				dispatch(signInUser(user));
@@ -31,7 +35,7 @@ export function verifyAuth() {
 				// listenToCurrentUserProfile action stores the data in profileReducer
 				// APP_LOADED action sets the initialized flag to true in asyncReducer
 				// When initialized flag is set to false, the LoadingComponent renders
-				profileRef.onSnapshot((snapshot) => {
+				onSnapshot(profileRef, (snapshot) => {
 					dispatch(listenToCurrentUserProfile(dataFromSnapshot(snapshot)));
 					dispatch({ type: APP_LOADED });
 				});

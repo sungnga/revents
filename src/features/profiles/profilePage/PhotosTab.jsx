@@ -75,32 +75,36 @@ function PhotosTab({ profile, isCurrentUser }) {
 							{photos.map((photo) => (
 								<Card key={photo.id}>
 									<Image src={photo.url} />
-									<Button.Group>
-										{/* disable the Main button if the photo is already set to profile photo */}
-										<Button
-											name={photo.id}
-											loading={
-												updating.isUpdating && updating.target === photo.id
-											}
-											onClick={(e) => handleSetMainPhoto(photo, e.target.name)}
-											disabled={photo.url === profile.photoURL}
-											basic
-											color='green'
-											content='Main'
-										/>
-										{/* disable the delete button if the photo is the profile photo */}
-										<Button
-											loading={
-												deleting.isDeleting && deleting.target === photo.id
-											}
-											disabled={photo.url === profile.photoURL}
-											name={photo.id}
-											onClick={(e) => handleDeletePhoto(photo, e.target.name)}
-											basic
-											color='red'
-											icon='trash'
-										/>
-									</Button.Group>
+									{isCurrentUser && (
+										<Button.Group>
+											{/* disable the Main button if the photo is already set to profile photo */}
+											<Button
+												name={photo.id}
+												loading={
+													updating.isUpdating && updating.target === photo.id
+												}
+												onClick={(e) =>
+													handleSetMainPhoto(photo, e.target.name)
+												}
+												disabled={photo.url === profile.photoURL}
+												basic
+												color='green'
+												content='Main'
+											/>
+											{/* disable the delete button if the photo is the profile photo */}
+											<Button
+												loading={
+													deleting.isDeleting && deleting.target === photo.id
+												}
+												disabled={photo.url === profile.photoURL}
+												name={photo.id}
+												onClick={(e) => handleDeletePhoto(photo, e.target.name)}
+												basic
+												color='red'
+												icon='trash'
+											/>
+										</Button.Group>
+									)}
 								</Card>
 							))}
 						</Card.Group>
